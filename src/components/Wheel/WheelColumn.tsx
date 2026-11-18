@@ -38,6 +38,7 @@ export const WheelColumn: React.FC<WheelColumnProps> = ({
   const isUserScrolling = useRef(false);
   const isMomentumScrolling = useRef(false);
   const scrollTimeoutRef = useRef<any>(null);
+  const isSelfTriggered = useRef(false);
 
   const containerHeight = itemHeight * visibleItems;
   const paddingVertical = (containerHeight - itemHeight) / 2;
@@ -45,8 +46,26 @@ export const WheelColumn: React.FC<WheelColumnProps> = ({
   // Find index of selected item, defaulting to closest or 0
   const selectedIndex = items.findIndex((item) => item.value === selectedValue);
 
+  // Guarantee correct scroll position on initial mount (especially inside Modal)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (flatListRef.current && selectedIndex >= 0) {
+        flatListRef.current.scrollToOffset({
+          offset: selectedIndex * itemHeight,
+          animated: false,
+        });
+      }
+    }, 60);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Sync scroll position when selectedValue changes externally
   useEffect(() => {
+    if (isSelfTriggered.current) {
+      isSelfTriggered.current = false;
+      return;
+    }
+
     if (
       !isUserScrolling.current &&
       !isMomentumScrolling.current &&
@@ -73,6 +92,7 @@ export const WheelColumn: React.FC<WheelColumnProps> = ({
     }
 
     if (targetItem && targetItem.value !== selectedValue) {
+      isSelfTriggered.current = true;
       onValueChange(targetItem.value);
     }
 
@@ -89,15 +109,23 @@ export const WheelColumn: React.FC<WheelColumnProps> = ({
 
   const handleScrollEndDrag = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetY = e.nativeEvent.contentOffset.y;
-    // On drag release, if momentum doesn't kick in within 60ms, snap immediately
+    const velocity = Math.abs(e.nativeEvent.velocity?.y || 0);
+
     if (scrollTimeoutRef.current) {
       clearTimeout(scrollTimeoutRef.current);
     }
+
+    // If momentum is active with high velocity, let onMomentumScrollEnd handle the snap
+    if (velocity > 0.1) {
+      return;
+    }
+
+    // For stationary release or small drag, snap smoothly
     scrollTimeoutRef.current = setTimeout(() => {
       if (!isMomentumScrolling.current) {
         snapToOffset(offsetY);
       }
-    }, 60);
+    }, 50);
   };
 
   const handleMomentumScrollBegin = () => {
@@ -110,6 +138,7 @@ export const WheelColumn: React.FC<WheelColumnProps> = ({
     if (scrollTimeoutRef.current) {
       clearTimeout(scrollTimeoutRef.current);
     }
+    isMomentumScrolling.current = false;
     snapToOffset(e.nativeEvent.contentOffset.y);
   };
 
@@ -205,7 +234,7 @@ export const WheelColumn: React.FC<WheelColumnProps> = ({
         keyExtractor={(item) => String(item.value)}
         showsVerticalScrollIndicator={false}
         snapToInterval={itemHeight}
-        snapToAlignment="center"
+        snapToAlignment="start"
         decelerationRate="fast"
         nestedScrollEnabled={true}
         overScrollMode="never"
@@ -222,6 +251,14 @@ export const WheelColumn: React.FC<WheelColumnProps> = ({
           index,
         })}
         initialScrollIndex={selectedIndex >= 0 ? selectedIndex : 0}
+        onScrollToIndexFailed={(info) => {
+          setTimeout(() => {
+            flatListRef.current?.scrollToOffset({
+              offset: info.index * itemHeight,
+              animated: false,
+            });
+          }, 50);
+        }}
       />
     </View>
   );

@@ -14,6 +14,7 @@ import {
   DateRange,
   SupportedLocale,
   DateFormat,
+  TimePickerLayout,
   formatDate,
 } from '@izonnet-web-solution/react-native-date-picker-kit';
 
@@ -40,6 +41,7 @@ function DatePickerDemoApp() {
 
   // Model 0: Time Dial Modal (Open mode with 12:34 and 05 examples)
   const [dialModalOpen, setDialModalOpen] = useState<boolean>(false);
+  const [dialLayout, setDialLayout] = useState<TimePickerLayout>('wheel');
   const [dialTime, setDialTime] = useState<Date | null>(() => {
     const d = new Date();
     d.setHours(12);
@@ -458,6 +460,43 @@ function DatePickerDemoApp() {
               </View>
             </View>
 
+            {/* Layout Mode Selector for TimePicker */}
+            <View style={styles.subControlRow}>
+              <Text style={[styles.subControlLabel, { color: subtextColor }]}>Layout Mode:</Text>
+              <View style={styles.intervalRow}>
+                {(['wheel', 'spinner', 'segmented'] as TimePickerLayout[]).map((layoutMode) => {
+                  const isSel = dialLayout === layoutMode;
+                  const label =
+                    layoutMode === 'wheel' ? 'Wheel' : layoutMode === 'spinner' ? 'Dial' : 'Stepper';
+                  return (
+                    <TouchableOpacity
+                      key={layoutMode}
+                      onPress={() => setDialLayout(layoutMode)}
+                      style={[
+                        styles.intervalPill,
+                        {
+                          backgroundColor: isSel ? `${primaryColor}18` : 'transparent',
+                          borderColor: isSel ? primaryColor : borderColor,
+                        },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.intervalPillText,
+                          {
+                            color: isSel ? primaryColor : subtextColor,
+                            fontWeight: isSel ? '800' : '600',
+                          },
+                        ]}
+                      >
+                        {label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+
             {/* Prominent Modal Launch Button */}
             <TouchableOpacity
               activeOpacity={0.85}
@@ -477,10 +516,10 @@ function DatePickerDemoApp() {
               <Text style={styles.openModalButtonIcon}>🧭</Text>
               <View style={{ marginLeft: 10, flex: 1 }}>
                 <Text style={styles.openModalButtonTitle}>
-                  Open Dial TimePicker (Modal Mode)
+                  Open TimePicker (Modal Mode)
                 </Text>
                 <Text style={styles.openModalButtonSubtitle}>
-                  Current: {dialTime ? formatDate(dialTime, 'hh:mm A', currentLocale) : 'Tap to open'}
+                  Layout: {dialLayout.toUpperCase()} | Time: {dialTime ? formatDate(dialTime, 'hh:mm A', currentLocale) : 'Tap to open'}
                 </Text>
               </View>
               <Text style={styles.openModalArrow}>→</Text>
@@ -491,7 +530,7 @@ function DatePickerDemoApp() {
               modal
               open={dialModalOpen}
               mode="time"
-              timePickerLayout="spinner"
+              timePickerLayout={dialLayout}
               value={dialTime}
               onChange={setDialTime}
               onConfirm={(d) => {
@@ -550,7 +589,7 @@ function DatePickerDemoApp() {
               </Text>
               <DatePicker
                 mode="time"
-                timePickerLayout="spinner"
+                timePickerLayout={dialLayout}
                 value={dialTime}
                 onChange={setDialTime}
                 theme={themeMode}

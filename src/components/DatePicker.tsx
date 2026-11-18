@@ -44,7 +44,7 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
     minimumTime,
     maximumTime,
     showSeconds = false,
-    timePickerLayout = 'segmented',
+    timePickerLayout = 'wheel',
     modal = false,
     open = false,
     allowManualEntry = false,

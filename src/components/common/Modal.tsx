@@ -35,35 +35,42 @@ export const Modal: React.FC<ModalProps> = ({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View
-          style={[
-            styles.backdrop,
-            { backgroundColor: `rgba(0, 0, 0, ${backdropOpacity})` },
-          ]}
+      <View style={styles.backdrop}>
+        {/* Backdrop touchable overlay to close when tapped outside */}
+        <TouchableWithoutFeedback
+          onPress={onClose}
+          accessibilityRole="button"
+          accessibilityLabel="Close modal"
         >
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            style={styles.keyboardAvoid}
+          <View
+            style={[
+              StyleSheet.absoluteFillObject,
+              { backgroundColor: `rgba(0, 0, 0, ${backdropOpacity})` },
+            ]}
+          />
+        </TouchableWithoutFeedback>
+
+        {/* Modal content dialog: Not wrapped in TouchableWithoutFeedback so child scroll/wheel gestures are never intercepted */}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.keyboardAvoid}
+          pointerEvents="box-none"
+        >
+          <View
+            style={[
+              styles.card,
+              {
+                backgroundColor: theme.backgroundColor,
+                borderRadius: theme.borderRadius,
+                borderColor: theme.borderColor,
+              },
+              contentStyle,
+            ]}
           >
-            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-              <View
-                style={[
-                  styles.card,
-                  {
-                    backgroundColor: theme.backgroundColor,
-                    borderRadius: theme.borderRadius,
-                    borderColor: theme.borderColor,
-                  },
-                  contentStyle,
-                ]}
-              >
-                {children}
-              </View>
-            </TouchableWithoutFeedback>
-          </KeyboardAvoidingView>
-        </View>
-      </TouchableWithoutFeedback>
+            {children}
+          </View>
+        </KeyboardAvoidingView>
+      </View>
     </RNModal>
   );
 };
