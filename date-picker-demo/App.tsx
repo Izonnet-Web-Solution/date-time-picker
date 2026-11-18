@@ -327,176 +327,6 @@ function DatePickerDemoApp() {
         {/* --- DEMO 0: TIME DIAL PICKER (OPEN / MODAL MODE) --- */}
         {activeTab === 'time-dial-modal' && (
           <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
-            <View style={styles.cardHeader}>
-              <View style={styles.badgeRow}>
-                <View style={[styles.tagBadge, { backgroundColor: `${primaryColor}18` }]}>
-                  <Text style={[styles.tagBadgeText, { color: primaryColor }]}>MODAL OPEN MODE</Text>
-                </View>
-                <View style={[styles.tagBadge, { backgroundColor: '#10B98118' }]}>
-                  <Text style={[styles.tagBadgeText, { color: '#10B981' }]}>CLOCK DIAL</Text>
-                </View>
-              </View>
-              <Text style={[styles.cardTitle, { color: textColor }]}>
-                Select Time: Dial Mode (Open / Modal)
-              </Text>
-              <Text style={[styles.cardDesc, { color: subtextColor }]}>
-                Interactive analog clock face with precision minute selection. Demonstrates selecting exact minute numbers like :05 and :34 (e.g. 12:34), plus fine-tuning for minutes 1, 2, 3, 4.
-              </Text>
-            </View>
-
-            {/* Quick Test Presets: 12:34 PM, 09:05 AM, 12:04 PM */}
-            <View style={styles.presetSection}>
-              <Text style={[styles.subControlLabel, { color: subtextColor, marginBottom: 8 }]}>
-                Test Time Examples:
-              </Text>
-              <View style={styles.examplePillsRow}>
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={() => {
-                    const d = new Date();
-                    d.setHours(12);
-                    d.setMinutes(25);
-                    d.setSeconds(0);
-                    setDialTime(d);
-                  }}
-                  style={[
-                    styles.exampleBtn,
-                    {
-                      backgroundColor: dialTime?.getMinutes() === 25 ? primaryColor : `${primaryColor}15`,
-                      borderColor: primaryColor,
-                    },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.exampleBtnText,
-                      { color: dialTime?.getMinutes() === 25 ? '#FFFFFF' : primaryColor },
-                    ]}
-                  >
-                    🔥 12:25 PM (Move to :27)
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={() => {
-                    const d = new Date();
-                    d.setHours(12);
-                    d.setMinutes(34);
-                    d.setSeconds(0);
-                    setDialTime(d);
-                  }}
-                  style={[
-                    styles.exampleBtn,
-                    {
-                      backgroundColor: dialTime?.getMinutes() === 34 ? primaryColor : `${primaryColor}15`,
-                      borderColor: primaryColor,
-                    },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.exampleBtnText,
-                      { color: dialTime?.getMinutes() === 34 ? '#FFFFFF' : primaryColor },
-                    ]}
-                  >
-                    ⏰ Example: 12:34 PM
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={() => {
-                    const d = new Date();
-                    d.setHours(9);
-                    d.setMinutes(5);
-                    d.setSeconds(0);
-                    setDialTime(d);
-                  }}
-                  style={[
-                    styles.exampleBtn,
-                    {
-                      backgroundColor: dialTime?.getMinutes() === 5 ? primaryColor : `${primaryColor}15`,
-                      borderColor: primaryColor,
-                    },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.exampleBtnText,
-                      { color: dialTime?.getMinutes() === 5 ? '#FFFFFF' : primaryColor },
-                    ]}
-                  >
-                    ⏱️ Example: 09:05 AM
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={() => {
-                    const d = new Date();
-                    d.setHours(12);
-                    d.setMinutes(4);
-                    d.setSeconds(0);
-                    setDialTime(d);
-                  }}
-                  style={[
-                    styles.exampleBtn,
-                    {
-                      backgroundColor: dialTime?.getMinutes() === 4 ? primaryColor : `${primaryColor}15`,
-                      borderColor: primaryColor,
-                    },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.exampleBtnText,
-                      { color: dialTime?.getMinutes() === 4 ? '#FFFFFF' : primaryColor },
-                    ]}
-                  >
-                    🎯 Example: 12:04 (1,2,3,4 min)
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* Layout Mode Selector for TimePicker */}
-            <View style={styles.subControlRow}>
-              <Text style={[styles.subControlLabel, { color: subtextColor }]}>Layout Mode:</Text>
-              <View style={styles.intervalRow}>
-                {(['wheel', 'spinner', 'segmented'] as TimePickerLayout[]).map((layoutMode) => {
-                  const isSel = dialLayout === layoutMode;
-                  const label =
-                    layoutMode === 'wheel' ? 'Wheel' : layoutMode === 'spinner' ? 'Dial' : 'Stepper';
-                  return (
-                    <TouchableOpacity
-                      key={layoutMode}
-                      onPress={() => setDialLayout(layoutMode)}
-                      style={[
-                        styles.intervalPill,
-                        {
-                          backgroundColor: isSel ? `${primaryColor}18` : 'transparent',
-                          borderColor: isSel ? primaryColor : borderColor,
-                        },
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.intervalPillText,
-                          {
-                            color: isSel ? primaryColor : subtextColor,
-                            fontWeight: isSel ? '800' : '600',
-                          },
-                        ]}
-                      >
-                        {label}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </View>
-
             {/* Prominent Modal Launch Button */}
             <TouchableOpacity
               activeOpacity={0.85}
@@ -530,7 +360,7 @@ function DatePickerDemoApp() {
               modal
               open={dialModalOpen}
               mode="time"
-              timePickerLayout={dialLayout}
+              timePickerLayout={"segmented"}
               value={dialTime}
               onChange={setDialTime}
               onConfirm={(d) => {
@@ -544,7 +374,7 @@ function DatePickerDemoApp() {
             />
 
             {/* Live Result Ticket Card */}
-            <View
+            {/* <View
               style={[
                 styles.resultTicket,
                 {
@@ -580,7 +410,7 @@ function DatePickerDemoApp() {
                   </Text>
                 </View>
               </View>
-            </View>
+            </View> */}
 
             {/* Inline Dial View Preview */}
             <View style={{ marginTop: 20 }}>
@@ -589,7 +419,7 @@ function DatePickerDemoApp() {
               </Text>
               <DatePicker
                 mode="time"
-                timePickerLayout={dialLayout}
+                timePickerLayout={"spinner"}
                 value={dialTime}
                 onChange={setDialTime}
                 theme={themeMode}

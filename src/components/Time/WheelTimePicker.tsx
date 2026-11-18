@@ -71,8 +71,9 @@ export const WheelTimePicker: React.FC<WheelTimePickerProps> = ({
         });
       }
     } else {
-      for (let h = 1; h <= 12; h++) {
-        const disabled = isHourDisabled(h, false, period, validationOptions);
+      const startH = hours === 0 ? 0 : 1;
+      for (let h = startH; h <= 12; h++) {
+        const disabled = h === 0 ? false : isHourDisabled(h, false, period, validationOptions);
         list.push({
           label: `${padZero(h)}${disabled ? ' ✕' : ''}`,
           value: h,
@@ -80,7 +81,7 @@ export const WheelTimePicker: React.FC<WheelTimePickerProps> = ({
       }
     }
     return list;
-  }, [is24Hour, period, validationOptions]);
+  }, [is24Hour, hours, period, validationOptions]);
 
   // 2. Minutes items
   const minuteItems: WheelItem[] = useMemo(() => {

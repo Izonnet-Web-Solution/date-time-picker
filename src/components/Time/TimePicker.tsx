@@ -6,7 +6,6 @@ import {
   StyleSheet,
   StyleProp,
   ViewStyle,
-  ScrollView,
 } from 'react-native';
 import type {
   DatePickerTheme,
@@ -126,6 +125,11 @@ export const TimePicker: React.FC<TimePickerProps> = ({
       setMinutes(parsed.minutes);
       setSeconds(parsed.seconds || 0);
       if (parsed.period) setPeriod(parsed.period);
+    } else if (controlledValue === null) {
+      setHours(0);
+      setMinutes(0);
+      setSeconds(0);
+      setPeriod('AM');
     }
   }, [controlledValue, is24Hour]);
 
@@ -166,7 +170,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
       setValidation(valResult);
 
       if (valResult.isValid) {
-        const h24 = is24Hour ? newH : convert12To24(newH, newP || 'AM');
+        const h24 = is24Hour ? newH : (newH === 0 ? 0 : convert12To24(newH, newP || 'AM'));
         const base = activeDate || new Date();
         const updatedDate = setTimeOnDate(base, h24, newM, newS);
         onChange?.(updatedDate);
@@ -211,13 +215,18 @@ export const TimePicker: React.FC<TimePickerProps> = ({
   };
 
   const handleClear = () => {
+    setHours(0);
+    setMinutes(0);
+    setSeconds(0);
+    setPeriod('AM');
+    setValidation({ isValid: true });
     onChange?.(null);
     onClear?.();
   };
 
   const handleConfirm = () => {
     if (validation.isValid) {
-      const h24 = is24Hour ? hours : convert12To24(hours, period);
+      const h24 = is24Hour ? hours : (hours === 0 ? 0 : convert12To24(hours, period));
       const base = activeDate || new Date();
       const finalDate = setTimeOnDate(base, h24, minutes, seconds);
       onConfirm?.(finalDate);
@@ -236,76 +245,6 @@ export const TimePicker: React.FC<TimePickerProps> = ({
         style,
       ]}
     >
-      {/* Top Header Row with Title, 12h/24h toggle badge, and Layout Switcher */}
-      <View style={styles.topBar}>
-        <View style={styles.titleBlock}>
-          <Text style={[styles.mainTitle, { color: theme.textColor }]}>
-            {locale.selectTime || 'Time Picker'}
-          </Text>
-          <TouchableOpacity
-            activeOpacity={0.75}
-            onPress={() => setIs24Hour(!is24Hour)}
-            style={[
-              styles.modeBadge,
-              {
-                backgroundColor: `${theme.primaryColor}14`,
-                borderColor: `${theme.primaryColor}30`,
-              },
-            ]}
-          >
-            <Text style={[styles.modeBadgeText, { color: theme.primaryColor }]}>
-              {is24Hour ? '24H ⇄' : '12H (AM/PM) ⇄'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* View Mode Segmented Capsule */}
-        <View
-          style={[
-            styles.layoutPillsContainer,
-            {
-              backgroundColor: `${theme.textColor}0A`,
-              borderColor: theme.borderColor,
-            },
-          ]}
-        >
-          {(['wheel', 'spinner', 'segmented'] as TimePickerLayout[]).map((modeKey) => {
-            const isSel = layout === modeKey;
-            const label = modeKey === 'wheel' ? 'Wheel' : modeKey === 'spinner' ? 'Dial' : 'Stepper';
-            return (
-              <TouchableOpacity
-                key={modeKey}
-                activeOpacity={0.8}
-                onPress={() => setLayout(modeKey)}
-                style={[
-                  styles.layoutPill,
-                  isSel && {
-                    backgroundColor: theme.primaryColor,
-                    shadowColor: theme.primaryColor,
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 3,
-                    elevation: 2,
-                  },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.layoutPillText,
-                    {
-                      color: isSel ? '#FFFFFF' : theme.secondaryTextColor,
-                      fontWeight: isSel ? '800' : '600',
-                    },
-                  ]}
-                >
-                  {label}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </View>
-
       {/* Sleek Compact Hero Time Display */}
       <View
         style={[
@@ -325,18 +264,18 @@ export const TimePicker: React.FC<TimePickerProps> = ({
               styles.heroDigitBox,
               activeUnit === 'hours'
                 ? {
-                    borderColor: theme.primaryColor,
-                    backgroundColor: `${theme.primaryColor}14`,
-                    shadowColor: theme.primaryColor,
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.18,
-                    shadowRadius: 5,
-                    elevation: 3,
-                  }
+                  borderColor: theme.primaryColor,
+                  backgroundColor: `${theme.primaryColor}14`,
+                  shadowColor: theme.primaryColor,
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.18,
+                  shadowRadius: 5,
+
+                }
                 : {
-                    borderColor: 'transparent',
-                    backgroundColor: `${theme.textColor}06`,
-                  },
+                  borderColor: 'transparent',
+                  backgroundColor: `${theme.textColor}06`,
+                },
             ]}
           >
             <Text
@@ -371,18 +310,18 @@ export const TimePicker: React.FC<TimePickerProps> = ({
               styles.heroDigitBox,
               activeUnit === 'minutes'
                 ? {
-                    borderColor: theme.primaryColor,
-                    backgroundColor: `${theme.primaryColor}14`,
-                    shadowColor: theme.primaryColor,
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.18,
-                    shadowRadius: 5,
-                    elevation: 3,
-                  }
+                  borderColor: theme.primaryColor,
+                  backgroundColor: `${theme.primaryColor}14`,
+                  shadowColor: theme.primaryColor,
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.18,
+                  shadowRadius: 5,
+
+                }
                 : {
-                    borderColor: 'transparent',
-                    backgroundColor: `${theme.textColor}06`,
-                  },
+                  borderColor: 'transparent',
+                  backgroundColor: `${theme.textColor}06`,
+                },
             ]}
           >
             <Text
@@ -543,95 +482,6 @@ export const TimePicker: React.FC<TimePickerProps> = ({
             validationOptions={validationOptions}
           />
 
-          {/* Compact Precision Minute Controls */}
-          {activeUnit === 'minutes' && (
-            <View
-              style={[
-                styles.fineMinuteContainer,
-                { backgroundColor: theme.cardColor, borderColor: theme.borderColor },
-              ]}
-            >
-              <View style={styles.fineMinuteHeaderRow}>
-                <Text style={[styles.fineMinuteTitle, { color: theme.secondaryTextColor }]}>
-                  MINUTE PRECISION:
-                </Text>
-                <View style={styles.fineMinuteStepper}>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => stepMinute(-5)}
-                    style={[styles.fineStepBtn, { backgroundColor: `${theme.primaryColor}12` }]}
-                  >
-                    <Text style={[styles.fineStepText, { color: theme.primaryColor }]}>−5m</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => stepMinute(-1)}
-                    style={[styles.fineStepBtn, { backgroundColor: `${theme.primaryColor}18` }]}
-                  >
-                    <Text style={[styles.fineStepText, { color: theme.primaryColor }]}>−1m</Text>
-                  </TouchableOpacity>
-                  <View
-                    style={[
-                      styles.fineMinuteDisplayBox,
-                      { backgroundColor: `${theme.primaryColor}15`, borderColor: `${theme.primaryColor}40` },
-                    ]}
-                  >
-                    <Text style={[styles.fineMinuteDisplay, { color: theme.primaryColor }]}>
-                      :{padZero(minutes)}
-                    </Text>
-                  </View>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => stepMinute(1)}
-                    style={[styles.fineStepBtn, { backgroundColor: `${theme.primaryColor}18` }]}
-                  >
-                    <Text style={[styles.fineStepText, { color: theme.primaryColor }]}>+1m</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => stepMinute(5)}
-                    style={[styles.fineStepBtn, { backgroundColor: `${theme.primaryColor}12` }]}
-                  >
-                    <Text style={[styles.fineStepText, { color: theme.primaryColor }]}>+5m</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-
-              {/* Dynamic nearby minutes based on current value (e.g. 25 -> :25, :26, :27, :28, :29, :30) */}
-              <View style={styles.minutePillsRow}>
-                {(() => {
-                  const base5 = Math.floor(minutes / 5) * 5;
-                  const nearby = [base5, (base5 + 1) % 60, (base5 + 2) % 60, (base5 + 3) % 60, (base5 + 4) % 60, (base5 + 5) % 60];
-                  return nearby.map((mVal) => {
-                    const isCurrent = minutes === mVal;
-                    return (
-                      <TouchableOpacity
-                        key={`nearby-m-${mVal}`}
-                        activeOpacity={0.75}
-                        onPress={() => applyTimeChange(hours, mVal, seconds, period)}
-                        style={[
-                          styles.minutePillChip,
-                          {
-                            backgroundColor: isCurrent ? theme.primaryColor : `${theme.primaryColor}10`,
-                            borderColor: isCurrent ? theme.primaryColor : `${theme.primaryColor}24`,
-                          },
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.minutePillChipText,
-                            { color: isCurrent ? '#FFFFFF' : theme.primaryColor, fontWeight: isCurrent ? '900' : '700' },
-                          ]}
-                        >
-                          :{padZero(mVal)}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  });
-                })()}
-              </View>
-            </View>
-          )}
         </View>
       )}
 
@@ -705,54 +555,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
       )}
 
       {/* Quick Jump Shortcuts Strip */}
-      <View style={styles.presetsRow}>
-        <Text style={[styles.presetsTitle, { color: theme.secondaryTextColor }]}>
-          QUICK:
-        </Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.presetsScroll}
-        >
-          {[
-            { label: is24Hour ? '09:00' : '09:00 AM', h: 9, m: 0, p: 'AM' as TimePeriod },
-            { label: is24Hour ? '12:00' : '12:00 PM', h: 12, m: 0, p: 'PM' as TimePeriod },
-            { label: is24Hour ? '15:00' : '03:00 PM', h: is24Hour ? 15 : 3, m: 0, p: 'PM' as TimePeriod },
-            { label: is24Hour ? '18:00' : '06:00 PM', h: is24Hour ? 18 : 6, m: 0, p: 'PM' as TimePeriod },
-            { label: is24Hour ? '21:00' : '09:00 PM', h: is24Hour ? 21 : 9, m: 0, p: 'PM' as TimePeriod },
-          ].map((preset) => {
-            const isMatch =
-              (is24Hour ? hours === preset.h : hours === preset.h && period === preset.p) &&
-              minutes === preset.m;
-            return (
-              <TouchableOpacity
-                key={preset.label}
-                activeOpacity={0.75}
-                onPress={() => applyTimeChange(preset.h, preset.m, 0, preset.p)}
-                style={[
-                  styles.presetPill,
-                  {
-                    borderColor: isMatch ? theme.primaryColor : theme.borderColor,
-                    backgroundColor: isMatch ? `${theme.primaryColor}18` : theme.cardColor,
-                  },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.presetPillText,
-                    {
-                      color: isMatch ? theme.primaryColor : theme.textColor,
-                      fontWeight: isMatch ? '800' : '600',
-                    },
-                  ]}
-                >
-                  {preset.label}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-      </View>
+
 
       {/* Validation Message */}
       <DateValidationMessage validation={validation} theme={theme} />
