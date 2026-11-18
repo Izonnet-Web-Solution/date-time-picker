@@ -16,6 +16,7 @@ export type StandardDateFormat =
 
 export type DateFormat =
   | StandardDateFormat
+  | 'DD MMMM YYYY'
   | 'YYYY-MM-DD'
   | 'DD-MM-YYYY'
   | 'HH:mm'
@@ -24,7 +25,9 @@ export type DateFormat =
   | 'hh:mm:ss A'
   | 'DD/MM/YYYY HH:mm'
   | 'DD/MM/YYYY hh:mm A'
-  | (string & {});
+  | 'MM/DD/YYYY HH:mm'
+  | 'MM/DD/YYYY hh:mm A'
+  | 'YYYY-MM-DD HH:mm';
 
 export type SupportedLocale = 'en' | 'hi' | 'gu';
 

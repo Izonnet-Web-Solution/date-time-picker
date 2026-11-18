@@ -34,7 +34,7 @@ import { convert24To12, padZero } from './timeUtils';
  */
 export const formatDate = (
   date: Date | null | undefined,
-  format: DateFormat = 'DD/MM/YYYY',
+  format: DateFormat | string = 'DD/MM/YYYY',
   locale: SupportedLocale | DatePickerLocale = enLocale
 ): string => {
   if (!date || isNaN(date.getTime())) {
@@ -93,7 +93,7 @@ export const formatDate = (
 /**
  * Returns user-friendly placeholder based on format
  */
-export const getPlaceholderForFormat = (format: DateFormat = 'DD/MM/YYYY'): string => {
+export const getPlaceholderForFormat = (format: DateFormat | string = 'DD/MM/YYYY'): string => {
   switch (format) {
     case 'DD/MM/YYYY':
       return 'DD/MM/YYYY';
@@ -109,8 +109,12 @@ export const getPlaceholderForFormat = (format: DateFormat = 'DD/MM/YYYY'): stri
       return 'DD-MM-YYYY';
     case 'HH:mm':
       return 'HH:mm (24h)';
+    case 'HH:mm:ss':
+      return 'HH:mm:ss (24h)';
     case 'hh:mm A':
       return 'hh:mm AM/PM';
+    case 'hh:mm:ss A':
+      return 'hh:mm:ss AM/PM';
     case 'DD/MM/YYYY HH:mm':
       return 'DD/MM/YYYY HH:mm';
     case 'DD/MM/YYYY hh:mm A':

@@ -21,7 +21,7 @@ export interface ParseResult {
  */
 export const parseTimeStrict = (
   text: string,
-  format: DateFormat = 'hh:mm A',
+  format: DateFormat | string = 'hh:mm A',
   locale: SupportedLocale | DatePickerLocale = enLocale,
   baseDate: Date = new Date()
 ): ParseResult => {
@@ -92,7 +92,7 @@ export const parseTimeStrict = (
  */
 export const parseDateStrict = (
   text: string,
-  format: DateFormat = 'DD/MM/YYYY',
+  format: DateFormat | string = 'DD/MM/YYYY',
   locale: SupportedLocale | DatePickerLocale = enLocale
 ): ParseResult => {
   const activeLocale = getLocale(locale);
