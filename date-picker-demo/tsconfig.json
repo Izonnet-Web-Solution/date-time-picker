@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["esnext"],
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "isolatedModules": true,
+    "strict": true,
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@izonnet-web-solution/react-native-date-picker-kit": ["../src"],
+      "react-native-date-picker-kit": ["../src"],
+      "@izonnet-web-solution/react-native-phone-input-kit": ["../src"],
+      "@jenu-dev/react-native-phone-input-kit": ["../src"],
+      "react-native-phone-input-kit": ["../src"]
+    },
+    "types": ["jest"],
+    "typeRoots": ["./node_modules/@types"]
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "**/node_modules/*", "**/Pods/*"]
+}

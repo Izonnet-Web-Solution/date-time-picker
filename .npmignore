@@ -1,0 +1,14 @@
+__tests__/
+__mocks__/
+example/
+.github/
+.vscode/
+.idea/
+tsconfig.json
+tsconfig.build.json
+jest.config.js
+.eslintrc.js
+.prettierrc
+*.log
+coverage/
+screenshots/
