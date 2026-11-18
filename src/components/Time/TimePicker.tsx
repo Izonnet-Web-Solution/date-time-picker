@@ -597,6 +597,96 @@ export const TimePicker: React.FC<TimePickerProps> = ({
             theme={theme}
             validationOptions={validationOptions}
           />
+
+          {/* Fine Minute Selection Controls with Dynamic Nearby Steps */}
+          {activeUnit === 'minutes' && (
+            <View
+              style={[
+                styles.fineMinuteContainer,
+                { backgroundColor: theme.cardColor, borderColor: theme.borderColor },
+              ]}
+            >
+              <View style={styles.fineMinuteHeaderRow}>
+                <Text style={[styles.fineMinuteTitle, { color: theme.secondaryTextColor }]}>
+                  MINUTE PRECISION (DRAG OR TAP):
+                </Text>
+                <View style={styles.fineMinuteStepper}>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => stepMinute(-5)}
+                    style={[styles.fineStepBtn, { backgroundColor: `${theme.primaryColor}12` }]}
+                  >
+                    <Text style={[styles.fineStepText, { color: theme.primaryColor }]}>−5m</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => stepMinute(-1)}
+                    style={[styles.fineStepBtn, { backgroundColor: `${theme.primaryColor}18` }]}
+                  >
+                    <Text style={[styles.fineStepText, { color: theme.primaryColor }]}>−1m</Text>
+                  </TouchableOpacity>
+                  <View
+                    style={[
+                      styles.fineMinuteDisplayBox,
+                      { backgroundColor: `${theme.primaryColor}15`, borderColor: `${theme.primaryColor}40` },
+                    ]}
+                  >
+                    <Text style={[styles.fineMinuteDisplay, { color: theme.primaryColor }]}>
+                      :{padZero(minutes)}
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => stepMinute(1)}
+                    style={[styles.fineStepBtn, { backgroundColor: `${theme.primaryColor}18` }]}
+                  >
+                    <Text style={[styles.fineStepText, { color: theme.primaryColor }]}>+1m</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => stepMinute(5)}
+                    style={[styles.fineStepBtn, { backgroundColor: `${theme.primaryColor}12` }]}
+                  >
+                    <Text style={[styles.fineStepText, { color: theme.primaryColor }]}>+5m</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* Dynamic nearby minutes based on current value (e.g. 25 -> :25, :26, :27, :28, :29, :30) */}
+              <View style={styles.minutePillsRow}>
+                {(() => {
+                  const base5 = Math.floor(minutes / 5) * 5;
+                  const nearby = [base5, (base5 + 1) % 60, (base5 + 2) % 60, (base5 + 3) % 60, (base5 + 4) % 60, (base5 + 5) % 60];
+                  return nearby.map((mVal) => {
+                    const isCurrent = minutes === mVal;
+                    return (
+                      <TouchableOpacity
+                        key={`nearby-m-${mVal}`}
+                        activeOpacity={0.75}
+                        onPress={() => applyTimeChange(hours, mVal, seconds, period)}
+                        style={[
+                          styles.minutePillChip,
+                          {
+                            backgroundColor: isCurrent ? theme.primaryColor : `${theme.primaryColor}10`,
+                            borderColor: isCurrent ? theme.primaryColor : `${theme.primaryColor}24`,
+                          },
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.minutePillChipText,
+                            { color: isCurrent ? '#FFFFFF' : theme.primaryColor, fontWeight: isCurrent ? '900' : '700' },
+                          ]}
+                        >
+                          :{padZero(mVal)}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  });
+                })()}
+              </View>
+            </View>
+          )}
         </View>
       )}
 
@@ -893,6 +983,66 @@ const styles = StyleSheet.create({
   },
   dialTabText: {
     fontSize: 12,
+    fontWeight: '700',
+  },
+  fineMinuteContainer: {
+    marginTop: 8,
+    padding: 10,
+    borderRadius: 14,
+    borderWidth: 1,
+  },
+  fineMinuteHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  fineMinuteTitle: {
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  fineMinuteStepper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  fineStepBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+  },
+  fineStepText: {
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  fineMinuteDisplayBox: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  fineMinuteDisplay: {
+    fontSize: 14,
+    fontWeight: '800',
+    minWidth: 28,
+    textAlign: 'center',
+  },
+  minutePillsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 4,
+  },
+  minutePillChip: {
+    flex: 1,
+    paddingVertical: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  minutePillChipText: {
+    fontSize: 11,
     fontWeight: '700',
   },
   stepperRow: {

@@ -259,6 +259,18 @@ export interface BaseDatePickerProps {
   timePickerLayout?: TimePickerLayout;
 
   /**
+   * Whether to present the picker inside a modal dialog popup.
+   * @default false
+   */
+  modal?: boolean;
+
+  /**
+   * When modal is true, controls whether the modal dialog is currently open / visible.
+   * @default false
+   */
+  open?: boolean;
+
+  /**
    * Enable manual typing mode
    * @default false
    */
@@ -289,11 +301,6 @@ export interface BaseDatePickerProps {
   showClearButton?: boolean;
 
   /**
-   * Callback when action confirm is tapped
-   */
-  onConfirm?: (value: Date | DateRange | null) => void;
-
-  /**
    * Callback when action cancel is tapped
    */
   onCancel?: () => void;
@@ -319,6 +326,7 @@ export interface SingleDatePickerProps extends BaseDatePickerProps {
   value?: Date | null;
   onChange?: (date: Date | null) => void;
   defaultValue?: Date | null;
+  onConfirm?: (date: Date | null) => void;
 }
 
 export interface RangeDatePickerProps extends BaseDatePickerProps {
@@ -329,6 +337,7 @@ export interface RangeDatePickerProps extends BaseDatePickerProps {
   defaultStartDate?: Date | null;
   defaultEndDate?: Date | null;
   maxRangeDays?: number;
+  onConfirm?: (range: DateRange | null) => void;
 }
 
 export interface InputDatePickerProps extends BaseDatePickerProps {
@@ -342,6 +351,7 @@ export interface InputDatePickerProps extends BaseDatePickerProps {
   popupTitle?: string;
   inputStyle?: StyleProp<TextStyle>;
   inputContainerStyle?: StyleProp<ViewStyle>;
+  onConfirm?: (date: Date | null) => void;
 }
 
 export interface WheelDatePickerProps extends BaseDatePickerProps {
@@ -353,6 +363,7 @@ export interface WheelDatePickerProps extends BaseDatePickerProps {
   maxYear?: number;
   itemHeight?: number;
   visibleItems?: number;
+  onConfirm?: (date: Date | null) => void;
 }
 
 export interface TimePickerComponentProps extends BaseDatePickerProps {
@@ -360,6 +371,7 @@ export interface TimePickerComponentProps extends BaseDatePickerProps {
   value?: Date | null;
   onChange?: (date: Date | null) => void;
   defaultValue?: Date | null;
+  onConfirm?: (date: Date | null) => void;
 }
 
 export interface DateTimePickerProps extends BaseDatePickerProps {
@@ -368,6 +380,7 @@ export interface DateTimePickerProps extends BaseDatePickerProps {
   onChange?: (date: Date | null) => void;
   defaultValue?: Date | null;
   initialTab?: 'date' | 'time';
+  onConfirm?: (date: Date | null) => void;
 }
 
 export type DatePickerProps =

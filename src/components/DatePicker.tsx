@@ -18,6 +18,7 @@ import { RangePicker } from './Range/RangePicker';
 import { DateInput } from './Input/DateInput';
 import { TimePicker } from './Time/TimePicker';
 import { DateTimePicker } from './Time/DateTimePicker';
+import { Modal } from './common/Modal';
 
 export const DatePicker: React.FC<DatePickerProps> = (props) => {
   const {
@@ -40,6 +41,8 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
     maximumTime,
     showSeconds = false,
     timePickerLayout = 'segmented',
+    modal = false,
+    open = false,
     allowManualEntry = false,
     manualEntryType = 'single',
     showActionButtons = true,
@@ -119,7 +122,7 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
           showActionButtons={showActionButtons}
           showNowButton={showTodayButton}
           showClearButton={showClearButton}
-          onConfirm={onConfirm}
+          onConfirm={onConfirm as ((range: any) => void) | undefined}
           onCancel={onCancel}
           onClear={() => {
             clear();
@@ -158,7 +161,7 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
           locale={locale}
           initialTab={dateTimeProps.initialTab}
           showActionButtons={showActionButtons}
-          onConfirm={onConfirm}
+          onConfirm={onConfirm as ((range: any) => void) | undefined}
           onCancel={onCancel}
           onClear={() => {
             clear();
@@ -190,7 +193,7 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
           itemHeight={wheelProps.itemHeight}
           visibleItems={wheelProps.visibleItems}
           showActionButtons={showActionButtons}
-          onConfirm={onConfirm}
+          onConfirm={onConfirm as ((range: any) => void) | undefined}
           onCancel={onCancel}
           style={style}
         />
@@ -217,7 +220,7 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
           disabledDates={disabledDates}
           disabledWeekdays={disabledWeekdays}
           showActionButtons={showActionButtons}
-          onConfirm={onConfirm}
+          onConfirm={onConfirm as ((range: any) => void) | undefined}
           onCancel={onCancel}
           style={style}
         />
@@ -275,7 +278,7 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
         showActionButtons={showActionButtons}
         showTodayButton={showTodayButton}
         showClearButton={showClearButton}
-        onConfirm={onConfirm}
+        onConfirm={onConfirm as ((date: Date | null) => void) | undefined}
         onCancel={onCancel}
         onClear={() => {
           clear();
@@ -286,11 +289,27 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
     );
   };
 
-  return (
+  const content = (
     <View testID={testID} style={styles.container}>
       {renderContent()}
     </View>
   );
+
+  if (modal) {
+    return (
+      <Modal
+        visible={open}
+        onClose={() => {
+          onCancel?.();
+        }}
+        theme={theme}
+      >
+        {content}
+      </Modal>
+    );
+  }
+
+  return content;
 };
 
 const styles = StyleSheet.create({
