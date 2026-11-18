@@ -236,102 +236,77 @@ export const TimePicker: React.FC<TimePickerProps> = ({
         style,
       ]}
     >
-      {/* Top Header Row with Title and Layout Toggle */}
+      {/* Top Header Row with Title, 12h/24h toggle badge, and Layout Switcher */}
       <View style={styles.topBar}>
-        <View>
+        <View style={styles.titleBlock}>
           <Text style={[styles.mainTitle, { color: theme.textColor }]}>
             {locale.selectTime || 'Time Picker'}
           </Text>
-          <Text style={[styles.subTitle, { color: theme.secondaryTextColor }]}>
-            {is24Hour ? '24 Hours Mode' : '12 Hours (AM / PM)'}
-          </Text>
+          <TouchableOpacity
+            activeOpacity={0.75}
+            onPress={() => setIs24Hour(!is24Hour)}
+            style={[
+              styles.modeBadge,
+              {
+                backgroundColor: `${theme.primaryColor}14`,
+                borderColor: `${theme.primaryColor}30`,
+              },
+            ]}
+          >
+            <Text style={[styles.modeBadgeText, { color: theme.primaryColor }]}>
+              {is24Hour ? '24H ⇄' : '12H (AM/PM) ⇄'}
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        {/* View Mode Segmented Pill */}
+        {/* View Mode Segmented Capsule */}
         <View
           style={[
             styles.layoutPillsContainer,
-            { backgroundColor: `${theme.textColor}0C` },
+            {
+              backgroundColor: `${theme.textColor}0A`,
+              borderColor: theme.borderColor,
+            },
           ]}
         >
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => setLayout('wheel')}
-            style={[
-              styles.layoutPill,
-              layout === 'wheel' && {
-                backgroundColor: theme.primaryColor,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.15,
-                shadowRadius: 2,
-                elevation: 2,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                styles.layoutPillText,
-                { color: layout === 'wheel' ? '#FFFFFF' : theme.secondaryTextColor },
-              ]}
-            >
-              Wheel
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => setLayout('spinner')}
-            style={[
-              styles.layoutPill,
-              layout === 'spinner' && {
-                backgroundColor: theme.primaryColor,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.15,
-                shadowRadius: 2,
-                elevation: 2,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                styles.layoutPillText,
-                { color: layout === 'spinner' ? '#FFFFFF' : theme.secondaryTextColor },
-              ]}
-            >
-              Dial
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => setLayout('segmented')}
-            style={[
-              styles.layoutPill,
-              layout === 'segmented' && {
-                backgroundColor: theme.primaryColor,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.15,
-                shadowRadius: 2,
-                elevation: 2,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                styles.layoutPillText,
-                { color: layout === 'segmented' ? '#FFFFFF' : theme.secondaryTextColor },
-              ]}
-            >
-              Stepper
-            </Text>
-          </TouchableOpacity>
+          {(['wheel', 'spinner', 'segmented'] as TimePickerLayout[]).map((modeKey) => {
+            const isSel = layout === modeKey;
+            const label = modeKey === 'wheel' ? 'Wheel' : modeKey === 'spinner' ? 'Dial' : 'Stepper';
+            return (
+              <TouchableOpacity
+                key={modeKey}
+                activeOpacity={0.8}
+                onPress={() => setLayout(modeKey)}
+                style={[
+                  styles.layoutPill,
+                  isSel && {
+                    backgroundColor: theme.primaryColor,
+                    shadowColor: theme.primaryColor,
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3,
+                    elevation: 2,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.layoutPillText,
+                    {
+                      color: isSel ? '#FFFFFF' : theme.secondaryTextColor,
+                      fontWeight: isSel ? '800' : '600',
+                    },
+                  ]}
+                >
+                  {label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       </View>
 
-      {/* Hero Display Card */}
+      {/* Sleek Compact Hero Time Display */}
       <View
         style={[
           styles.heroCard,
@@ -342,7 +317,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
         ]}
       >
         <View style={styles.heroCenterBlock}>
-          {/* Hour Unit Tile */}
+          {/* Hour Unit Box */}
           <TouchableOpacity
             activeOpacity={0.85}
             onPress={() => setActiveUnit('hours')}
@@ -354,13 +329,13 @@ export const TimePicker: React.FC<TimePickerProps> = ({
                     backgroundColor: `${theme.primaryColor}14`,
                     shadowColor: theme.primaryColor,
                     shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.2,
-                    shadowRadius: 6,
+                    shadowOpacity: 0.18,
+                    shadowRadius: 5,
                     elevation: 3,
                   }
                 : {
                     borderColor: 'transparent',
-                    backgroundColor: `${theme.textColor}08`,
+                    backgroundColor: `${theme.textColor}06`,
                   },
             ]}
           >
@@ -369,7 +344,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
                 styles.heroDigitText,
                 {
                   color: activeUnit === 'hours' ? theme.primaryColor : theme.textColor,
-                  fontSize: 38,
+                  fontSize: 34,
                 },
               ]}
             >
@@ -388,7 +363,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
           {/* Colon Separator */}
           <Text style={[styles.heroColon, { color: theme.textColor }]}>:</Text>
 
-          {/* Minute Unit Tile */}
+          {/* Minute Unit Box */}
           <TouchableOpacity
             activeOpacity={0.85}
             onPress={() => setActiveUnit('minutes')}
@@ -400,13 +375,13 @@ export const TimePicker: React.FC<TimePickerProps> = ({
                     backgroundColor: `${theme.primaryColor}14`,
                     shadowColor: theme.primaryColor,
                     shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.2,
-                    shadowRadius: 6,
+                    shadowOpacity: 0.18,
+                    shadowRadius: 5,
                     elevation: 3,
                   }
                 : {
                     borderColor: 'transparent',
-                    backgroundColor: `${theme.textColor}08`,
+                    backgroundColor: `${theme.textColor}06`,
                   },
             ]}
           >
@@ -415,7 +390,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
                 styles.heroDigitText,
                 {
                   color: activeUnit === 'minutes' ? theme.primaryColor : theme.textColor,
-                  fontSize: 38,
+                  fontSize: 34,
                 },
               ]}
             >
@@ -431,13 +406,37 @@ export const TimePicker: React.FC<TimePickerProps> = ({
             </Text>
           </TouchableOpacity>
 
+          {/* Optional Seconds */}
+          {showSeconds && (
+            <>
+              <Text style={[styles.heroColon, { color: theme.textColor }]}>:</Text>
+              <View
+                style={[
+                  styles.heroDigitBox,
+                  {
+                    borderColor: 'transparent',
+                    backgroundColor: `${theme.textColor}06`,
+                    minWidth: 54,
+                  },
+                ]}
+              >
+                <Text style={[styles.heroDigitText, { color: theme.textColor, fontSize: 34 }]}>
+                  {padZero(seconds)}
+                </Text>
+                <Text style={[styles.heroUnitSubtext, { color: theme.secondaryTextColor }]}>
+                  SEC
+                </Text>
+              </View>
+            </>
+          )}
+
           {/* AM / PM Segmented Capsule (for 12h) */}
           {!is24Hour && (
             <View
               style={[
                 styles.heroPeriodPill,
                 {
-                  backgroundColor: `${theme.textColor}0E`,
+                  backgroundColor: `${theme.textColor}0A`,
                   borderColor: theme.borderColor,
                 },
               ]}
@@ -452,7 +451,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
                     shadowColor: '#000',
                     shadowOffset: { width: 0, height: 1 },
                     shadowOpacity: 0.2,
-                    shadowRadius: 3,
+                    shadowRadius: 2,
                     elevation: 2,
                   },
                 ]}
@@ -480,7 +479,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
                     shadowColor: '#000',
                     shadowOffset: { width: 0, height: 1 },
                     shadowOpacity: 0.2,
-                    shadowRadius: 3,
+                    shadowRadius: 2,
                     elevation: 2,
                   },
                 ]}
@@ -499,25 +498,6 @@ export const TimePicker: React.FC<TimePickerProps> = ({
               </TouchableOpacity>
             </View>
           )}
-        </View>
-
-        {/* 12h / 24h Toggle Pill */}
-        <View style={styles.formatModeRow}>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => setIs24Hour(!is24Hour)}
-            style={[
-              styles.formatToggleBtn,
-              {
-                backgroundColor: `${theme.primaryColor}10`,
-                borderColor: `${theme.primaryColor}30`,
-              },
-            ]}
-          >
-            <Text style={[styles.formatToggleText, { color: theme.primaryColor }]}>
-              {is24Hour ? '⇄ Switch to 12-Hour (AM/PM)' : '⇄ Switch to 24-Hour'}
-            </Text>
-          </TouchableOpacity>
         </View>
       </View>
 
@@ -544,44 +524,9 @@ export const TimePicker: React.FC<TimePickerProps> = ({
 
       {/* --- VIEW 2: CLOCK DIAL PICKER --- */}
       {layout === 'spinner' && (
-        <View style={styles.viewContainer}>
-          <View style={styles.dialHeaderTabs}>
-            <TouchableOpacity
-              onPress={() => setActiveUnit('hours')}
-              style={[
-                styles.dialTabPill,
-                activeUnit === 'hours' && { backgroundColor: theme.primaryColor },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.dialTabText,
-                  { color: activeUnit === 'hours' ? '#FFFFFF' : theme.secondaryTextColor },
-                ]}
-              >
-                Hours ({padZero(hours)})
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setActiveUnit('minutes')}
-              style={[
-                styles.dialTabPill,
-                activeUnit === 'minutes' && { backgroundColor: theme.primaryColor },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.dialTabText,
-                  { color: activeUnit === 'minutes' ? '#FFFFFF' : theme.secondaryTextColor },
-                ]}
-              >
-                Minutes ({padZero(minutes)})
-              </Text>
-            </TouchableOpacity>
-          </View>
-
+        <View style={styles.dialContainer}>
           <ClockDial
+            size={228}
             mode={activeUnit}
             value={activeUnit === 'hours' ? hours : minutes}
             is24Hour={is24Hour}
@@ -589,7 +534,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
             onSelect={(selectedVal) => {
               if (activeUnit === 'hours') {
                 applyTimeChange(selectedVal, minutes, seconds, period);
-                setActiveUnit('minutes'); // Auto switch to minutes
+                setActiveUnit('minutes'); // Smoothly advance to minutes
               } else {
                 applyTimeChange(hours, selectedVal, seconds, period);
               }
@@ -598,7 +543,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
             validationOptions={validationOptions}
           />
 
-          {/* Fine Minute Selection Controls with Dynamic Nearby Steps */}
+          {/* Compact Precision Minute Controls */}
           {activeUnit === 'minutes' && (
             <View
               style={[
@@ -608,7 +553,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
             >
               <View style={styles.fineMinuteHeaderRow}>
                 <Text style={[styles.fineMinuteTitle, { color: theme.secondaryTextColor }]}>
-                  MINUTE PRECISION (DRAG OR TAP):
+                  MINUTE PRECISION:
                 </Text>
                 <View style={styles.fineMinuteStepper}>
                   <TouchableOpacity
@@ -759,50 +704,53 @@ export const TimePicker: React.FC<TimePickerProps> = ({
         </View>
       )}
 
-      {/* Quick Jump Shortcuts */}
+      {/* Quick Jump Shortcuts Strip */}
       <View style={styles.presetsRow}>
-        <Text style={[styles.presetsTitle, { color: theme.secondaryTextColor }]}>QUICK JUMPS:</Text>
+        <Text style={[styles.presetsTitle, { color: theme.secondaryTextColor }]}>
+          QUICK:
+        </Text>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.presetsScroll}
         >
-          <TouchableOpacity
-            onPress={() => stepMinute(15)}
-            style={[styles.presetPill, { borderColor: theme.borderColor, backgroundColor: theme.cardColor }]}
-          >
-            <Text style={[styles.presetPillText, { color: theme.textColor }]}>+15m</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => stepMinute(30)}
-            style={[styles.presetPill, { borderColor: theme.borderColor, backgroundColor: theme.cardColor }]}
-          >
-            <Text style={[styles.presetPillText, { color: theme.textColor }]}>+30m</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => stepHour(1)}
-            style={[styles.presetPill, { borderColor: theme.borderColor, backgroundColor: theme.cardColor }]}
-          >
-            <Text style={[styles.presetPillText, { color: theme.textColor }]}>+1h</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => applyTimeChange(hours, 0, 0, period)}
-            style={[styles.presetPill, { borderColor: theme.borderColor, backgroundColor: theme.cardColor }]}
-          >
-            <Text style={[styles.presetPillText, { color: theme.textColor }]}>:00</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => applyTimeChange(9, 0, 0, 'AM')}
-            style={[styles.presetPill, { borderColor: theme.borderColor, backgroundColor: theme.cardColor }]}
-          >
-            <Text style={[styles.presetPillText, { color: theme.textColor }]}>09:00 AM</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => applyTimeChange(12, 0, 0, 'PM')}
-            style={[styles.presetPill, { borderColor: theme.borderColor, backgroundColor: theme.cardColor }]}
-          >
-            <Text style={[styles.presetPillText, { color: theme.textColor }]}>12:00 PM</Text>
-          </TouchableOpacity>
+          {[
+            { label: is24Hour ? '09:00' : '09:00 AM', h: 9, m: 0, p: 'AM' as TimePeriod },
+            { label: is24Hour ? '12:00' : '12:00 PM', h: 12, m: 0, p: 'PM' as TimePeriod },
+            { label: is24Hour ? '15:00' : '03:00 PM', h: is24Hour ? 15 : 3, m: 0, p: 'PM' as TimePeriod },
+            { label: is24Hour ? '18:00' : '06:00 PM', h: is24Hour ? 18 : 6, m: 0, p: 'PM' as TimePeriod },
+            { label: is24Hour ? '21:00' : '09:00 PM', h: is24Hour ? 21 : 9, m: 0, p: 'PM' as TimePeriod },
+          ].map((preset) => {
+            const isMatch =
+              (is24Hour ? hours === preset.h : hours === preset.h && period === preset.p) &&
+              minutes === preset.m;
+            return (
+              <TouchableOpacity
+                key={preset.label}
+                activeOpacity={0.75}
+                onPress={() => applyTimeChange(preset.h, preset.m, 0, preset.p)}
+                style={[
+                  styles.presetPill,
+                  {
+                    borderColor: isMatch ? theme.primaryColor : theme.borderColor,
+                    backgroundColor: isMatch ? `${theme.primaryColor}18` : theme.cardColor,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.presetPillText,
+                    {
+                      color: isMatch ? theme.primaryColor : theme.textColor,
+                      fontWeight: isMatch ? '800' : '600',
+                    },
+                  ]}
+                >
+                  {preset.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
       </View>
 
@@ -862,51 +810,62 @@ export const TimePicker: React.FC<TimePickerProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: 14,
     borderWidth: 1,
   },
   topBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 14,
+    marginBottom: 10,
+  },
+  titleBlock: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   mainTitle: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '800',
     letterSpacing: -0.3,
   },
-  subTitle: {
-    fontSize: 11,
-    fontWeight: '600',
-    marginTop: 2,
+  modeBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  modeBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.3,
   },
   layoutPillsContainer: {
     flexDirection: 'row',
     borderRadius: 10,
-    padding: 3,
+    padding: 2,
+    borderWidth: 1,
   },
   layoutPill: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
     borderRadius: 8,
   },
   layoutPillText: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 11,
   },
   heroCard: {
-    borderRadius: 18,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    borderRadius: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
     borderWidth: 1,
-    marginBottom: 12,
+    marginBottom: 10,
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 1,
   },
   heroCenterBlock: {
     flexDirection: 'row',
@@ -914,118 +873,95 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   heroDigitBox: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 14,
-    borderWidth: 2,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 12,
+    borderWidth: 1.5,
     alignItems: 'center',
-    minWidth: 84,
+    minWidth: 72,
   },
   heroDigitText: {
     fontWeight: '900',
-    letterSpacing: -1,
+    letterSpacing: -0.8,
   },
   heroUnitSubtext: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '800',
     marginTop: -2,
     letterSpacing: 0.6,
   },
   heroColon: {
-    fontSize: 36,
+    fontSize: 30,
     fontWeight: '900',
-    marginHorizontal: 6,
-    marginTop: -10,
+    marginHorizontal: 5,
+    marginTop: -8,
   },
   heroPeriodPill: {
-    marginLeft: 14,
-    borderRadius: 12,
+    marginLeft: 12,
+    borderRadius: 10,
     borderWidth: 1,
-    padding: 3,
-    gap: 4,
+    padding: 2,
+    gap: 3,
   },
   heroPeriodBtn: {
-    paddingVertical: 7,
-    paddingHorizontal: 12,
-    borderRadius: 9,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 8,
     alignItems: 'center',
   },
   heroPeriodText: {
-    fontSize: 12,
-  },
-  formatModeRow: {
-    marginTop: 10,
-  },
-  formatToggleBtn: {
-    paddingVertical: 5,
-    paddingHorizontal: 12,
-    borderRadius: 14,
-    borderWidth: 1,
-  },
-  formatToggleText: {
     fontSize: 11,
-    fontWeight: '700',
   },
   viewContainer: {
+    paddingVertical: 2,
+  },
+  dialContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 4,
   },
-  dialHeaderTabs: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 10,
-    marginBottom: 8,
-  },
-  dialTabPill: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 16,
-    backgroundColor: 'rgba(0,0,0,0.05)',
-  },
-  dialTabText: {
-    fontSize: 12,
-    fontWeight: '700',
-  },
   fineMinuteContainer: {
+    width: '100%',
     marginTop: 8,
-    padding: 10,
-    borderRadius: 14,
+    padding: 8,
+    borderRadius: 12,
     borderWidth: 1,
   },
   fineMinuteHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   fineMinuteTitle: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '800',
     letterSpacing: 0.5,
   },
   fineMinuteStepper: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
   fineStepBtn: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 8,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
   },
   fineStepText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '800',
   },
   fineMinuteDisplayBox: {
-    paddingHorizontal: 8,
+    paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 8,
+    borderRadius: 6,
     borderWidth: 1,
   },
   fineMinuteDisplay: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '800',
-    minWidth: 28,
+    minWidth: 24,
     textAlign: 'center',
   },
   minutePillsRow: {
@@ -1035,87 +971,85 @@ const styles = StyleSheet.create({
   },
   minutePillChip: {
     flex: 1,
-    paddingVertical: 5,
-    borderRadius: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   minutePillChipText: {
-    fontSize: 11,
-    fontWeight: '700',
+    fontSize: 10,
   },
   stepperRow: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 6,
+    gap: 10,
+    marginTop: 4,
   },
   stepperUnitCard: {
     flex: 1,
     alignItems: 'center',
-    padding: 14,
-    borderRadius: 16,
+    padding: 12,
+    borderRadius: 14,
     borderWidth: 1,
   },
   stepperCardTitle: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '800',
     letterSpacing: 0.5,
-    marginBottom: 10,
+    marginBottom: 8,
   },
   stepperControls: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 10,
   },
   stepperCircleBtn: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     justifyContent: 'center',
     alignItems: 'center',
   },
   stepperCircleText: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '800',
   },
   stepperValueText: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: '900',
-    minWidth: 42,
+    minWidth: 38,
     textAlign: 'center',
   },
   presetsRow: {
-    marginTop: 12,
+    marginTop: 10,
     flexDirection: 'row',
     alignItems: 'center',
   },
   presetsTitle: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '800',
     letterSpacing: 0.5,
-    marginRight: 8,
+    marginRight: 6,
   },
   presetsScroll: {
     gap: 6,
-    paddingRight: 10,
+    paddingRight: 6,
   },
   presetPill: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 14,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 10,
     borderWidth: 1,
   },
   presetPillText: {
     fontSize: 11,
-    fontWeight: '700',
   },
   actionsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 16,
-    paddingTop: 12,
+    marginTop: 12,
+    paddingTop: 10,
     borderTopWidth: 1,
     borderTopColor: 'rgba(0,0,0,0.06)',
   },
