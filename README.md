@@ -353,7 +353,12 @@ const customLocale = {
 | `endDate` | `Date \| null` | `null` | Range end date (`mode="range"`) |
 | `onRangeChange` | `(range: DateRange) => void` | `undefined` | Callback on date range selection |
 | `maxRangeDays` | `number` | `undefined` | Maximum allowed range span in days |
-| `format` | `DateFormat` | `'DD/MM/YYYY'` | Date / Time display format string |
+| `format` | `DateFormat` | `'DD/MM/YYYY'` | Date / Time display format string (`'DD/MM/YYYY'`, `'MM/DD/YYYY'`, `'YYYY/DD/MM'`, `'YYYY/MM/DD'`) |
+| `showFormatSelector` | `boolean` | `false` | Display dynamic format switcher bar (DD/MM/YYYY, MM/DD/YYYY, YYYY/DD/MM, YYYY/MM/DD) |
+| `supportedFormats` | `DateFormat[]` | `['DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY/DD/MM', 'YYYY/MM/DD']` | List of formats in switcher |
+| `onFormatChange` | `(format: DateFormat) => void` | `undefined` | Callback fired when user switches format |
+| `modal` | `boolean` | `false` | Open picker in a popup modal dialog |
+| `open` | `boolean` | `false` | Control modal visibility |
 | `locale` | `'en' \| 'hi' \| 'gu' \| DatePickerLocale` | `'en'` | Active language or custom locale dictionary |
 | `theme` | `'light' \| 'dark' \| Partial<DatePickerTheme>` | `'light'` | Color theme |
 | `accentColor` | `string` | `undefined` | Primary highlight color override |

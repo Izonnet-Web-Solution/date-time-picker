@@ -1,4 +1,11 @@
-import type { DateFormat, DatePickerLocale, SupportedLocale } from '../types';
+import type { DateFormat, DatePickerLocale, SupportedLocale, StandardDateFormat } from '../types';
+
+export const STANDARD_DATE_FORMATS: StandardDateFormat[] = [
+  'DD/MM/YYYY',
+  'MM/DD/YYYY',
+  'YYYY/DD/MM',
+  'YYYY/MM/DD',
+];
 import { enLocale } from '../localization/en';
 import { getLocale } from '../localization';
 import { convert24To12, padZero } from './timeUtils';
@@ -77,6 +84,10 @@ export const getPlaceholderForFormat = (format: DateFormat = 'DD/MM/YYYY'): stri
       return 'DD/MM/YYYY';
     case 'MM/DD/YYYY':
       return 'MM/DD/YYYY';
+    case 'YYYY/DD/MM':
+      return 'YYYY/DD/MM';
+    case 'YYYY/MM/DD':
+      return 'YYYY/MM/DD';
     case 'YYYY-MM-DD':
       return 'YYYY-MM-DD';
     case 'DD-MM-YYYY':

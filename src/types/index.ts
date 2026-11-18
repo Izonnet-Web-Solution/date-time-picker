@@ -8,9 +8,14 @@ export type DatePickerMode =
   | 'time'
   | 'datetime';
 
-export type DateFormat =
+export type StandardDateFormat =
   | 'DD/MM/YYYY'
   | 'MM/DD/YYYY'
+  | 'YYYY/DD/MM'
+  | 'YYYY/MM/DD';
+
+export type DateFormat =
+  | StandardDateFormat
   | 'YYYY-MM-DD'
   | 'DD-MM-YYYY'
   | 'HH:mm'
@@ -223,6 +228,24 @@ export interface BaseDatePickerProps {
    * @default 'DD/MM/YYYY'
    */
   format?: DateFormat;
+
+  /**
+   * Whether to display an interactive format selection bar above the picker.
+   * Allows users to dynamically switch between formats (DD/MM/YYYY, MM/DD/YYYY, YYYY/DD/MM, YYYY/MM/DD).
+   * @default false
+   */
+  showFormatSelector?: boolean;
+
+  /**
+   * List of supported date formats available in the format selector bar.
+   * @default ['DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY/DD/MM', 'YYYY/MM/DD']
+   */
+  supportedFormats?: DateFormat[];
+
+  /**
+   * Callback fired when user switches the date format via the format selector bar.
+   */
+  onFormatChange?: (format: DateFormat) => void;
 
   /**
    * 24-hour mode (true) vs 12-hour AM/PM mode (false).

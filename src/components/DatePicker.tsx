@@ -1,6 +1,7 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import type {
+  DateFormat,
   DatePickerProps,
   SingleDatePickerProps,
   RangeDatePickerProps,
@@ -35,6 +36,9 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
     disabledWeekdays,
     firstDayOfWeek = 0,
     format,
+    showFormatSelector = false,
+    supportedFormats,
+    onFormatChange,
     is24Hour,
     minuteInterval = 1,
     minimumTime,
@@ -71,7 +75,14 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
     : (mode === 'datetime'
         ? (is24Hour ? 'DD/MM/YYYY HH:mm' : 'DD/MM/YYYY hh:mm A')
         : 'DD/MM/YYYY');
-  const activeFormat = format || defaultFormat;
+
+  const [activeFormat, setActiveFormat] = useState<DateFormat>(() => format || defaultFormat);
+
+  useEffect(() => {
+    if (format) {
+      setActiveFormat(format);
+    }
+  }, [format]);
 
   const {
     selectedDate,
@@ -289,8 +300,74 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
     );
   };
 
+  const renderFormatSelector = () => {
+    if (!showFormatSelector) return null;
+
+    const availableFormats = supportedFormats || [
+      'DD/MM/YYYY',
+      'MM/DD/YYYY',
+      'YYYY/DD/MM',
+      'YYYY/MM/DD',
+    ];
+
+    return (
+      <View
+        style={[
+          styles.formatSelectorContainer,
+          {
+            borderColor: theme.borderColor,
+            backgroundColor: `${theme.primaryColor}06`,
+          },
+        ]}
+      >
+        <Text style={[styles.formatSelectorTitle, { color: theme.secondaryTextColor }]}>
+          FORMAT:
+        </Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.formatPillsRow}
+        >
+          {availableFormats.map((fmt) => {
+            const isSelected = activeFormat === fmt;
+            return (
+              <TouchableOpacity
+                key={fmt}
+                activeOpacity={0.75}
+                onPress={() => {
+                  setActiveFormat(fmt);
+                  onFormatChange?.(fmt);
+                }}
+                style={[
+                  styles.formatPill,
+                  {
+                    backgroundColor: isSelected ? theme.primaryColor : `${theme.primaryColor}12`,
+                    borderColor: isSelected ? theme.primaryColor : `${theme.primaryColor}24`,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.formatPillText,
+                    {
+                      color: isSelected ? '#FFFFFF' : theme.primaryColor,
+                      fontWeight: isSelected ? '800' : '600',
+                    },
+                  ]}
+                >
+                  {fmt}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+    );
+  };
+
   const content = (
     <View testID={testID} style={styles.container}>
+      {renderFormatSelector()}
       {renderContent()}
     </View>
   );
@@ -315,5 +392,33 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+  },
+  formatSelectorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    marginBottom: 10,
+  },
+  formatSelectorTitle: {
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.6,
+    marginRight: 8,
+  },
+  formatPillsRow: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  formatPill: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  formatPillText: {
+    fontSize: 11,
   },
 });

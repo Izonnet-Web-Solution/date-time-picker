@@ -13,6 +13,7 @@ import {
   DatePicker,
   DateRange,
   SupportedLocale,
+  DateFormat,
   formatDate,
 } from '@izonnet-web-solution/react-native-date-picker-kit';
 
@@ -35,6 +36,7 @@ function DatePickerDemoApp() {
     systemColorScheme === 'dark' ? 'dark' : 'light'
   );
   const [currentLocale, setCurrentLocale] = useState<SupportedLocale>('en');
+  const [selectedDateFormat, setSelectedDateFormat] = useState<DateFormat>('DD/MM/YYYY');
 
   // Model 0: Time Dial Modal (Open mode with 12:34 and 05 examples)
   const [dialModalOpen, setDialModalOpen] = useState<boolean>(false);
@@ -218,6 +220,59 @@ function DatePickerDemoApp() {
                 );
               })}
             </View>
+          </View>
+
+          {/* Date Format Selector */}
+          <View style={[styles.controlRow, { marginTop: 10 }]}>
+            <Text style={[styles.controlLabel, { color: textColor }]}>Format:</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={[
+                styles.pillGroup,
+                { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)', gap: 4 },
+              ]}
+            >
+              {[
+                'DD/MM/YYYY',
+                'MM/DD/YYYY',
+                'YYYY/DD/MM',
+                'YYYY/MM/DD',
+              ].map((fmt) => {
+                const isSelected = selectedDateFormat === fmt;
+                return (
+                  <TouchableOpacity
+                    key={fmt}
+                    activeOpacity={0.8}
+                    onPress={() => setSelectedDateFormat(fmt as DateFormat)}
+                    style={[
+                      styles.pill,
+                      isSelected && {
+                        backgroundColor: cardBg,
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 1 },
+                        shadowOpacity: 0.1,
+                        shadowRadius: 2,
+                        elevation: 2,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.pillText,
+                        {
+                          color: isSelected ? primaryColor : subtextColor,
+                          fontWeight: isSelected ? '800' : '600',
+                          fontSize: 11,
+                        },
+                      ]}
+                    >
+                      {fmt}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
           </View>
         </View>
 
@@ -767,7 +822,9 @@ function DatePickerDemoApp() {
               onChange={setCalendarDate}
               theme={themeMode}
               locale={currentLocale}
-              format="DD/MM/YYYY"
+              format={selectedDateFormat}
+              showFormatSelector={true}
+              onFormatChange={setSelectedDateFormat}
               allowManualEntry={true}
               disabledWeekdays={[0]}
               minimumDate={new Date(2020, 0, 1)}
@@ -776,11 +833,11 @@ function DatePickerDemoApp() {
 
             <View style={[styles.resultTicket, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)', borderColor }]}>
               <View style={styles.ticketTopRow}>
-                <Text style={[styles.ticketLabel, { color: subtextColor }]}>SELECTED CALENDAR DATE</Text>
+                <Text style={[styles.ticketLabel, { color: subtextColor }]}>SELECTED CALENDAR DATE ({selectedDateFormat})</Text>
                 <View style={[styles.activeDot, { backgroundColor: '#10B981' }]} />
               </View>
               <Text style={[styles.ticketValue, { color: textColor }]}>
-                {calendarDate ? formatDate(calendarDate, 'DD MMMM YYYY', currentLocale) : 'None'}
+                {calendarDate ? formatDate(calendarDate, selectedDateFormat, currentLocale) : 'None'}
               </Text>
             </View>
           </View>
@@ -873,7 +930,7 @@ function DatePickerDemoApp() {
               value={inputDate}
               onChange={setInputDate}
               label="Appointment Date"
-              format="DD/MM/YYYY"
+              format={selectedDateFormat}
               allowManualEntry={true}
               theme={themeMode}
               locale={currentLocale}
@@ -881,11 +938,11 @@ function DatePickerDemoApp() {
 
             <View style={[styles.resultTicket, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)', borderColor }]}>
               <View style={styles.ticketTopRow}>
-                <Text style={[styles.ticketLabel, { color: subtextColor }]}>CURRENT DATE VALUE</Text>
+                <Text style={[styles.ticketLabel, { color: subtextColor }]}>CURRENT DATE VALUE ({selectedDateFormat})</Text>
                 <View style={[styles.activeDot, { backgroundColor: '#10B981' }]} />
               </View>
               <Text style={[styles.ticketValue, { color: textColor }]}>
-                {inputDate ? formatDate(inputDate, 'DD/MM/YYYY', currentLocale) : 'None'}
+                {inputDate ? formatDate(inputDate, selectedDateFormat, currentLocale) : 'None'}
               </Text>
             </View>
           </View>
@@ -943,18 +1000,20 @@ function DatePickerDemoApp() {
               onChange={setManualDate}
               allowManualEntry={true}
               manualEntryType={manualType}
-              format="DD/MM/YYYY"
+              format={selectedDateFormat}
+              showFormatSelector={true}
+              onFormatChange={setSelectedDateFormat}
               theme={themeMode}
               locale={currentLocale}
             />
 
             <View style={[styles.resultTicket, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)', borderColor }]}>
               <View style={styles.ticketTopRow}>
-                <Text style={[styles.ticketLabel, { color: subtextColor }]}>SYNCHRONIZED CALENDAR VALUE</Text>
+                <Text style={[styles.ticketLabel, { color: subtextColor }]}>SYNCHRONIZED CALENDAR VALUE ({selectedDateFormat})</Text>
                 <View style={[styles.activeDot, { backgroundColor: '#10B981' }]} />
               </View>
               <Text style={[styles.ticketValue, { color: textColor }]}>
-                {manualDate ? formatDate(manualDate, 'DD MMMM YYYY', currentLocale) : 'None'}
+                {manualDate ? formatDate(manualDate, selectedDateFormat, currentLocale) : 'None'}
               </Text>
             </View>
           </View>

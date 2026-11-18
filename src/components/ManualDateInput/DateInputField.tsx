@@ -48,6 +48,7 @@ export const DateInputField: React.FC<DateInputFieldProps> = ({
   const [isFocused, setIsFocused] = useState(false);
 
   // Split inputs refs
+  const dayRef = useRef<TextInput>(null);
   const monthRef = useRef<TextInput>(null);
   const yearRef = useRef<TextInput>(null);
 
@@ -60,52 +61,80 @@ export const DateInputField: React.FC<DateInputFieldProps> = ({
   };
 
   if (type === 'split') {
-    // Parse current parts
     const separator = format.includes('-') ? '-' : '/';
-    const parts = value.split(separator);
-    const dayVal = parts[0] || '';
-    const monthVal = parts[1] || '';
-    const yearVal = parts[2] || '';
+    const rawParts = value.split(separator);
+    const formatParts = format.split(separator);
+
+    // Determine ordering of Day ('D'), Month ('M'), Year ('Y') from format
+    const fieldOrder = (formatParts.length === 3 ? formatParts : ['DD', 'MM', 'YYYY']).map((p) => {
+      const u = p.trim().toUpperCase();
+      if (u.startsWith('Y')) return 'Y';
+      if (u.startsWith('M')) return 'M';
+      return 'D';
+    }) as ('D' | 'M' | 'Y')[];
+
+    // Map current values based on fieldOrder
+    let dayVal = '';
+    let monthVal = '';
+    let yearVal = '';
+
+    fieldOrder.forEach((fType, idx) => {
+      const v = rawParts[idx] || '';
+      if (fType === 'D') dayVal = v;
+      if (fType === 'M') monthVal = v;
+      if (fType === 'Y') yearVal = v;
+    });
+
+    const updateCombined = (newD: string, newM: string, newY: string) => {
+      const combined = fieldOrder.map((fType) => {
+        if (fType === 'D') return newD;
+        if (fType === 'M') return newM;
+        return newY;
+      });
+      onChangeText(combined.join(separator));
+    };
 
     const handleDayChange = (d: string) => {
       const clean = d.replace(/\D/g, '').slice(0, 2);
-      const newCombined = `${clean}${separator}${monthVal}${separator}${yearVal}`;
-      onChangeText(newCombined);
-      if (clean.length === 2 && monthRef.current) {
-        monthRef.current.focus();
+      updateCombined(clean, monthVal, yearVal);
+      if (clean.length === 2) {
+        const nextIdx = fieldOrder.indexOf('D') + 1;
+        if (nextIdx < 3) {
+          if (fieldOrder[nextIdx] === 'M') monthRef.current?.focus();
+          else if (fieldOrder[nextIdx] === 'Y') yearRef.current?.focus();
+        }
       }
     };
 
     const handleMonthChange = (m: string) => {
       const clean = m.replace(/\D/g, '').slice(0, 2);
-      const newCombined = `${dayVal}${separator}${clean}${separator}${yearVal}`;
-      onChangeText(newCombined);
-      if (clean.length === 2 && yearRef.current) {
-        yearRef.current.focus();
+      updateCombined(dayVal, clean, yearVal);
+      if (clean.length === 2) {
+        const nextIdx = fieldOrder.indexOf('M') + 1;
+        if (nextIdx < 3) {
+          if (fieldOrder[nextIdx] === 'D') dayRef.current?.focus();
+          else if (fieldOrder[nextIdx] === 'Y') yearRef.current?.focus();
+        }
       }
     };
 
     const handleYearChange = (y: string) => {
       const clean = y.replace(/\D/g, '').slice(0, 4);
-      const newCombined = `${dayVal}${separator}${monthVal}${separator}${clean}`;
-      onChangeText(newCombined);
+      updateCombined(dayVal, monthVal, clean);
+      if (clean.length === 4) {
+        const nextIdx = fieldOrder.indexOf('Y') + 1;
+        if (nextIdx < 3) {
+          if (fieldOrder[nextIdx] === 'D') dayRef.current?.focus();
+          else if (fieldOrder[nextIdx] === 'M') monthRef.current?.focus();
+        }
+      }
     };
 
-    return (
-      <View style={[styles.container, style]}>
-        {label && (
-          <Text
-            style={[
-              styles.label,
-              { color: theme.textColor, fontSize: theme.fontSize.small },
-            ]}
-          >
-            {label}
-          </Text>
-        )}
-        <View style={styles.splitRow}>
-          {/* Day */}
+    const renderSplitBox = (fType: 'D' | 'M' | 'Y') => {
+      if (fType === 'D') {
+        return (
           <View
+            key="day-box"
             style={[
               styles.splitBox,
               {
@@ -119,6 +148,7 @@ export const DateInputField: React.FC<DateInputFieldProps> = ({
               {locale.dayLabel}
             </Text>
             <TextInput
+              ref={dayRef}
               value={dayVal}
               onChangeText={handleDayChange}
               keyboardType="number-pad"
@@ -133,9 +163,12 @@ export const DateInputField: React.FC<DateInputFieldProps> = ({
               editable={editable}
             />
           </View>
-
-          {/* Month */}
+        );
+      }
+      if (fType === 'M') {
+        return (
           <View
+            key="month-box"
             style={[
               styles.splitBox,
               {
@@ -164,38 +197,57 @@ export const DateInputField: React.FC<DateInputFieldProps> = ({
               editable={editable}
             />
           </View>
-
-          {/* Year */}
-          <View
+        );
+      }
+      return (
+        <View
+          key="year-box"
+          style={[
+            styles.splitBox,
+            {
+              flex: 1.4,
+              borderColor: getBorderColor(),
+              backgroundColor: theme.surfaceColor,
+              borderRadius: Math.max(theme.borderRadius - 4, 8),
+            },
+          ]}
+        >
+          <Text style={[styles.splitLabel, { color: theme.secondaryTextColor }]}>
+            {locale.yearLabel}
+          </Text>
+          <TextInput
+            ref={yearRef}
+            value={yearVal}
+            onChangeText={handleYearChange}
+            keyboardType="number-pad"
+            maxLength={4}
+            placeholder="YYYY"
+            placeholderTextColor={theme.disabledTextColor}
             style={[
-              styles.splitBox,
-              {
-                flex: 1.4,
-                borderColor: getBorderColor(),
-                backgroundColor: theme.surfaceColor,
-                borderRadius: Math.max(theme.borderRadius - 4, 8),
-              },
+              styles.splitInput,
+              { color: theme.textColor, fontSize: theme.fontSize.medium },
+              inputStyle,
+            ]}
+            editable={editable}
+          />
+        </View>
+      );
+    };
+
+    return (
+      <View style={[styles.container, style]}>
+        {label && (
+          <Text
+            style={[
+              styles.label,
+              { color: theme.textColor, fontSize: theme.fontSize.small },
             ]}
           >
-            <Text style={[styles.splitLabel, { color: theme.secondaryTextColor }]}>
-              {locale.yearLabel}
-            </Text>
-            <TextInput
-              ref={yearRef}
-              value={yearVal}
-              onChangeText={handleYearChange}
-              keyboardType="number-pad"
-              maxLength={4}
-              placeholder="YYYY"
-              placeholderTextColor={theme.disabledTextColor}
-              style={[
-                styles.splitInput,
-                { color: theme.textColor, fontSize: theme.fontSize.medium },
-                inputStyle,
-              ]}
-              editable={editable}
-            />
-          </View>
+            {label}
+          </Text>
+        )}
+        <View style={styles.splitRow}>
+          {fieldOrder.map((fType) => renderSplitBox(fType))}
         </View>
       </View>
     );

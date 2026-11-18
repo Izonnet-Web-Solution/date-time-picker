@@ -37,6 +37,22 @@ describe('dateParsing & dateFormatting', () => {
       expect(res.date?.getDate()).toBe(29);
     });
 
+    it('parses valid YYYY/MM/DD date', () => {
+      const res = parseDateStrict('2024/02/29', 'YYYY/MM/DD');
+      expect(res.validation.isValid).toBe(true);
+      expect(res.date?.getFullYear()).toBe(2024);
+      expect(res.date?.getMonth()).toBe(1);
+      expect(res.date?.getDate()).toBe(29);
+    });
+
+    it('parses valid YYYY/DD/MM date', () => {
+      const res = parseDateStrict('2024/29/02', 'YYYY/DD/MM');
+      expect(res.validation.isValid).toBe(true);
+      expect(res.date?.getFullYear()).toBe(2024);
+      expect(res.date?.getMonth()).toBe(1);
+      expect(res.date?.getDate()).toBe(29);
+    });
+
     it('rejects invalid leap year date (Feb 29 on non-leap year)', () => {
       const res = parseDateStrict('29/02/2023', 'DD/MM/YYYY');
       expect(res.validation.isValid).toBe(false);
@@ -80,6 +96,14 @@ describe('dateParsing & dateFormatting', () => {
       expect(formatDate(sampleDate, 'YYYY-MM-DD')).toBe('2024-02-29');
     });
 
+    it('formats YYYY/MM/DD', () => {
+      expect(formatDate(sampleDate, 'YYYY/MM/DD')).toBe('2024/02/29');
+    });
+
+    it('formats YYYY/DD/MM', () => {
+      expect(formatDate(sampleDate, 'YYYY/DD/MM')).toBe('2024/29/02');
+    });
+
     it('formats with month names MMMM', () => {
       const formatted = formatDate(sampleDate, 'DD MMMM YYYY', enLocale);
       expect(formatted).toBe('29 February 2024');
@@ -97,6 +121,18 @@ describe('dateParsing & dateFormatting', () => {
       expect(formatMaskedInput('2026', 'YYYY-MM-DD')).toBe('2026');
       expect(formatMaskedInput('202611', 'YYYY-MM-DD')).toBe('2026-11');
       expect(formatMaskedInput('20261118', 'YYYY-MM-DD')).toBe('2026-11-18');
+    });
+
+    it('applies slashes automatically for YYYY/MM/DD', () => {
+      expect(formatMaskedInput('2026', 'YYYY/MM/DD')).toBe('2026');
+      expect(formatMaskedInput('202611', 'YYYY/MM/DD')).toBe('2026/11');
+      expect(formatMaskedInput('20261118', 'YYYY/MM/DD')).toBe('2026/11/18');
+    });
+
+    it('applies slashes automatically for YYYY/DD/MM', () => {
+      expect(formatMaskedInput('2026', 'YYYY/DD/MM')).toBe('2026');
+      expect(formatMaskedInput('202618', 'YYYY/DD/MM')).toBe('2026/18');
+      expect(formatMaskedInput('20261811', 'YYYY/DD/MM')).toBe('2026/18/11');
     });
   });
 });
