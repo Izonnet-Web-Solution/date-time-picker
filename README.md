@@ -370,4 +370,4 @@ const customLocale = {
 
 ## 📄 License
 
-MIT © [Izonnet Web Solution](https://github.com/Izonnet-Web-Solution)
+Jenil © [Izonnet Web Solution](https://github.com/Izonnet-Web-Solution)
