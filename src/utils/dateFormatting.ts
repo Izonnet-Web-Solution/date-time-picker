@@ -6,6 +6,21 @@ export const STANDARD_DATE_FORMATS: StandardDateFormat[] = [
   'YYYY/DD/MM',
   'YYYY/MM/DD',
 ];
+
+export const DateFormats = {
+  DD_MM_YYYY: 'DD/MM/YYYY',
+  MM_DD_YYYY: 'MM/DD/YYYY',
+  YYYY_DD_MM: 'YYYY/DD/MM',
+  YYYY_MM_DD: 'YYYY/MM/DD',
+  YYYY_MM_DD_DASH: 'YYYY-MM-DD',
+  DD_MM_YYYY_DASH: 'DD-MM-YYYY',
+  HH_MM: 'HH:mm',
+  HH_MM_SS: 'HH:mm:ss',
+  HH_MM_A: 'hh:mm A',
+  HH_MM_SS_A: 'hh:mm:ss A',
+  DATETIME_24H: 'DD/MM/YYYY HH:mm',
+  DATETIME_12H: 'DD/MM/YYYY hh:mm A',
+} as const;
 import { enLocale } from '../localization/en';
 import { getLocale } from '../localization';
 import { convert24To12, padZero } from './timeUtils';

@@ -682,10 +682,10 @@ function DatePickerDemoApp() {
               <Text style={[styles.ticketValue, { color: textColor }]}>
                 {time24
                   ? formatDate(
-                      time24,
-                      showSeconds24 ? 'HH:mm:ss' : 'HH:mm',
-                      currentLocale
-                    )
+                    time24,
+                    showSeconds24 ? 'HH:mm:ss' : 'HH:mm',
+                    currentLocale
+                  )
                   : 'None'}
               </Text>
             </View>
@@ -756,12 +756,12 @@ function DatePickerDemoApp() {
               <Text style={[styles.ticketValue, { color: textColor }]}>
                 {dateTimeVal
                   ? formatDate(
-                      dateTimeVal,
-                      dateTimeIs24
-                        ? 'DD MMMM YYYY, HH:mm'
-                        : 'DD MMMM YYYY, hh:mm A',
-                      currentLocale
-                    )
+                    dateTimeVal,
+                    dateTimeIs24
+                      ? 'DD MMMM YYYY, HH:mm'
+                      : 'DD MMMM YYYY, hh:mm A',
+                    currentLocale
+                  )
                   : 'None'}
               </Text>
             </View>

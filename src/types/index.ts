@@ -24,7 +24,7 @@ export type DateFormat =
   | 'hh:mm:ss A'
   | 'DD/MM/YYYY HH:mm'
   | 'DD/MM/YYYY hh:mm A'
-  | string;
+  | (string & {});
 
 export type SupportedLocale = 'en' | 'hi' | 'gu';
 
