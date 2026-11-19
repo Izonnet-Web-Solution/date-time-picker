@@ -21,6 +21,7 @@ export interface UseDatePickerProps {
   disabledDates?: (Date | string)[] | DisabledDateCheck;
   disabledWeekdays?: number[];
   allowManualEntry?: boolean;
+  defaultManualMode?: boolean;
 }
 
 export interface UseDatePickerReturn {
@@ -46,6 +47,7 @@ export const useDatePicker = ({
   maximumDate,
   disabledDates,
   disabledWeekdays,
+  defaultManualMode = false,
 }: UseDatePickerProps): UseDatePickerReturn => {
   const isControlled = controlledValue !== undefined;
 
@@ -59,7 +61,7 @@ export const useDatePicker = ({
     return selectedDate ? formatDate(selectedDate, format, locale) : '';
   });
 
-  const [isManualMode, setIsManualMode] = useState<boolean>(false);
+  const [isManualMode, setIsManualMode] = useState<boolean>(Boolean(defaultManualMode));
 
   const [validationResult, setValidationResult] = useState<ValidationResult>({
     isValid: true,

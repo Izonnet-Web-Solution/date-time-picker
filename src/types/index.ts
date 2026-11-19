@@ -27,7 +27,8 @@ export type DateFormat =
   | 'DD/MM/YYYY hh:mm A'
   | 'MM/DD/YYYY HH:mm'
   | 'MM/DD/YYYY hh:mm A'
-  | 'YYYY-MM-DD HH:mm';
+  | 'YYYY-MM-DD HH:mm'
+  | (string & {});
 
 export type SupportedLocale = 'en' | 'hi' | 'gu';
 
@@ -297,10 +298,28 @@ export interface BaseDatePickerProps {
   open?: boolean;
 
   /**
+   * Whether to automatically close the modal when a date or time is selected.
+   * If false, selection must be finalized via the Confirm action button.
+   * @default false
+   */
+  autoCloseOnSelect?: boolean;
+
+  /**
+   * Callback fired when modal is closed (either by selecting date/time, tapping backdrop, or cancel)
+   */
+  onClose?: () => void;
+
+  /**
    * Enable manual typing mode
    * @default false
    */
   allowManualEntry?: boolean;
+
+  /**
+   * Whether to start directly in manual typing mode when allowManualEntry is enabled
+   * @default false
+   */
+  defaultManualMode?: boolean;
 
   /**
    * Manual input layout type ('single' formatted box vs 'split' day/month/year boxes)
@@ -348,7 +367,7 @@ export interface BaseDatePickerProps {
 }
 
 export interface SingleDatePickerProps extends BaseDatePickerProps {
-  mode?: 'calendar' | 'wheel';
+  mode?: 'calendar';
   value?: Date | null;
   onChange?: (date: Date | null) => void;
   defaultValue?: Date | null;

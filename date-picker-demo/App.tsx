@@ -41,7 +41,7 @@ function DatePickerDemoApp() {
 
   // Model 0: Time Dial Modal (Open mode with 12:34 and 05 examples)
   const [dialModalOpen, setDialModalOpen] = useState<boolean>(false);
-  const [dialLayout, setDialLayout] = useState<TimePickerLayout>('wheel');
+  const [dialLayout, setDialLayout] = useState<TimePickerLayout>('spinner');
   const [dialTime, setDialTime] = useState<Date | null>(() => {
     const d = new Date();
     d.setHours(12);
@@ -52,34 +52,42 @@ function DatePickerDemoApp() {
 
   // Model 1: Calendar Date
   const [calendarDate, setCalendarDate] = useState<Date | null>(new Date());
+  const [calendarModalOpen, setCalendarModalOpen] = useState<boolean>(false);
 
   // Model 2: Wheel Date
   const [wheelDate, setWheelDate] = useState<Date | null>(new Date());
+  const [wheelModalOpen, setWheelModalOpen] = useState<boolean>(false);
 
   // Model 3: Date Range
   const [range, setRange] = useState<DateRange>({
     startDate: new Date(),
     endDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
   });
+  const [rangeModalOpen, setRangeModalOpen] = useState<boolean>(false);
 
   // Model 4: Input Date
   const [inputDate, setInputDate] = useState<Date | null>(new Date());
+  const [inputModalOpen, setInputModalOpen] = useState<boolean>(false);
 
   // Model 5: Manual Date
   const [manualDate, setManualDate] = useState<Date | null>(new Date(2024, 1, 29));
   const [manualType, setManualType] = useState<'single' | 'split'>('single');
+  const [manualModalOpen, setManualModalOpen] = useState<boolean>(false);
 
   // Model 6: 12-Hour Time (AM/PM)
   const [time12, setTime12] = useState<Date | null>(new Date());
   const [minuteStep12, setMinuteStep12] = useState<number>(5);
+  const [time12ModalOpen, setTime12ModalOpen] = useState<boolean>(false);
 
   // Model 7: 24-Hour Time
   const [time24, setTime24] = useState<Date | null>(new Date());
   const [showSeconds24, setShowSeconds24] = useState<boolean>(false);
+  const [time24ModalOpen, setTime24ModalOpen] = useState<boolean>(false);
 
   // Model 8: DateTime (Combined)
   const [dateTimeVal, setDateTimeVal] = useState<Date | null>(new Date());
   const [dateTimeIs24, setDateTimeIs24] = useState<boolean>(false);
+  const [dateTimeModalOpen, setDateTimeModalOpen] = useState<boolean>(false);
 
   // Model 9: Time Constraints (Min & Max boundaries)
   const [constrainedTime, setConstrainedTime] = useState<Date | null>(
@@ -359,13 +367,14 @@ function DatePickerDemoApp() {
               modal
               open={dialModalOpen}
               mode="time"
-              timePickerLayout={"segmented"}
+              timePickerLayout={"spinner"}
               value={dialTime}
               onChange={setDialTime}
               onConfirm={(d) => {
                 setDialTime(d);
                 setDialModalOpen(false);
               }}
+              onClose={() => setDialModalOpen(false)}
               onCancel={() => setDialModalOpen(false)}
               theme={themeMode}
               locale={currentLocale}
@@ -373,7 +382,7 @@ function DatePickerDemoApp() {
             />
 
             {/* Live Result Ticket Card */}
-            {/* <View
+            <View
               style={[
                 styles.resultTicket,
                 {
@@ -409,22 +418,6 @@ function DatePickerDemoApp() {
                   </Text>
                 </View>
               </View>
-            </View> */}
-
-            {/* Inline Dial View Preview */}
-            <View style={{ marginTop: 20 }}>
-              <Text style={[styles.subControlLabel, { color: subtextColor, marginBottom: 10 }]}>
-                INLINE INTERACTIVE CLOCK DIAL:
-              </Text>
-              <DatePicker
-                mode="time"
-                timePickerLayout={"spinner"}
-                value={dialTime}
-                onChange={setDialTime}
-                theme={themeMode}
-                locale={currentLocale}
-                format="hh:mm A"
-              />
             </View>
           </View>
         )}
@@ -432,11 +425,101 @@ function DatePickerDemoApp() {
         {/* --- DEMO 1: 12-HOUR TIME PICKER (AM/PM) --- */}
         {activeTab === 'time-12h' && (
           <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
+            <View style={styles.cardHeader}>
+              <View style={styles.badgeRow}>
+                <View style={[styles.tagBadge, { backgroundColor: `${primaryColor}18` }]}>
+                  <Text style={[styles.tagBadgeText, { color: primaryColor }]}>12H AM/PM</Text>
+                </View>
+                <View style={[styles.tagBadge, { backgroundColor: '#10B98118' }]}>
+                  <Text style={[styles.tagBadgeText, { color: '#10B981' }]}>CONFIRM TO SET</Text>
+                </View>
+              </View>
+              <Text style={[styles.cardTitle, { color: textColor }]}>
+                12-Hour Time Picker (AM/PM)
+              </Text>
+              <Text style={[styles.cardDesc, { color: subtextColor }]}>
+                Click below to open the modal. Inside modal, use Now, Clear, Cancel, and Confirm buttons.
+              </Text>
+            </View>
+
+            {/* Minute Interval Selector */}
+            <View style={styles.subControlRow}>
+              <Text style={[styles.subControlLabel, { color: subtextColor }]}>Minute Step:</Text>
+              <View style={styles.intervalRow}>
+                {[1, 5, 10, 15, 30].map((step) => {
+                  const isSel = minuteStep12 === step;
+                  return (
+                    <TouchableOpacity
+                      key={step}
+                      onPress={() => setMinuteStep12(step)}
+                      style={[
+                        styles.intervalPill,
+                        {
+                          backgroundColor: isSel ? `${primaryColor}18` : 'transparent',
+                          borderColor: isSel ? primaryColor : borderColor,
+                        },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.intervalPillText,
+                          {
+                            color: isSel ? primaryColor : subtextColor,
+                            fontWeight: isSel ? '800' : '600',
+                          },
+                        ]}
+                      >
+                        {step}m
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+
+            {/* Modal Launch Button */}
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => setTime12ModalOpen(true)}
+              style={[
+                styles.openModalButton,
+                {
+                  backgroundColor: primaryColor,
+                  shadowColor: primaryColor,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 5,
+                  marginBottom: 16,
+                },
+              ]}
+            >
+              <Text style={styles.openModalButtonIcon}>⏰</Text>
+              <View style={{ marginLeft: 10, flex: 1 }}>
+                <Text style={styles.openModalButtonTitle}>
+                  Open 12h TimePicker (Modal Mode)
+                </Text>
+                <Text style={styles.openModalButtonSubtitle}>
+                  Time: {time12 ? formatDate(time12, 'hh:mm A', currentLocale) : 'Tap to open & select'}
+                </Text>
+              </View>
+              <Text style={styles.openModalArrow}>→</Text>
+            </TouchableOpacity>
+
+            {/* Modal DatePicker instance */}
             <DatePicker
+              modal
+              open={time12ModalOpen}
               mode="time"
-              timePickerLayout={"wheel"}
+              timePickerLayout="wheel"
               value={time12}
               onChange={setTime12}
+              onConfirm={(d) => {
+                setTime12(d);
+                setTime12ModalOpen(false);
+              }}
+              onClose={() => setTime12ModalOpen(false)}
+              onCancel={() => setTime12ModalOpen(false)}
               is24Hour={false}
               minuteInterval={minuteStep12}
               theme={themeMode}
@@ -447,7 +530,7 @@ function DatePickerDemoApp() {
             {/* Live Result Ticket Card */}
             <View style={[styles.resultTicket, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)', borderColor }]}>
               <View style={styles.ticketTopRow}>
-                <Text style={[styles.ticketLabel, { color: subtextColor }]}>LIVE OUTPUT (12H)</Text>
+                <Text style={[styles.ticketLabel, { color: subtextColor }]}>CONFIRMED OUTPUT (12H)</Text>
                 <View style={[styles.activeDot, { backgroundColor: '#10B981' }]} />
               </View>
               <Text style={[styles.ticketValue, { color: textColor }]}>
@@ -463,10 +546,92 @@ function DatePickerDemoApp() {
         {/* --- DEMO 2: 24-HOUR TIME PICKER --- */}
         {activeTab === 'time-24h' && (
           <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
+            <View style={styles.cardHeader}>
+              <View style={styles.badgeRow}>
+                <View style={[styles.tagBadge, { backgroundColor: `${primaryColor}18` }]}>
+                  <Text style={[styles.tagBadgeText, { color: primaryColor }]}>24H MILITARY</Text>
+                </View>
+                <View style={[styles.tagBadge, { backgroundColor: '#10B98118' }]}>
+                  <Text style={[styles.tagBadgeText, { color: '#10B981' }]}>CONFIRM TO SET</Text>
+                </View>
+              </View>
+              <Text style={[styles.cardTitle, { color: textColor }]}>
+                24-Hour Military Time Picker
+              </Text>
+              <Text style={[styles.cardDesc, { color: subtextColor }]}>
+                00:00 to 23:59 military time format. Click below to open modal with Now, Clear, Cancel, and Confirm buttons.
+              </Text>
+            </View>
+
+            {/* Seconds Toggle */}
+            <View style={styles.subControlRow}>
+              <Text style={[styles.subControlLabel, { color: subtextColor }]}>Seconds Display:</Text>
+              <TouchableOpacity
+                onPress={() => setShowSeconds24((s) => !s)}
+                style={[
+                  styles.intervalPill,
+                  {
+                    backgroundColor: showSeconds24 ? `${primaryColor}18` : 'transparent',
+                    borderColor: showSeconds24 ? primaryColor : borderColor,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.intervalPillText,
+                    {
+                      color: showSeconds24 ? primaryColor : subtextColor,
+                      fontWeight: showSeconds24 ? '800' : '600',
+                    },
+                  ]}
+                >
+                  {showSeconds24 ? '⏱️ Seconds: ON' : '⏱️ Seconds: OFF'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Modal Launch Button */}
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => setTime24ModalOpen(true)}
+              style={[
+                styles.openModalButton,
+                {
+                  backgroundColor: primaryColor,
+                  shadowColor: primaryColor,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 5,
+                  marginBottom: 16,
+                },
+              ]}
+            >
+              <Text style={styles.openModalButtonIcon}>⏱️</Text>
+              <View style={{ marginLeft: 10, flex: 1 }}>
+                <Text style={styles.openModalButtonTitle}>
+                  Open 24h TimePicker (Modal Mode)
+                </Text>
+                <Text style={styles.openModalButtonSubtitle}>
+                  Time: {time24 ? formatDate(time24, showSeconds24 ? 'HH:mm:ss' : 'HH:mm', currentLocale) : 'Tap to open & select'}
+                </Text>
+              </View>
+              <Text style={styles.openModalArrow}>→</Text>
+            </TouchableOpacity>
+
+            {/* Modal DatePicker instance */}
             <DatePicker
+              modal
+              open={time24ModalOpen}
               mode="time"
               value={time24}
               onChange={setTime24}
+              onConfirm={(d) => {
+                setTime24(d);
+                setTime24ModalOpen(false);
+              }}
+              onClose={() => setTime24ModalOpen(false)}
+              onCancel={() => setTime24ModalOpen(false)}
               is24Hour={true}
               showSeconds={showSeconds24}
               theme={themeMode}
@@ -476,7 +641,7 @@ function DatePickerDemoApp() {
 
             <View style={[styles.resultTicket, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)', borderColor }]}>
               <View style={styles.ticketTopRow}>
-                <Text style={[styles.ticketLabel, { color: subtextColor }]}>LIVE OUTPUT (24H)</Text>
+                <Text style={[styles.ticketLabel, { color: subtextColor }]}>CONFIRMED OUTPUT (24H)</Text>
                 <View style={[styles.activeDot, { backgroundColor: '#10B981' }]} />
               </View>
               <Text style={[styles.ticketValue, { color: textColor }]}>
@@ -495,10 +660,100 @@ function DatePickerDemoApp() {
         {/* --- DEMO 3: COMBINED DATE + TIME PICKER --- */}
         {activeTab === 'datetime' && (
           <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
+            <View style={styles.cardHeader}>
+              <View style={styles.badgeRow}>
+                <View style={[styles.tagBadge, { backgroundColor: `${primaryColor}18` }]}>
+                  <Text style={[styles.tagBadgeText, { color: primaryColor }]}>DATE + TIME</Text>
+                </View>
+                <View style={[styles.tagBadge, { backgroundColor: '#10B98118' }]}>
+                  <Text style={[styles.tagBadgeText, { color: '#10B981' }]}>CONFIRM TO SET</Text>
+                </View>
+              </View>
+              <Text style={[styles.cardTitle, { color: textColor }]}>
+                Date + Time Combined Picker
+              </Text>
+              <Text style={[styles.cardDesc, { color: subtextColor }]}>
+                Unified modal with tabbed Date and Time controls. Changes committed only upon Confirm button tap.
+              </Text>
+            </View>
+
+            {/* 12h vs 24h toggle */}
+            <View style={styles.subControlRow}>
+              <Text style={[styles.subControlLabel, { color: subtextColor }]}>Clock Format:</Text>
+              <View style={styles.intervalRow}>
+                <TouchableOpacity
+                  onPress={() => setDateTimeIs24(false)}
+                  style={[
+                    styles.intervalPill,
+                    {
+                      backgroundColor: !dateTimeIs24 ? `${primaryColor}18` : 'transparent',
+                      borderColor: !dateTimeIs24 ? primaryColor : borderColor,
+                    },
+                  ]}
+                >
+                  <Text style={[styles.intervalPillText, { color: !dateTimeIs24 ? primaryColor : subtextColor, fontWeight: !dateTimeIs24 ? '800' : '600' }]}>
+                    12H (AM/PM)
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setDateTimeIs24(true)}
+                  style={[
+                    styles.intervalPill,
+                    {
+                      backgroundColor: dateTimeIs24 ? `${primaryColor}18` : 'transparent',
+                      borderColor: dateTimeIs24 ? primaryColor : borderColor,
+                    },
+                  ]}
+                >
+                  <Text style={[styles.intervalPillText, { color: dateTimeIs24 ? primaryColor : subtextColor, fontWeight: dateTimeIs24 ? '800' : '600' }]}>
+                    24H (Military)
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Modal Launch Button */}
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => setDateTimeModalOpen(true)}
+              style={[
+                styles.openModalButton,
+                {
+                  backgroundColor: primaryColor,
+                  shadowColor: primaryColor,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 5,
+                  marginBottom: 16,
+                },
+              ]}
+            >
+              <Text style={styles.openModalButtonIcon}>📅⏰</Text>
+              <View style={{ marginLeft: 10, flex: 1 }}>
+                <Text style={styles.openModalButtonTitle}>
+                  Open Date+Time Picker (Modal Mode)
+                </Text>
+                <Text style={styles.openModalButtonSubtitle}>
+                  Current: {dateTimeVal ? formatDate(dateTimeVal, dateTimeIs24 ? 'DD/MM/YYYY HH:mm' : 'DD/MM/YYYY hh:mm A', currentLocale) : 'Tap to open & select'}
+                </Text>
+              </View>
+              <Text style={styles.openModalArrow}>→</Text>
+            </TouchableOpacity>
+
+            {/* Modal DatePicker instance */}
             <DatePicker
+              modal
+              open={dateTimeModalOpen}
               mode="datetime"
               value={dateTimeVal}
               onChange={setDateTimeVal}
+              onConfirm={(d) => {
+                setDateTimeVal(d);
+                setDateTimeModalOpen(false);
+              }}
+              onClose={() => setDateTimeModalOpen(false)}
+              onCancel={() => setDateTimeModalOpen(false)}
               is24Hour={dateTimeIs24}
               theme={themeMode}
               locale={currentLocale}
@@ -507,7 +762,7 @@ function DatePickerDemoApp() {
 
             <View style={[styles.resultTicket, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)', borderColor }]}>
               <View style={styles.ticketTopRow}>
-                <Text style={[styles.ticketLabel, { color: subtextColor }]}>FULL COMBINED TIMESTAMP</Text>
+                <Text style={[styles.ticketLabel, { color: subtextColor }]}>CONFIRMED TIMESTAMP</Text>
                 <View style={[styles.activeDot, { backgroundColor: '#10B981' }]} />
               </View>
               <Text style={[styles.ticketValue, { color: textColor }]}>
@@ -564,26 +819,60 @@ function DatePickerDemoApp() {
         {/* --- DEMO 5: CALENDAR DATE PICKER --- */}
         {activeTab === 'calendar' && (
           <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
+            {/* Modal Launch Button */}
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => setCalendarModalOpen(true)}
+              style={[
+                styles.openModalButton,
+                {
+                  backgroundColor: primaryColor,
+                  shadowColor: primaryColor,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 5,
+                  marginBottom: 12,
+                },
+              ]}
+            >
+              <Text style={styles.openModalButtonIcon}>📅</Text>
+              <View style={{ marginLeft: 10, flex: 1 }}>
+                <Text style={styles.openModalButtonTitle}>
+                  Open Calendar (Modal Dialog)
+                </Text>
+                <Text style={styles.openModalButtonSubtitle}>
+                  Date: {calendarDate ? formatDate(calendarDate, selectedDateFormat, currentLocale) : 'Tap to select date'}
+                </Text>
+              </View>
+              <Text style={styles.openModalArrow}>→</Text>
+            </TouchableOpacity>
 
-
+            {/* Modal DatePicker instance with auto-close */}
             <DatePicker
+              modal
+              open={calendarModalOpen}
               mode="calendar"
               value={calendarDate}
               onChange={setCalendarDate}
+              onConfirm={(d) => {
+                setCalendarDate(d);
+                setCalendarModalOpen(false);
+              }}
+              onClose={() => setCalendarModalOpen(false)}
+              onCancel={() => setCalendarModalOpen(false)}
               theme={themeMode}
               locale={currentLocale}
               format={selectedDateFormat}
-              showFormatSelector={true}
-              onFormatChange={setSelectedDateFormat}
               allowManualEntry={true}
               disabledWeekdays={[0]}
               minimumDate={new Date(2020, 0, 1)}
               maximumDate={new Date(2030, 11, 31)}
             />
 
-            <View style={[styles.resultTicket, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)', borderColor }]}>
+            <View style={[styles.resultTicket, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)', borderColor, marginTop: 12 }]}>
               <View style={styles.ticketTopRow}>
-                <Text style={[styles.ticketLabel, { color: subtextColor }]}>SELECTED CALENDAR DATE ({selectedDateFormat})</Text>
+                <Text style={[styles.ticketLabel, { color: subtextColor }]}>SELECTED CALENDAR DATE</Text>
                 <View style={[styles.activeDot, { backgroundColor: '#10B981' }]} />
               </View>
               <Text style={[styles.ticketValue, { color: textColor }]}>
@@ -596,15 +885,80 @@ function DatePickerDemoApp() {
         {/* --- DEMO 6: WHEEL DATE PICKER --- */}
         {activeTab === 'wheel' && (
           <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
+            <View style={styles.cardHeader}>
+              <View style={styles.badgeRow}>
+                <View style={[styles.tagBadge, { backgroundColor: `${primaryColor}18` }]}>
+                  <Text style={[styles.tagBadgeText, { color: primaryColor }]}>WHEEL DATE</Text>
+                </View>
+                <View style={[styles.tagBadge, { backgroundColor: '#10B98118' }]}>
+                  <Text style={[styles.tagBadgeText, { color: '#10B981' }]}>CONFIRM TO SET</Text>
+                </View>
+              </View>
+              <Text style={[styles.cardTitle, { color: textColor }]}>
+                Wheel Date Picker
+              </Text>
+              <Text style={[styles.cardDesc, { color: subtextColor }]}>
+                Smooth Day, Month, and Year spinning wheels. Click below to open modal with Today, Clear, Cancel, and Confirm buttons.
+              </Text>
+            </View>
+
+            {/* Modal Launch Button */}
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => setWheelModalOpen(true)}
+              style={[
+                styles.openModalButton,
+                {
+                  backgroundColor: primaryColor,
+                  shadowColor: primaryColor,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 5,
+                  marginBottom: 16,
+                },
+              ]}
+            >
+              <Text style={styles.openModalButtonIcon}>🎡</Text>
+              <View style={{ marginLeft: 10, flex: 1 }}>
+                <Text style={styles.openModalButtonTitle}>
+                  Open Wheel DatePicker (Modal Mode)
+                </Text>
+                <Text style={styles.openModalButtonSubtitle}>
+                  Date: {wheelDate ? formatDate(wheelDate, selectedDateFormat, currentLocale) : 'Tap to open & select'}
+                </Text>
+              </View>
+              <Text style={styles.openModalArrow}>→</Text>
+            </TouchableOpacity>
+
+            {/* Modal DatePicker instance */}
             <DatePicker
+              modal
+              open={wheelModalOpen}
               mode="wheel"
               value={wheelDate}
               onChange={setWheelDate}
+              onConfirm={(d) => {
+                setWheelDate(d);
+                setWheelModalOpen(false);
+              }}
+              onClose={() => setWheelModalOpen(false)}
+              onCancel={() => setWheelModalOpen(false)}
               theme={themeMode}
               locale={currentLocale}
               minYear={1970}
               maxYear={2040}
             />
+
+            <View style={[styles.resultTicket, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)', borderColor }]}>
+              <View style={styles.ticketTopRow}>
+                <Text style={[styles.ticketLabel, { color: subtextColor }]}>CONFIRMED WHEEL DATE ({selectedDateFormat})</Text>
+                <View style={[styles.activeDot, { backgroundColor: '#10B981' }]} />
+              </View>
+              <Text style={[styles.ticketValue, { color: textColor }]}>
+                {wheelDate ? formatDate(wheelDate, selectedDateFormat, currentLocale) : 'None'}
+              </Text>
+            </View>
           </View>
         )}
 
@@ -612,59 +966,330 @@ function DatePickerDemoApp() {
         {activeTab === 'range' && (
           <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
             <View style={styles.cardHeader}>
+              <View style={styles.badgeRow}>
+                <View style={[styles.tagBadge, { backgroundColor: `${primaryColor}18` }]}>
+                  <Text style={[styles.tagBadgeText, { color: primaryColor }]}>DATE RANGE</Text>
+                </View>
+                <View style={[styles.tagBadge, { backgroundColor: '#10B98118' }]}>
+                  <Text style={[styles.tagBadgeText, { color: '#10B981' }]}>CONFIRM TO SET</Text>
+                </View>
+              </View>
               <Text style={[styles.cardTitle, { color: textColor }]}>
                 Date Range Picker
               </Text>
               <Text style={[styles.cardDesc, { color: subtextColor }]}>
-                Start and End date selection with ribbon highlights and maxRangeDays constraints.
+                Start and End date selection with ribbon highlights. Click below to open modal with Clear, Cancel, and Apply buttons.
               </Text>
             </View>
 
+            {/* Modal Launch Button */}
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => setRangeModalOpen(true)}
+              style={[
+                styles.openModalButton,
+                {
+                  backgroundColor: primaryColor,
+                  shadowColor: primaryColor,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 5,
+                  marginBottom: 16,
+                },
+              ]}
+            >
+              <Text style={styles.openModalButtonIcon}>📊</Text>
+              <View style={{ marginLeft: 10, flex: 1 }}>
+                <Text style={styles.openModalButtonTitle}>
+                  Open Date Range Picker (Modal Mode)
+                </Text>
+                <Text style={styles.openModalButtonSubtitle}>
+                  Range: {range.startDate ? formatDate(range.startDate, 'DD/MM/YYYY', currentLocale) : '--'} - {range.endDate ? formatDate(range.endDate, 'DD/MM/YYYY', currentLocale) : '--'}
+                </Text>
+              </View>
+              <Text style={styles.openModalArrow}>→</Text>
+            </TouchableOpacity>
+
+            {/* Modal DatePicker instance */}
             <DatePicker
+              modal
+              open={rangeModalOpen}
               mode="range"
               startDate={range.startDate}
               endDate={range.endDate}
               onRangeChange={setRange}
+              onConfirm={(r) => {
+                if (r) setRange(r);
+                setRangeModalOpen(false);
+              }}
+              onClose={() => setRangeModalOpen(false)}
+              onCancel={() => setRangeModalOpen(false)}
               maxRangeDays={14}
               theme={themeMode}
               locale={currentLocale}
             />
 
-
+            <View style={[styles.resultTicket, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)', borderColor }]}>
+              <View style={styles.ticketTopRow}>
+                <Text style={[styles.ticketLabel, { color: subtextColor }]}>CONFIRMED DATE RANGE</Text>
+                <View style={[styles.activeDot, { backgroundColor: '#10B981' }]} />
+              </View>
+              <Text style={[styles.ticketValue, { color: textColor }]}>
+                {range.startDate ? formatDate(range.startDate, 'DD/MM/YYYY', currentLocale) : 'Start'}
+                {' → '}
+                {range.endDate ? formatDate(range.endDate, 'DD/MM/YYYY', currentLocale) : 'End'}
+              </Text>
+            </View>
           </View>
         )}
 
         {/* --- DEMO 8: INPUT MODAL PICKER --- */}
         {activeTab === 'input' && (
           <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
+            <View style={styles.cardHeader}>
+              <View style={styles.badgeRow}>
+                <View style={[styles.tagBadge, { backgroundColor: `${primaryColor}18` }]}>
+                  <Text style={[styles.tagBadgeText, { color: primaryColor }]}>INPUT MODAL</Text>
+                </View>
+                <View style={[styles.tagBadge, { backgroundColor: '#10B98118' }]}>
+                  <Text style={[styles.tagBadgeText, { color: '#10B981' }]}>CONFIRM TO SET</Text>
+                </View>
+              </View>
+              <Text style={[styles.cardTitle, { color: textColor }]}>
+                Input Modal Picker
+              </Text>
+              <Text style={[styles.cardDesc, { color: subtextColor }]}>
+                Tap the prominent launch card or the input calendar icon to open the modal dialog with Today, Clear, Cancel, and Confirm buttons.
+              </Text>
+            </View>
+
+            {/* Prominent Modal Launch Button */}
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => setInputModalOpen(true)}
+              style={[
+                styles.openModalButton,
+                {
+                  backgroundColor: primaryColor,
+                  shadowColor: primaryColor,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 5,
+                  marginBottom: 16,
+                },
+              ]}
+            >
+              <Text style={styles.openModalButtonIcon}>📝</Text>
+              <View style={{ marginLeft: 10, flex: 1 }}>
+                <Text style={styles.openModalButtonTitle}>
+                  Open Input Picker (Modal Mode)
+                </Text>
+                <Text style={styles.openModalButtonSubtitle}>
+                  Format: {selectedDateFormat} | Date: {inputDate ? formatDate(inputDate, selectedDateFormat, currentLocale) : 'Tap to open'}
+                </Text>
+              </View>
+              <Text style={styles.openModalArrow}>→</Text>
+            </TouchableOpacity>
+
+            {/* Modal DatePicker instance */}
             <DatePicker
+              modal
+              open={inputModalOpen}
               mode="input"
               value={inputDate}
               onChange={setInputDate}
-              label="Appointment Date"
+              onConfirm={(d) => {
+                setInputDate(d);
+                setInputModalOpen(false);
+              }}
+              onClose={() => setInputModalOpen(false)}
+              onCancel={() => setInputModalOpen(false)}
+              label="Date"
               format={selectedDateFormat}
               allowManualEntry={true}
               theme={themeMode}
               locale={currentLocale}
             />
+
+            {/* Inline Interactive Input Field Preview */}
+            <View style={{ marginTop: 6, marginBottom: 16 }}>
+              <Text style={[styles.subControlLabel, { color: subtextColor, marginBottom: 8 }]}>
+                INLINE INTERACTIVE FIELD (TAP ICON TO OPEN):
+              </Text>
+              <DatePicker
+                mode="input"
+                value={inputDate}
+                onChange={setInputDate}
+                onConfirm={setInputDate}
+                label="Date"
+                format={selectedDateFormat}
+                allowManualEntry={true}
+                theme={themeMode}
+                locale={currentLocale}
+              />
+            </View>
+
+            <View style={[styles.resultTicket, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)', borderColor }]}>
+              <View style={styles.ticketTopRow}>
+                <Text style={[styles.ticketLabel, { color: subtextColor }]}>CONFIRMED APPOINTMENT DATE</Text>
+                <View style={[styles.activeDot, { backgroundColor: '#10B981' }]} />
+              </View>
+              <Text style={[styles.ticketValue, { color: textColor }]}>
+                {inputDate ? formatDate(inputDate, selectedDateFormat, currentLocale) : 'None'}
+              </Text>
+            </View>
           </View>
         )}
 
-        {/* --- DEMO 9: CUSTOM MANUAL DATE ENTRY --- */}
+        {/* --- DEMO 9: DATEPICKER MODAL & MANUAL ENTRY --- */}
         {activeTab === 'manual' && (
           <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
+            <View style={styles.cardHeader}>
+              <View style={styles.badgeRow}>
+                <View style={[styles.tagBadge, { backgroundColor: `${primaryColor}18` }]}>
+                  <Text style={[styles.tagBadgeText, { color: primaryColor }]}>MANUAL INPUT</Text>
+                </View>
+                <View style={[styles.tagBadge, { backgroundColor: '#10B98118' }]}>
+                  <Text style={[styles.tagBadgeText, { color: '#10B981' }]}>CONFIRM TO SET</Text>
+                </View>
+              </View>
+              <Text style={[styles.cardTitle, { color: textColor }]}>
+                DatePicker Modal & Manual Entry
+              </Text>
+              <Text style={[styles.cardDesc, { color: subtextColor }]}>
+                Interactive calendar modal dialog supporting Single Box and Split input formats with Today, Clear, Cancel, and Confirm buttons.
+              </Text>
+            </View>
+
+            {/* Manual Entry Type Switcher */}
+            <View style={styles.subControlRow}>
+              <Text style={[styles.subControlLabel, { color: subtextColor }]}>Input Style:</Text>
+              <View style={styles.intervalRow}>
+                {[
+                  { key: 'single', label: '📝 Single Box' },
+                  { key: 'split', label: '📑 Split Boxes' },
+                ].map((item) => {
+                  const isSel = manualType === item.key;
+                  return (
+                    <TouchableOpacity
+                      key={item.key}
+                      onPress={() => setManualType(item.key as 'single' | 'split')}
+                      style={[
+                        styles.intervalPill,
+                        {
+                          backgroundColor: isSel ? `${primaryColor}18` : 'transparent',
+                          borderColor: isSel ? primaryColor : borderColor,
+                        },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.intervalPillText,
+                          {
+                            color: isSel ? primaryColor : subtextColor,
+                            fontWeight: isSel ? '800' : '600',
+                          },
+                        ]}
+                      >
+                        {item.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+
+            {/* Prominent Modal Launch Button */}
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => setManualModalOpen(true)}
+              style={[
+                styles.openModalButton,
+                {
+                  backgroundColor: primaryColor,
+                  shadowColor: primaryColor,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 5,
+                  marginBottom: 12,
+                },
+              ]}
+            >
+              <Text style={styles.openModalButtonIcon}>📅</Text>
+              <View style={{ marginLeft: 10, flex: 1 }}>
+                <Text style={styles.openModalButtonTitle}>
+                  Open DatePicker (Modal Mode)
+                </Text>
+                <Text style={styles.openModalButtonSubtitle}>
+                  Date: {manualDate ? formatDate(manualDate, selectedDateFormat, currentLocale) : 'Tap to enter date'}
+                </Text>
+              </View>
+              <Text style={styles.openModalArrow}>→</Text>
+            </TouchableOpacity>
+
+            {/* Modal DatePicker instance */}
             <DatePicker
+              modal
+              open={manualModalOpen}
               mode="calendar"
+              defaultManualMode={true}
               value={manualDate}
               onChange={setManualDate}
+              onConfirm={(d) => {
+                setManualDate(d);
+                setManualModalOpen(false);
+              }}
+              onClose={() => setManualModalOpen(false)}
+              onCancel={() => setManualModalOpen(false)}
               allowManualEntry={true}
-              manualEntryType={"split"}
+              manualEntryType={manualType}
               format={selectedDateFormat}
-              showFormatSelector={true}
-              onFormatChange={setSelectedDateFormat}
               theme={themeMode}
               locale={currentLocale}
             />
+
+            {/* Inline Live Manual Input Preview */}
+            <View style={{ marginTop: 4, marginBottom: 12 }}>
+              <Text style={[styles.subControlLabel, { color: subtextColor, marginBottom: 6 }]}>
+                INTERACTIVE MANUAL INPUT PREVIEW ({manualType.toUpperCase()}):
+              </Text>
+              <DatePicker
+                mode="calendar"
+                defaultManualMode={true}
+                allowManualEntry={true}
+                manualEntryType={manualType}
+                value={manualDate}
+                onChange={setManualDate}
+                format={selectedDateFormat}
+                theme={themeMode}
+                locale={currentLocale}
+              />
+            </View>
+
+            {/* Live Result Output */}
+            <View
+              style={[
+                styles.resultTicket,
+                {
+                  backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+                  borderColor,
+                  marginTop: 12,
+                },
+              ]}
+            >
+              <View style={styles.ticketTopRow}>
+                <Text style={[styles.ticketLabel, { color: subtextColor }]}>
+                  SELECTED DATE
+                </Text>
+                <View style={[styles.activeDot, { backgroundColor: '#10B981' }]} />
+              </View>
+              <Text style={[styles.ticketValue, { color: textColor }]}>
+                {manualDate ? formatDate(manualDate, selectedDateFormat, currentLocale) : 'None'}
+              </Text>
+            </View>
           </View>
         )}
       </ScrollView>

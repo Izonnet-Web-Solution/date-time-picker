@@ -296,7 +296,7 @@ export default function ExampleApp() {
               mode="input"
               value={inputDate}
               onChange={setInputDate}
-              label="Select Appointment Date"
+              label="Date"
               format="DD/MM/YYYY"
               allowManualEntry={true}
               theme={themeMode}

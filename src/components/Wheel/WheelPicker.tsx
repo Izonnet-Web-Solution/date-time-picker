@@ -26,8 +26,11 @@ export interface WheelPickerProps {
   itemHeight?: number;
   visibleItems?: number;
   showActionButtons?: boolean;
+  showTodayButton?: boolean;
+  showClearButton?: boolean;
   onConfirm?: (date: Date | null) => void;
   onCancel?: () => void;
+  onClear?: () => void;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -45,8 +48,11 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({
   itemHeight = 44,
   visibleItems = 5,
   showActionButtons = true,
+  showTodayButton = true,
+  showClearButton = true,
   onConfirm,
   onCancel,
+  onClear,
   style,
 }) => {
   const currentDate = value || new Date();
@@ -166,13 +172,27 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({
       {showActionButtons && (
         <View style={styles.actionsFooter}>
           <View style={styles.leftActions}>
-            <Button
-              title={locale.today}
-              variant="text"
-              size="small"
-              theme={theme}
-              onPress={() => onChange(new Date())}
-            />
+            {showTodayButton && (
+              <Button
+                title={locale.today}
+                variant="text"
+                size="small"
+                theme={theme}
+                onPress={() => onChange(new Date())}
+              />
+            )}
+            {showClearButton && (
+              <Button
+                title={locale.clear}
+                variant="text"
+                size="small"
+                theme={theme}
+                onPress={() => {
+                  onChange(null);
+                  onClear?.();
+                }}
+              />
+            )}
           </View>
 
           <View style={styles.rightActions}>
@@ -209,28 +229,37 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 1,
     overflow: 'hidden',
+    flexGrow: 1,
+    justifyContent: 'space-between',
   },
   columnsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 12,
   },
   actionsFooter: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 10,
-    marginTop: 8,
-    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingTop: 12,
+    marginTop: 'auto',
+    borderTopWidth: 1,
     borderTopColor: 'rgba(0,0,0,0.06)',
   },
   leftActions: {
     flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   rightActions: {
     flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   actionBtn: {
-    marginLeft: 6,
+    marginLeft: 0,
   },
 });

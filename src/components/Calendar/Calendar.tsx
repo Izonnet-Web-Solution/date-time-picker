@@ -221,30 +221,39 @@ export const Calendar: React.FC<CalendarProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 12,
+    padding: 10,
     borderWidth: 1,
     overflow: 'hidden',
+    flexGrow: 1,
+    justifyContent: 'space-between',
   },
   manualContainer: {
-    paddingVertical: 12,
+    paddingVertical: 8,
     paddingHorizontal: 4,
+    flex: 1,
+    justifyContent: 'center',
   },
   actionsFooter: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingTop: 10,
-    marginTop: 4,
-    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingBottom: 2,
+    marginTop: 'auto',
+    borderTopWidth: 1,
     borderTopColor: 'rgba(0,0,0,0.06)',
   },
   leftActions: {
     flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   rightActions: {
     flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   actionBtn: {
-    marginHorizontal: 3,
+    marginHorizontal: 0,
   },
 });

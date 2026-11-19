@@ -48,18 +48,18 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderWidth: 1,
-    marginTop: 8,
-    marginBottom: 4,
+    marginTop: 6,
+    marginBottom: 2,
   },
   icon: {
-    fontSize: 14,
-    marginRight: 8,
+    fontSize: 13,
+    marginRight: 6,
   },
   text: {
     flex: 1,
-    fontWeight: '500',
+    fontWeight: '600',
   },
 });

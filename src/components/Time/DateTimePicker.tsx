@@ -14,7 +14,6 @@ import type {
   DisabledDateCheck,
   TimePickerLayout,
 } from '../../types';
-import { formatDate } from '../../utils/dateFormatting';
 import { setTimeOnDate } from '../../utils/timeUtils';
 import { validateDate } from '../../utils/dateValidation';
 import { Calendar } from '../Calendar/Calendar';
@@ -225,6 +224,7 @@ export const DateTimePicker: React.FC<DateTimePickerComponentProps> = ({
         <Calendar
           selectedDate={currentDate}
           onSelectDate={handleDateSelect}
+          format={displayFormat}
           theme={theme}
           locale={locale}
           minimumDate={minimumDate}
@@ -242,6 +242,7 @@ export const DateTimePicker: React.FC<DateTimePickerComponentProps> = ({
         <TimePicker
           value={currentDate}
           onChange={handleTimeSelect}
+          format={displayFormat}
           is24Hour={is24Hour}
           minuteInterval={minuteInterval}
           minimumTime={minimumTime}
@@ -316,6 +317,8 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     borderWidth: 1,
+    flexGrow: 1,
+    justifyContent: 'space-between',
   },
   previewBanner: {
     padding: 14,
@@ -374,7 +377,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 16,
+    marginTop: 'auto',
     paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: 'rgba(0,0,0,0.06)',

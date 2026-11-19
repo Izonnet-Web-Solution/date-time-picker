@@ -25,6 +25,9 @@ export interface DateInputProps {
   value?: Date | null;
   defaultValue?: Date | null;
   onChange?: (date: Date | null) => void;
+  onConfirm?: (date: Date | null) => void;
+  onCancel?: () => void;
+  onClear?: () => void;
   format?: DateFormat;
   theme: DatePickerTheme;
   locale: DatePickerLocale;
@@ -47,6 +50,9 @@ export const DateInput: React.FC<DateInputProps> = ({
   value,
   defaultValue,
   onChange,
+  onConfirm,
+  onCancel,
+  onClear,
   format = 'DD/MM/YYYY',
   theme,
   locale,
@@ -79,7 +85,9 @@ export const DateInput: React.FC<DateInputProps> = ({
   } = useDatePicker({
     value,
     defaultValue,
-    onChange,
+    onChange: (d) => {
+      onChange?.(d);
+    },
     format,
     locale,
     minimumDate,
@@ -95,6 +103,17 @@ export const DateInput: React.FC<DateInputProps> = ({
     if (!allowManualEntry && editable) {
       setIsPopupOpen(true);
     }
+  };
+
+  const handleClearPress = () => {
+    clear();
+    onClear?.();
+  };
+
+  const handleConfirmPopup = (confirmedDate: Date | null) => {
+    selectDate(confirmedDate);
+    onChange?.(confirmedDate);
+    onConfirm?.(confirmedDate);
   };
 
   const getBorderColor = () => {
@@ -122,9 +141,11 @@ export const DateInput: React.FC<DateInputProps> = ({
         style={[
           styles.inputRow,
           {
-            backgroundColor: theme.surfaceColor,
+            backgroundColor: theme.cardColor || theme.surfaceColor,
             borderColor: getBorderColor(),
-            borderRadius: theme.borderRadius,
+            borderRadius: Math.max(theme.borderRadius, 14),
+            shadowColor: isFocused ? theme.primaryColor : '#000',
+            shadowOpacity: isFocused ? 0.12 : 0.03,
           },
           inputContainerStyle,
         ]}
@@ -155,7 +176,7 @@ export const DateInput: React.FC<DateInputProps> = ({
             icon="close"
             size={16}
             color={theme.secondaryTextColor}
-            onPress={clear}
+            onPress={handleClearPress}
             accessibilityLabel={locale.clear}
             style={styles.actionIcon}
           />
@@ -176,9 +197,16 @@ export const DateInput: React.FC<DateInputProps> = ({
 
       <CalendarPopup
         visible={isPopupOpen}
-        onClose={() => setIsPopupOpen(false)}
+        onClose={() => {
+          setIsPopupOpen(false);
+          onCancel?.();
+        }}
         selectedDate={selectedDate}
-        onSelectDate={selectDate}
+        onSelectDate={(d) => {
+          selectDate(d);
+          onChange?.(d);
+        }}
+        onConfirm={handleConfirmPopup}
         theme={theme}
         locale={locale}
         format={format}
@@ -204,23 +232,28 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   label: {
-    fontWeight: '600',
-    marginBottom: 6,
+    fontWeight: '700',
+    marginBottom: 8,
+    letterSpacing: -0.2,
   },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1.5,
-    paddingHorizontal: 12,
-    height: 48,
+    paddingHorizontal: 14,
+    height: 52,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    elevation: 2,
   },
   textInput: {
     flex: 1,
     height: '100%',
     padding: 0,
-    fontWeight: '500',
+    fontWeight: '600',
+    letterSpacing: 0.5,
   },
   actionIcon: {
-    marginLeft: 6,
+    marginLeft: 8,
   },
 });

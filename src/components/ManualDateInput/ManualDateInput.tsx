@@ -61,6 +61,6 @@ export const ManualDateInput: React.FC<ManualDateInputProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingVertical: 4,
+    paddingVertical: 2,
   },
 });

@@ -1,5 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import type {
   DateFormat,
   DatePickerProps,
@@ -17,6 +25,7 @@ import { Calendar } from './Calendar/Calendar';
 import { WheelPicker } from './Wheel/WheelPicker';
 import { RangePicker } from './Range/RangePicker';
 import { DateInput } from './Input/DateInput';
+import { DateInputField } from './ManualDateInput/DateInputField';
 import { TimePicker } from './Time/TimePicker';
 import { DateTimePicker } from './Time/DateTimePicker';
 import { Modal } from './common/Modal';
@@ -47,7 +56,10 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
     timePickerLayout = 'wheel',
     modal = false,
     open = false,
+    autoCloseOnSelect = false,
+    onClose,
     allowManualEntry = false,
+    defaultManualMode = false,
     manualEntryType = 'single',
     showActionButtons = true,
     showTodayButton = true,
@@ -104,7 +116,78 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
     disabledDates,
     disabledWeekdays,
     allowManualEntry,
+    defaultManualMode,
   });
+
+  // Check if component is in modal presentation mode
+  const hasModalProp = 'modal' in props && props.modal !== undefined;
+  const isModalMode = hasModalProp
+    ? (open !== undefined ? Boolean(modal) : true)
+    : (Boolean(modal) || open !== undefined);
+  const isVisible = open !== undefined ? Boolean(open) : Boolean(modal);
+
+  // Draft value while modal is open, so changes are only committed when Confirm button is pressed
+  const [draftValue, setDraftValue] = useState<any>(() => {
+    if (mode === 'range') {
+      const rp = props as RangeDatePickerProps;
+      return {
+        startDate: rp.startDate ?? rp.defaultStartDate ?? null,
+        endDate: rp.endDate ?? rp.defaultEndDate ?? null,
+      };
+    }
+    return singleProps.value ?? singleProps.defaultValue ?? null;
+  });
+
+  // Re-sync draft value whenever modal opens or external value changes
+  useEffect(() => {
+    if (isVisible) {
+      if (mode === 'range') {
+        const rp = props as RangeDatePickerProps;
+        setDraftValue({
+          startDate: rp.startDate ?? rp.defaultStartDate ?? null,
+          endDate: rp.endDate ?? rp.defaultEndDate ?? null,
+        });
+      } else {
+        setDraftValue(singleProps.value ?? singleProps.defaultValue ?? null);
+      }
+    }
+  }, [isVisible, mode, singleProps.value, singleProps.defaultValue]);
+
+  // Modal close handlers
+  const handleModalClose = useCallback(() => {
+    onClose?.();
+    onCancel?.();
+  }, [onClose, onCancel]);
+
+  const handleConfirmAndClose = useCallback(
+    (confirmedValue: any) => {
+      if (mode === 'range') {
+        const rp = props as RangeDatePickerProps;
+        rp.onRangeChange?.(confirmedValue);
+      } else {
+        singleProps.onChange?.(confirmedValue);
+      }
+      (onConfirm as ((v: any) => void) | undefined)?.(confirmedValue);
+      onClose?.();
+    },
+    [mode, singleProps, onConfirm, onClose]
+  );
+
+  // Seamless styling inside modal dialog: strip nested border and background
+  const pickerStyle: StyleProp<ViewStyle> = isModalMode
+    ? [
+      {
+        borderWidth: 0,
+        backgroundColor: 'transparent',
+        shadowOpacity: 0,
+        elevation: 0,
+        padding: 0,
+        flex: 1,
+        justifyContent: 'space-between',
+      },
+      style,
+    ]
+    : style;
 
   const renderContent = () => {
     // 1. Dedicated Time Picker Mode
@@ -112,17 +195,25 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
       const timeProps = props as TimePickerComponentProps;
       return (
         <TimePicker
-          value={timeProps.value !== undefined ? timeProps.value : selectedDate}
+          value={
+            isModalMode
+              ? (draftValue !== undefined ? draftValue : selectedDate)
+              : (timeProps.value !== undefined ? timeProps.value : selectedDate)
+          }
           defaultValue={timeProps.defaultValue}
           onChange={(d) => {
-            selectDate(d);
-            timeProps.onChange?.(d);
+            if (isModalMode) {
+              setDraftValue(d);
+            } else {
+              selectDate(d);
+              timeProps.onChange?.(d);
+            }
           }}
           is24Hour={is24Hour}
           minuteInterval={minuteInterval}
           minimumTime={minimumTime}
           maximumTime={maximumTime}
-          selectedDate={selectedDate}
+          selectedDate={isModalMode ? (draftValue ?? selectedDate) : selectedDate}
           minimumDate={minimumDate}
           maximumDate={maximumDate}
           showSeconds={showSeconds}
@@ -133,13 +224,18 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
           showActionButtons={showActionButtons}
           showNowButton={showTodayButton}
           showClearButton={showClearButton}
-          onConfirm={onConfirm as ((range: any) => void) | undefined}
-          onCancel={onCancel}
+          onConfirm={(d) => {
+            handleConfirmAndClose(d ?? draftValue);
+          }}
+          onCancel={handleModalClose}
           onClear={() => {
+            if (isModalMode) setDraftValue(null);
             clear();
             onClear?.();
           }}
-          style={style}
+          autoCloseOnSelect={isModalMode && autoCloseOnSelect}
+          onClose={handleModalClose}
+          style={pickerStyle}
         />
       );
     }
@@ -149,11 +245,19 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
       const dateTimeProps = props as DateTimePickerProps;
       return (
         <DateTimePicker
-          value={dateTimeProps.value !== undefined ? dateTimeProps.value : selectedDate}
+          value={
+            isModalMode
+              ? (draftValue !== undefined ? draftValue : selectedDate)
+              : (dateTimeProps.value !== undefined ? dateTimeProps.value : selectedDate)
+          }
           defaultValue={dateTimeProps.defaultValue}
           onChange={(d) => {
-            selectDate(d);
-            dateTimeProps.onChange?.(d);
+            if (isModalMode) {
+              setDraftValue(d);
+            } else {
+              selectDate(d);
+              dateTimeProps.onChange?.(d);
+            }
           }}
           format={activeFormat}
           is24Hour={is24Hour}
@@ -172,13 +276,16 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
           locale={locale}
           initialTab={dateTimeProps.initialTab}
           showActionButtons={showActionButtons}
-          onConfirm={onConfirm as ((range: any) => void) | undefined}
-          onCancel={onCancel}
+          onConfirm={(d) => {
+            handleConfirmAndClose(d ?? draftValue);
+          }}
+          onCancel={handleModalClose}
           onClear={() => {
+            if (isModalMode) setDraftValue(null);
             clear();
             onClear?.();
           }}
-          style={style}
+          style={pickerStyle}
         />
       );
     }
@@ -188,10 +295,14 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
       const wheelProps = props as WheelDatePickerProps;
       return (
         <WheelPicker
-          value={wheelProps.value ?? selectedDate}
+          value={isModalMode ? (draftValue ?? wheelProps.value ?? selectedDate) : (wheelProps.value ?? selectedDate)}
           onChange={(d) => {
-            selectDate(d);
-            wheelProps.onChange?.(d);
+            if (isModalMode) {
+              setDraftValue(d);
+            } else {
+              selectDate(d);
+              wheelProps.onChange?.(d);
+            }
           }}
           theme={theme}
           locale={locale}
@@ -204,9 +315,17 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
           itemHeight={wheelProps.itemHeight}
           visibleItems={wheelProps.visibleItems}
           showActionButtons={showActionButtons}
-          onConfirm={onConfirm as ((range: any) => void) | undefined}
-          onCancel={onCancel}
-          style={style}
+          showTodayButton={showTodayButton}
+          showClearButton={showClearButton}
+          onConfirm={(d) => {
+            handleConfirmAndClose(d ?? draftValue);
+          }}
+          onCancel={handleModalClose}
+          onClear={() => {
+            if (isModalMode) setDraftValue(null);
+            onClear?.();
+          }}
+          style={pickerStyle}
         />
       );
     }
@@ -216,11 +335,17 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
       const rangeProps = props as RangeDatePickerProps;
       return (
         <RangePicker
-          startDate={rangeProps.startDate}
-          endDate={rangeProps.endDate}
+          startDate={isModalMode ? draftValue?.startDate : rangeProps.startDate}
+          endDate={isModalMode ? draftValue?.endDate : rangeProps.endDate}
           defaultStartDate={rangeProps.defaultStartDate}
           defaultEndDate={rangeProps.defaultEndDate}
-          onRangeChange={rangeProps.onRangeChange}
+          onRangeChange={(range) => {
+            if (isModalMode) {
+              setDraftValue(range);
+            } else {
+              rangeProps.onRangeChange?.(range);
+            }
+          }}
           maxRangeDays={rangeProps.maxRangeDays}
           format={activeFormat}
           theme={theme}
@@ -231,9 +356,11 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
           disabledDates={disabledDates}
           disabledWeekdays={disabledWeekdays}
           showActionButtons={showActionButtons}
-          onConfirm={onConfirm as ((range: any) => void) | undefined}
-          onCancel={onCancel}
-          style={style}
+          onConfirm={(range) => {
+            handleConfirmAndClose(range ?? draftValue);
+          }}
+          onCancel={handleModalClose}
+          style={pickerStyle}
         />
       );
     }
@@ -241,11 +368,79 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
     // 5. Input Mode
     if (mode === 'input') {
       const inputProps = props as InputDatePickerProps;
+
+      // When presented in modal dialog mode (<DatePicker modal open={...} mode="input" />)
+      if (isModalMode) {
+        return (
+          <View style={styles.modalInputWrapper}>
+            <View style={styles.modalInputTopSection}>
+              <DateInputField
+                value={manualText}
+                onChangeText={(t) => handleManualInputChange(t)}
+                format={activeFormat}
+                theme={theme}
+                locale={locale}
+                type={manualEntryType}
+                placeholder={inputProps.placeholder}
+                label={inputProps.label}
+                isError={!validationResult.isValid}
+                editable={inputProps.editable !== false}
+              />
+            </View>
+
+            <Calendar
+              selectedDate={draftValue !== undefined ? draftValue : selectedDate}
+              onSelectDate={(newDate) => {
+                setDraftValue(newDate);
+                if (autoCloseOnSelect && newDate) {
+                  handleConfirmAndClose(newDate);
+                }
+              }}
+              theme={theme}
+              locale={locale}
+              format={activeFormat}
+              firstDayOfWeek={firstDayOfWeek}
+              minimumDate={minimumDate}
+              maximumDate={maximumDate}
+              disabledDates={disabledDates}
+              disabledWeekdays={disabledWeekdays}
+              showActionButtons={showActionButtons}
+              showTodayButton={showTodayButton}
+              showClearButton={showClearButton}
+              onConfirm={(d) => {
+                handleConfirmAndClose(d ?? draftValue ?? selectedDate);
+              }}
+              onCancel={handleModalClose}
+              onClear={() => {
+                setDraftValue(null);
+                clear();
+                onClear?.();
+              }}
+              style={pickerStyle}
+            />
+          </View>
+        );
+      }
+
+      // Inline mode: renders the interactive text input that triggers the popup modal
       return (
         <DateInput
-          value={inputProps.value}
+          value={inputProps.value !== undefined ? inputProps.value : selectedDate}
           defaultValue={inputProps.defaultValue}
-          onChange={inputProps.onChange}
+          onChange={(d) => {
+            selectDate(d);
+            inputProps.onChange?.(d);
+          }}
+          onConfirm={(d) => {
+            selectDate(d);
+            inputProps.onChange?.(d);
+            inputProps.onConfirm?.(d);
+          }}
+          onCancel={handleModalClose}
+          onClear={() => {
+            clear();
+            onClear?.();
+          }}
           format={activeFormat}
           theme={theme}
           locale={locale}
@@ -259,7 +454,7 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
           placeholder={inputProps.placeholder}
           label={inputProps.label}
           editable={inputProps.editable}
-          style={style}
+          style={pickerStyle}
           inputStyle={inputProps.inputStyle}
           inputContainerStyle={inputProps.inputContainerStyle}
         />
@@ -269,8 +464,17 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
     // 6. Default mode: 'calendar'
     return (
       <Calendar
-        selectedDate={selectedDate}
-        onSelectDate={selectDate}
+        selectedDate={isModalMode ? (draftValue !== undefined ? draftValue : selectedDate) : selectedDate}
+        onSelectDate={(newDate) => {
+          if (isModalMode) {
+            setDraftValue(newDate);
+          } else {
+            selectDate(newDate);
+          }
+          if (isModalMode && autoCloseOnSelect && newDate) {
+            handleConfirmAndClose(newDate);
+          }
+        }}
         theme={theme}
         locale={locale}
         format={activeFormat}
@@ -289,13 +493,16 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
         showActionButtons={showActionButtons}
         showTodayButton={showTodayButton}
         showClearButton={showClearButton}
-        onConfirm={onConfirm as ((date: Date | null) => void) | undefined}
-        onCancel={onCancel}
+        onConfirm={(d) => {
+          handleConfirmAndClose(d ?? draftValue ?? selectedDate);
+        }}
+        onCancel={handleModalClose}
         onClear={() => {
+          if (isModalMode) setDraftValue(null);
           clear();
           onClear?.();
         }}
-        style={style}
+        style={pickerStyle}
       />
     );
   };
@@ -366,19 +573,17 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
   };
 
   const content = (
-    <View testID={testID} style={styles.container}>
-      {/* {renderFormatSelector()} */}
+    <View testID={testID} style={[styles.container, isModalMode && styles.modalContainer]}>
+      {renderFormatSelector()}
       {renderContent()}
     </View>
   );
 
-  if (modal) {
+  if (isModalMode) {
     return (
       <Modal
-        visible={open}
-        onClose={() => {
-          onCancel?.();
-        }}
+        visible={isVisible}
+        onClose={handleModalClose}
         theme={theme}
       >
         {content}
@@ -393,14 +598,19 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
+    width: '100%',
+  },
   formatSelectorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 9,
     paddingHorizontal: 12,
     borderRadius: 14,
     borderWidth: 1,
-    marginBottom: 10,
+    marginBottom: 12,
   },
   formatSelectorTitle: {
     fontSize: 10,
@@ -420,5 +630,13 @@ const styles = StyleSheet.create({
   },
   formatPillText: {
     fontSize: 11,
+  },
+  modalInputWrapper: {
+    width: '100%',
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  modalInputTopSection: {
+    marginBottom: 4,
   },
 });

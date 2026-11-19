@@ -51,6 +51,8 @@ export interface TimePickerProps {
   onConfirm?: (date: Date | null) => void;
   onCancel?: () => void;
   onClear?: () => void;
+  autoCloseOnSelect?: boolean;
+  onClose?: () => void;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -78,6 +80,8 @@ export const TimePicker: React.FC<TimePickerProps> = ({
   onConfirm,
   onCancel,
   onClear,
+  autoCloseOnSelect = false,
+  onClose,
   style,
 }) => {
   // Determine 24-hour mode
@@ -212,6 +216,12 @@ export const TimePicker: React.FC<TimePickerProps> = ({
     const now = new Date();
     const t = getTimeFromDate(now, is24Hour);
     applyTimeChange(t.hours, t.minutes, t.seconds || 0, t.period);
+    if (autoCloseOnSelect) {
+      setTimeout(() => {
+        onConfirm?.(now);
+        onClose?.();
+      }, 200);
+    }
   };
 
   const handleClear = () => {
@@ -224,12 +234,18 @@ export const TimePicker: React.FC<TimePickerProps> = ({
     onClear?.();
   };
 
+  const handleCancel = () => {
+    onCancel?.();
+    onClose?.();
+  };
+
   const handleConfirm = () => {
     if (validation.isValid) {
       const h24 = is24Hour ? hours : (hours === 0 ? 0 : convert12To24(hours, period));
       const base = activeDate || new Date();
       const finalDate = setTimeOnDate(base, h24, minutes, seconds);
       onConfirm?.(finalDate);
+      onClose?.();
     }
   };
 
@@ -465,7 +481,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
       {layout === 'spinner' && (
         <View style={styles.dialContainer}>
           <ClockDial
-            size={228}
+            size={220}
             mode={activeUnit}
             value={activeUnit === 'hours' ? hours : minutes}
             is24Hour={is24Hour}
@@ -476,6 +492,15 @@ export const TimePicker: React.FC<TimePickerProps> = ({
                 setActiveUnit('minutes'); // Smoothly advance to minutes
               } else {
                 applyTimeChange(hours, selectedVal, seconds, period);
+                if (autoCloseOnSelect) {
+                  const h24 = is24Hour ? hours : (hours === 0 ? 0 : convert12To24(hours, period));
+                  const base = activeDate || new Date();
+                  const finalDate = setTimeOnDate(base, h24, selectedVal, seconds);
+                  setTimeout(() => {
+                    onConfirm?.(finalDate);
+                    onClose?.();
+                  }, 250);
+                }
               }
             }}
             theme={theme}
@@ -588,7 +613,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
             {onCancel && (
               <Button
                 title={locale.cancel}
-                onPress={onCancel}
+                onPress={handleCancel}
                 variant="text"
                 size="small"
                 theme={theme}
@@ -613,14 +638,16 @@ export const TimePicker: React.FC<TimePickerProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 14,
+    padding: 12,
     borderWidth: 1,
+    flexGrow: 1,
+    justifyContent: 'space-between',
   },
   topBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   titleBlock: {
     flexDirection: 'row',
@@ -628,46 +655,46 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   mainTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '800',
     letterSpacing: -0.3,
   },
   modeBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 8,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 7,
     borderWidth: 1,
   },
   modeBadgeText: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '800',
     letterSpacing: 0.3,
   },
   layoutPillsContainer: {
     flexDirection: 'row',
-    borderRadius: 10,
+    borderRadius: 8,
     padding: 2,
     borderWidth: 1,
   },
   layoutPill: {
-    paddingHorizontal: 9,
-    paddingVertical: 4,
-    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
   },
   layoutPillText: {
-    fontSize: 11,
+    fontSize: 10,
   },
   heroCard: {
-    borderRadius: 16,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    borderRadius: 14,
+    paddingVertical: 7,
+    paddingHorizontal: 10,
     borderWidth: 1,
-    marginBottom: 10,
+    marginBottom: 8,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
-    shadowRadius: 4,
+    shadowRadius: 3,
     elevation: 1,
   },
   heroCenterBlock: {
@@ -676,32 +703,32 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   heroDigitBox: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 10,
     borderWidth: 1.5,
     alignItems: 'center',
-    minWidth: 72,
+    minWidth: 66,
   },
   heroDigitText: {
     fontWeight: '900',
     letterSpacing: -0.8,
   },
   heroUnitSubtext: {
-    fontSize: 9,
+    fontSize: 8,
     fontWeight: '800',
     marginTop: -2,
-    letterSpacing: 0.6,
+    letterSpacing: 0.5,
   },
   heroColon: {
-    fontSize: 30,
+    fontSize: 26,
     fontWeight: '900',
-    marginHorizontal: 5,
-    marginTop: -8,
+    marginHorizontal: 4,
+    marginTop: -6,
   },
   heroPeriodPill: {
-    marginLeft: 12,
-    borderRadius: 10,
+    marginLeft: 10,
+    borderRadius: 8,
     borderWidth: 1,
     padding: 2,
     gap: 3,
@@ -716,12 +743,15 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
   viewContainer: {
-    paddingVertical: 2,
+    paddingVertical: 4,
+    flex: 1,
+    justifyContent: 'center',
   },
   dialContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 4,
+    paddingVertical: 8,
+    flex: 1,
   },
   fineMinuteContainer: {
     width: '100%',
@@ -851,8 +881,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 12,
-    paddingTop: 10,
+    marginTop: 'auto',
+    paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: 'rgba(0,0,0,0.06)',
   },

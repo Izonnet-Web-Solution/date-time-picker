@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Modal as RNModal,
   View,
+  ScrollView,
   StyleSheet,
   StyleProp,
   ViewStyle,
@@ -34,6 +35,7 @@ export const Modal: React.FC<ModalProps> = ({
       transparent
       animationType="fade"
       onRequestClose={onClose}
+      statusBarTranslucent
     >
       <View style={styles.backdrop}>
         {/* Backdrop touchable overlay to close when tapped outside */}
@@ -50,7 +52,7 @@ export const Modal: React.FC<ModalProps> = ({
           />
         </TouchableWithoutFeedback>
 
-        {/* Modal content dialog: Not wrapped in TouchableWithoutFeedback so child scroll/wheel gestures are never intercepted */}
+        {/* Modal content dialog */}
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={styles.keyboardAvoid}
@@ -60,14 +62,31 @@ export const Modal: React.FC<ModalProps> = ({
             style={[
               styles.card,
               {
-                backgroundColor: theme.backgroundColor,
-                borderRadius: theme.borderRadius,
+                backgroundColor: theme.cardColor || theme.backgroundColor,
+                borderRadius: Math.max(theme.borderRadius ?? 20, 24),
                 borderColor: theme.borderColor,
               },
               contentStyle,
             ]}
           >
-            {children}
+            {/* Top Drag / Sheet Handle Indicator */}
+            <View
+              style={[
+                styles.handleIndicator,
+                { backgroundColor: theme.borderColor },
+              ]}
+            />
+
+            {/* Scrollable Container to prevent overflow on small screens */}
+            <ScrollView
+              bounces={false}
+              showsVerticalScrollIndicator={false}
+              nestedScrollEnabled={true}
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={styles.scrollContent}
+            >
+              {children}
+            </ScrollView>
           </View>
         </KeyboardAvoidingView>
       </View>
@@ -80,7 +99,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 12,
   },
   keyboardAvoid: {
     width: '100%',
@@ -88,14 +107,31 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   card: {
-    width: '100%',
-    maxWidth: 380,
+    width: '95%',
+    maxWidth: 440,
+    minHeight: 450,
+    maxHeight: '94%',
     borderWidth: 1,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.2,
+    shadowRadius: 20,
+    elevation: 16,
     overflow: 'hidden',
+  },
+  handleIndicator: {
+    width: 42,
+    height: 4.5,
+    borderRadius: 3,
+    alignSelf: 'center',
+    marginTop: 10,
+    marginBottom: 8,
+    opacity: 0.5,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 12,
+    paddingBottom: 14,
+    justifyContent: 'space-between',
   },
 });

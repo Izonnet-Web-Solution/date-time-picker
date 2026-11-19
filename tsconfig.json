@@ -25,7 +25,12 @@
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@izonnet-web-solution/react-native-date-picker-kit": ["./src"],
+      "react-native-date-picker-kit": ["./src"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": [

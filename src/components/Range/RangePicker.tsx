@@ -213,6 +213,16 @@ export const RangePicker: React.FC<RangePickerProps> = ({
         <View style={styles.actionsFooter}>
           <View style={styles.leftActions}>
             <Button
+              title={locale.today}
+              variant="text"
+              size="small"
+              theme={theme}
+              onPress={() => {
+                const today = new Date();
+                selectDate(today);
+              }}
+            />
+            <Button
               title={locale.clear}
               variant="text"
               size="small"
@@ -255,6 +265,8 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 1,
     overflow: 'hidden',
+    flexGrow: 1,
+    justifyContent: 'space-between',
   },
   rangeHeader: {
     flexDirection: 'row',
@@ -290,18 +302,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 10,
-    marginTop: 4,
-    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingTop: 12,
+    marginTop: 'auto',
+    borderTopWidth: 1,
     borderTopColor: 'rgba(0,0,0,0.06)',
   },
   leftActions: {
     flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   rightActions: {
     flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   actionBtn: {
-    marginLeft: 6,
+    marginLeft: 0,
   },
 });

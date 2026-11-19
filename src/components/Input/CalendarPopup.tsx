@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import type {
   DatePickerTheme,
@@ -55,10 +55,18 @@ export const CalendarPopup: React.FC<CalendarPopupProps> = ({
   onToggleManualMode,
   onConfirm,
 }) => {
-  const handleConfirm = (date: Date | null) => {
-    if (onConfirm) {
-      onConfirm(date);
+  const [draftDate, setDraftDate] = useState<Date | null>(selectedDate);
+
+  useEffect(() => {
+    if (visible) {
+      setDraftDate(selectedDate);
     }
+  }, [visible, selectedDate]);
+
+  const handleConfirm = (date: Date | null) => {
+    const finalDate = date !== undefined ? date : draftDate;
+    onSelectDate(finalDate);
+    onConfirm?.(finalDate);
     onClose();
   };
 
@@ -66,8 +74,8 @@ export const CalendarPopup: React.FC<CalendarPopupProps> = ({
     <Modal visible={visible} onClose={onClose} theme={theme}>
       <View style={styles.calendarWrapper}>
         <Calendar
-          selectedDate={selectedDate}
-          onSelectDate={onSelectDate}
+          selectedDate={draftDate}
+          onSelectDate={setDraftDate}
           theme={theme}
           locale={locale}
           format={format}
@@ -84,8 +92,11 @@ export const CalendarPopup: React.FC<CalendarPopupProps> = ({
           onManualTextChange={onManualTextChange}
           onToggleManualMode={onToggleManualMode}
           showActionButtons={true}
+          showTodayButton={true}
+          showClearButton={true}
           onConfirm={handleConfirm}
           onCancel={onClose}
+          onClear={() => setDraftDate(null)}
           style={styles.calendarInner}
         />
       </View>
@@ -96,8 +107,11 @@ export const CalendarPopup: React.FC<CalendarPopupProps> = ({
 const styles = StyleSheet.create({
   calendarWrapper: {
     width: '100%',
+    flex: 1,
   },
   calendarInner: {
     borderWidth: 0,
+    backgroundColor: 'transparent',
+    padding: 0,
   },
 });

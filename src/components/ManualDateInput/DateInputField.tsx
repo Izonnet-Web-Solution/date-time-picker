@@ -1,8 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import {
   View,
   TextInput,
   Text,
+  TouchableOpacity,
   StyleSheet,
   StyleProp,
   ViewStyle,
@@ -13,8 +14,8 @@ import type {
   DatePickerTheme,
   DatePickerLocale,
 } from '../../types';
-import { IconButton } from '../common/IconButton';
 import { getPlaceholderForFormat } from '../../utils/dateFormatting';
+import { parseDateStrict } from '../../utils/dateParsing';
 
 export interface DateInputFieldProps {
   value: string;
@@ -46,6 +47,7 @@ export const DateInputField: React.FC<DateInputFieldProps> = ({
   editable = true,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [activeSplitField, setActiveSplitField] = useState<'D' | 'M' | 'Y' | null>(null);
 
   // Split inputs refs
   const dayRef = useRef<TextInput>(null);
@@ -53,15 +55,25 @@ export const DateInputField: React.FC<DateInputFieldProps> = ({
   const yearRef = useRef<TextInput>(null);
 
   const defaultPlaceholder = placeholder || getPlaceholderForFormat(format);
+  const separator = format.includes('-') ? '-' : '/';
+
+  // Compute live validation feedback
+  const parseResult = useMemo(() => {
+    if (!value || !value.trim()) return null;
+    return parseDateStrict(value, format, locale);
+  }, [value, format, locale]);
+
+  const isValidDate = parseResult?.validation.isValid === true;
+  const hasError = isError || (Boolean(value && value.trim()) && !isValidDate);
 
   const getBorderColor = () => {
-    if (isError) return theme.errorColor;
-    if (isFocused) return theme.primaryColor;
+    if (hasError) return theme.errorColor;
+    if (isFocused || activeSplitField !== null) return theme.primaryColor;
     return theme.borderColor;
   };
 
+  // --- SPLIT MODE IMPLEMENTATION ---
   if (type === 'split') {
-    const separator = format.includes('-') ? '-' : '/';
     const rawParts = value.split(separator);
     const formatParts = format.split(separator);
 
@@ -73,7 +85,6 @@ export const DateInputField: React.FC<DateInputFieldProps> = ({
       return 'D';
     }) as ('D' | 'M' | 'Y')[];
 
-    // Map current values based on fieldOrder
     let dayVal = '';
     let monthVal = '';
     let yearVal = '';
@@ -130,152 +141,190 @@ export const DateInputField: React.FC<DateInputFieldProps> = ({
       }
     };
 
-    const renderSplitBox = (fType: 'D' | 'M' | 'Y') => {
-      if (fType === 'D') {
-        return (
-          <View
-            key="day-box"
-            style={[
-              styles.splitBox,
-              {
-                borderColor: getBorderColor(),
-                backgroundColor: theme.surfaceColor,
-                borderRadius: Math.max(theme.borderRadius - 4, 8),
-              },
-            ]}
-          >
-            <Text style={[styles.splitLabel, { color: theme.secondaryTextColor }]}>
-              {locale.dayLabel}
-            </Text>
-            <TextInput
-              ref={dayRef}
-              value={dayVal}
-              onChangeText={handleDayChange}
-              keyboardType="number-pad"
-              maxLength={2}
-              placeholder="DD"
-              placeholderTextColor={theme.disabledTextColor}
-              style={[
-                styles.splitInput,
-                { color: theme.textColor, fontSize: theme.fontSize.medium },
-                inputStyle,
-              ]}
-              editable={editable}
-            />
-          </View>
-        );
-      }
-      if (fType === 'M') {
-        return (
-          <View
-            key="month-box"
-            style={[
-              styles.splitBox,
-              {
-                borderColor: getBorderColor(),
-                backgroundColor: theme.surfaceColor,
-                borderRadius: Math.max(theme.borderRadius - 4, 8),
-              },
-            ]}
-          >
-            <Text style={[styles.splitLabel, { color: theme.secondaryTextColor }]}>
-              {locale.monthLabel}
-            </Text>
-            <TextInput
-              ref={monthRef}
-              value={monthVal}
-              onChangeText={handleMonthChange}
-              keyboardType="number-pad"
-              maxLength={2}
-              placeholder="MM"
-              placeholderTextColor={theme.disabledTextColor}
-              style={[
-                styles.splitInput,
-                { color: theme.textColor, fontSize: theme.fontSize.medium },
-                inputStyle,
-              ]}
-              editable={editable}
-            />
-          </View>
-        );
-      }
+    const renderSplitPod = (fType: 'D' | 'M' | 'Y', index: number) => {
+      const isActive = activeSplitField === fType;
+      const ref = fType === 'D' ? dayRef : (fType === 'M' ? monthRef : yearRef);
+      const val = fType === 'D' ? dayVal : (fType === 'M' ? monthVal : yearVal);
+      const onChangeHandler = fType === 'D' ? handleDayChange : (fType === 'M' ? handleMonthChange : handleYearChange);
+      const titleLabel = fType === 'D' ? (locale.dayLabel || 'DAY') : (fType === 'M' ? (locale.monthLabel || 'MONTH') : (locale.yearLabel || 'YEAR'));
+      const maxLen = fType === 'Y' ? 4 : 2;
+      const placeHolderStr = fType === 'Y' ? 'YYYY' : (fType === 'M' ? 'MM' : 'DD');
+
       return (
-        <View
-          key="year-box"
-          style={[
-            styles.splitBox,
-            {
-              flex: 1.4,
-              borderColor: getBorderColor(),
-              backgroundColor: theme.surfaceColor,
-              borderRadius: Math.max(theme.borderRadius - 4, 8),
-            },
-          ]}
-        >
-          <Text style={[styles.splitLabel, { color: theme.secondaryTextColor }]}>
-            {locale.yearLabel}
-          </Text>
-          <TextInput
-            ref={yearRef}
-            value={yearVal}
-            onChangeText={handleYearChange}
-            keyboardType="number-pad"
-            maxLength={4}
-            placeholder="YYYY"
-            placeholderTextColor={theme.disabledTextColor}
+        <React.Fragment key={fType}>
+          {index > 0 && (
+            <View style={styles.separatorContainer}>
+              <Text style={[styles.separatorText, { color: theme.secondaryTextColor }]}>
+                {separator}
+              </Text>
+            </View>
+          )}
+
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={() => ref.current?.focus()}
             style={[
-              styles.splitInput,
-              { color: theme.textColor, fontSize: theme.fontSize.medium },
-              inputStyle,
+              styles.splitPodCard,
+              {
+                backgroundColor: isActive ? `${theme.primaryColor}0C` : theme.cardColor,
+                borderColor: isActive ? theme.primaryColor : (hasError ? theme.errorColor : theme.borderColor),
+                shadowColor: isActive ? theme.primaryColor : '#000',
+                shadowOpacity: isActive ? 0.18 : 0.04,
+                flex: fType === 'Y' ? 1.35 : 1,
+              },
             ]}
-            editable={editable}
-          />
-        </View>
+          >
+            {/* Mini Segment Badge */}
+            <View
+              style={[
+                styles.splitPodBadge,
+                {
+                  backgroundColor: isActive ? theme.primaryColor : `${theme.textColor}08`,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.splitPodBadgeText,
+                  {
+                    color: isActive ? '#FFFFFF' : theme.secondaryTextColor,
+                  },
+                ]}
+              >
+                {titleLabel.toUpperCase()}
+              </Text>
+            </View>
+
+            {/* Large Prominent Digits Input */}
+            <TextInput
+              ref={ref}
+              value={val}
+              onChangeText={onChangeHandler}
+              onFocus={() => setActiveSplitField(fType)}
+              onBlur={() => setActiveSplitField(null)}
+              keyboardType="number-pad"
+              maxLength={maxLen}
+              placeholder={placeHolderStr}
+              placeholderTextColor={theme.disabledTextColor}
+              style={[
+                styles.splitPodInput,
+                {
+                  color: isActive ? theme.primaryColor : theme.textColor,
+                },
+                inputStyle,
+              ]}
+              editable={editable}
+            />
+          </TouchableOpacity>
+        </React.Fragment>
       );
     };
 
     return (
-      <View style={[styles.container, style]}>
+      <View style={[styles.container, style, { backgroundColor: 'green' }]}>
+        {/* Sleek Top Status & Label Bar */}
+        <View style={styles.topStatusRow}>
+          <View style={styles.topBadgeGroup}>
+            <View style={[styles.pillBadge, { backgroundColor: `${theme.primaryColor}14` }]}>
+              <Text style={[styles.pillBadgeText, { color: theme.primaryColor }]}>
+                📑 SPLIT PODS
+              </Text>
+            </View>
+          </View>
+
+          {value.length > 0 && (
+            <View
+              style={[
+                styles.statusIndicator,
+                {
+                  backgroundColor: isValidDate ? '#10B98118' : '#EF444418',
+                  borderColor: isValidDate ? '#10B98140' : '#EF444440',
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.statusIndicatorText,
+                  { color: isValidDate ? '#10B981' : '#EF4444' },
+                ]}
+              >
+                {isValidDate ? '✓ Complete' : '⚠ Incomplete'}
+              </Text>
+            </View>
+          )}
+        </View>
+
         {label && (
-          <Text
-            style={[
-              styles.label,
-              { color: theme.textColor, fontSize: theme.fontSize.small },
-            ]}
-          >
+          <Text style={[styles.fieldLabel, { color: theme.textColor }]}>
             {label}
           </Text>
         )}
-        <View style={styles.splitRow}>
-          {fieldOrder.map((fType) => renderSplitBox(fType))}
+
+        {/* The 3 Modern Split Pods */}
+        <View style={styles.splitRowContainer}>
+          {fieldOrder.map((fType, idx) => renderSplitPod(fType, idx))}
         </View>
       </View>
     );
   }
 
-  // Single formatted input
+  // --- SINGLE BOX MODE IMPLEMENTATION (UNIQUE MODERN HERO CARD) ---
   return (
-    <View style={[styles.container, style]}>
+    <View style={[styles.container, style,]}>
+      {/* Sleek Top Header Badge Bar */}
+      <View style={styles.topStatusRow}>
+        <View style={styles.topBadgeGroup}>
+          <View style={[styles.pillBadge, { backgroundColor: `${theme.primaryColor}14` }]}>
+            <Text style={[styles.pillBadgeText, { color: theme.primaryColor }]}>
+              ⌨️ SINGLE BOX
+            </Text>
+          </View>
+        </View>
+
+        {value.length > 0 && (
+          <View
+            style={[
+              styles.statusIndicator,
+              {
+                backgroundColor: isValidDate ? '#10B98118' : '#EF444418',
+                borderColor: isValidDate ? '#10B98140' : '#EF444440',
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.statusIndicatorText,
+                { color: isValidDate ? '#10B981' : '#EF4444' },
+              ]}
+            >
+              {isValidDate ? '✓ Valid Date' : '⚠ Invalid'}
+            </Text>
+          </View>
+        )}
+      </View>
+
       {label && (
-        <Text
-          style={[
-            styles.label,
-            { color: theme.textColor, fontSize: theme.fontSize.small },
-          ]}
-        >
+        <Text style={[styles.fieldLabel, { color: theme.textColor }]}>
           {label}
         </Text>
       )}
+
+      {/* Hero Interactive Input Frame */}
       <View
         style={[
-          styles.singleInputContainer,
+          styles.heroInputFrame,
           {
-            backgroundColor: theme.surfaceColor,
+            backgroundColor: isFocused ? `${theme.primaryColor}06` : theme.cardColor,
             borderColor: getBorderColor(),
-            borderRadius: Math.max(theme.borderRadius - 4, 8),
+            shadowColor: isFocused ? theme.primaryColor : '#000',
+            shadowOpacity: isFocused ? 0.16 : 0.04,
           },
         ]}
       >
+        <View style={[styles.heroInputIconBadge, { backgroundColor: `${theme.primaryColor}12` }]}>
+          <Text style={styles.heroInputIcon}>📅</Text>
+        </View>
+
         <TextInput
           value={value}
           onChangeText={onChangeText}
@@ -287,10 +336,9 @@ export const DateInputField: React.FC<DateInputFieldProps> = ({
           maxLength={10}
           editable={editable}
           style={[
-            styles.textInput,
+            styles.heroDigitsInput,
             {
-              color: theme.textColor,
-              fontSize: theme.fontSize.medium,
+              color: isFocused ? theme.primaryColor : theme.textColor,
             },
             inputStyle,
           ]}
@@ -298,14 +346,13 @@ export const DateInputField: React.FC<DateInputFieldProps> = ({
         />
 
         {value.length > 0 && editable && (
-          <IconButton
-            icon="close"
-            size={16}
-            color={theme.secondaryTextColor}
+          <TouchableOpacity
+            activeOpacity={0.7}
             onPress={() => onChangeText('')}
-            accessibilityLabel={locale.clear}
-            style={styles.clearButton}
-          />
+            style={[styles.heroClearBtn, { backgroundColor: `${theme.textColor}12` }]}
+          >
+            <Text style={[styles.heroClearText, { color: theme.secondaryTextColor }]}>✕</Text>
+          </TouchableOpacity>
         )}
       </View>
     </View>
@@ -315,50 +362,132 @@ export const DateInputField: React.FC<DateInputFieldProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    marginVertical: 4,
+    marginVertical: 0,
   },
-  label: {
-    fontWeight: '600',
+  topStatusRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 6,
   },
-  singleInputContainer: {
+  topBadgeGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  pillBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  pillBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  statusIndicator: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+    borderWidth: 1,
+  },
+  statusIndicatorText: {
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  fieldLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    marginBottom: 6,
+    letterSpacing: -0.2,
+  },
+  heroInputFrame: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1.5,
+    borderRadius: 14,
     paddingHorizontal: 12,
     height: 48,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 2,
   },
-  textInput: {
+  heroInputIconBadge: {
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  heroInputIcon: {
+    fontSize: 15,
+  },
+  heroDigitsInput: {
     flex: 1,
     height: '100%',
     padding: 0,
-    fontWeight: '500',
+    fontSize: 18,
+    fontWeight: '800',
+    letterSpacing: 2,
   },
-  clearButton: {
+  heroClearBtn: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginLeft: 6,
   },
-  splitRow: {
+  heroClearText: {
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  splitRowContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
   },
-  splitBox: {
-    flex: 1,
-    marginHorizontal: 3,
+  splitPodCard: {
+    borderRadius: 12,
     borderWidth: 1.5,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingVertical: 6,
+    paddingHorizontal: 6,
     alignItems: 'center',
+    justifyContent: 'center',
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 2,
+    minHeight: 62,
   },
-  splitLabel: {
-    fontSize: 10,
-    fontWeight: '600',
-    textTransform: 'uppercase',
+  splitPodBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 5,
+    marginBottom: 2,
   },
-  splitInput: {
+  splitPodBadgeText: {
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  splitPodInput: {
     width: '100%',
     textAlign: 'center',
-    paddingVertical: 2,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: '800',
+    padding: 0,
+    letterSpacing: 1,
+  },
+  separatorContainer: {
+    paddingHorizontal: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  separatorText: {
+    fontSize: 20,
+    fontWeight: '300',
+    opacity: 0.6,
   },
 });
