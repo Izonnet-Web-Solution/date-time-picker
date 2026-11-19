@@ -290,7 +290,6 @@ function DatePickerDemoApp() {
             { id: 'time-12h', label: '⏰ 12h AM/PM' },
             { id: 'time-24h', label: '⏱️ 24h Military' },
             { id: 'datetime', label: '📅⏰ Date+Time' },
-            { id: 'time-constraints', label: '🔒 Constraints' },
             { id: 'calendar', label: '1. Calendar' },
             { id: 'wheel', label: '2. Wheel Date' },
             { id: 'range', label: '3. Range' },
@@ -433,49 +432,9 @@ function DatePickerDemoApp() {
         {/* --- DEMO 1: 12-HOUR TIME PICKER (AM/PM) --- */}
         {activeTab === 'time-12h' && (
           <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
-            <View style={styles.cardHeader}>
-              <Text style={[styles.cardTitle, { color: textColor }]}>
-                12-Hour Time Picker with AM / PM
-              </Text>
-              <Text style={[styles.cardDesc, { color: subtextColor }]}>
-                Includes 3 interactive modes: Cupertino-style 3D Wheel, Analog Clock Dial, and Precise Steppers.
-              </Text>
-            </View>
-
-            {/* Minute Interval Filter Chips */}
-            <View style={styles.subControlRow}>
-              <Text style={[styles.subControlLabel, { color: subtextColor }]}>Minute Step:</Text>
-              <View style={styles.intervalRow}>
-                {[1, 5, 15, 30].map((step) => {
-                  const isSel = minuteStep12 === step;
-                  return (
-                    <TouchableOpacity
-                      key={step}
-                      onPress={() => setMinuteStep12(step)}
-                      style={[
-                        styles.intervalPill,
-                        {
-                          backgroundColor: isSel ? `${primaryColor}18` : 'transparent',
-                          borderColor: isSel ? primaryColor : borderColor,
-                        },
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.intervalPillText,
-                          { color: isSel ? primaryColor : subtextColor, fontWeight: isSel ? '800' : '600' },
-                        ]}
-                      >
-                        {step}m
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </View>
-
             <DatePicker
               mode="time"
+              timePickerLayout={"wheel"}
               value={time12}
               onChange={setTime12}
               is24Hour={false}
@@ -504,34 +463,6 @@ function DatePickerDemoApp() {
         {/* --- DEMO 2: 24-HOUR TIME PICKER --- */}
         {activeTab === 'time-24h' && (
           <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
-            <View style={styles.cardHeader}>
-              <Text style={[styles.cardTitle, { color: textColor }]}>
-                24-Hour Military Time Picker
-              </Text>
-              <Text style={[styles.cardDesc, { color: subtextColor }]}>
-                Full continuous range from 00:00 to 23:59. Toggle seconds precision on or off with 1 tap.
-              </Text>
-            </View>
-
-            <View style={styles.subControlRow}>
-              <Text style={[styles.subControlLabel, { color: subtextColor }]}>Precision:</Text>
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => setShowSeconds24(!showSeconds24)}
-                style={[
-                  styles.toggleChip,
-                  {
-                    backgroundColor: showSeconds24 ? `${primaryColor}18` : 'transparent',
-                    borderColor: showSeconds24 ? primaryColor : borderColor,
-                  },
-                ]}
-              >
-                <Text style={[styles.toggleChipText, { color: showSeconds24 ? primaryColor : subtextColor }]}>
-                  {showSeconds24 ? '✓ Seconds Enabled (HH:mm:ss)' : '+ Enable Seconds'}
-                </Text>
-              </TouchableOpacity>
-            </View>
-
             <DatePicker
               mode="time"
               value={time24}
@@ -564,49 +495,6 @@ function DatePickerDemoApp() {
         {/* --- DEMO 3: COMBINED DATE + TIME PICKER --- */}
         {activeTab === 'datetime' && (
           <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
-            <View style={styles.cardHeader}>
-              <Text style={[styles.cardTitle, { color: textColor }]}>
-                Combined Date & Time Picker
-              </Text>
-              <Text style={[styles.cardDesc, { color: subtextColor }]}>
-                Synchronized Calendar and Clock tabs emitting a single unified JavaScript Date object.
-              </Text>
-            </View>
-
-            <View style={styles.subControlRow}>
-              <Text style={[styles.subControlLabel, { color: subtextColor }]}>Time Clock:</Text>
-              <View style={[styles.intervalRow]}>
-                <TouchableOpacity
-                  onPress={() => setDateTimeIs24(false)}
-                  style={[
-                    styles.intervalPill,
-                    {
-                      backgroundColor: !dateTimeIs24 ? `${primaryColor}18` : 'transparent',
-                      borderColor: !dateTimeIs24 ? primaryColor : borderColor,
-                    },
-                  ]}
-                >
-                  <Text style={[styles.intervalPillText, { color: !dateTimeIs24 ? primaryColor : subtextColor }]}>
-                    12h AM/PM
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setDateTimeIs24(true)}
-                  style={[
-                    styles.intervalPill,
-                    {
-                      backgroundColor: dateTimeIs24 ? `${primaryColor}18` : 'transparent',
-                      borderColor: dateTimeIs24 ? primaryColor : borderColor,
-                    },
-                  ]}
-                >
-                  <Text style={[styles.intervalPillText, { color: dateTimeIs24 ? primaryColor : subtextColor }]}>
-                    24h
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
             <DatePicker
               mode="datetime"
               value={dateTimeVal}
@@ -638,7 +526,7 @@ function DatePickerDemoApp() {
         )}
 
         {/* --- DEMO 4: TIME CONSTRAINTS & BOUNDARIES --- */}
-        {activeTab === 'time-constraints' && (
+        {/* {activeTab === 'time-constraints' && (
           <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
             <View style={styles.cardHeader}>
               <Text style={[styles.cardTitle, { color: textColor }]}>
@@ -671,19 +559,12 @@ function DatePickerDemoApp() {
               </Text>
             </View>
           </View>
-        )}
+        )} */}
 
         {/* --- DEMO 5: CALENDAR DATE PICKER --- */}
         {activeTab === 'calendar' && (
           <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
-            <View style={styles.cardHeader}>
-              <Text style={[styles.cardTitle, { color: textColor }]}>
-                Interactive Calendar Date Picker
-              </Text>
-              <Text style={[styles.cardDesc, { color: subtextColor }]}>
-                Month navigation, selected day highlighting, disabled weekends (Sundays disabled), and action buttons.
-              </Text>
-            </View>
+
 
             <DatePicker
               mode="calendar"
@@ -715,15 +596,6 @@ function DatePickerDemoApp() {
         {/* --- DEMO 6: WHEEL DATE PICKER --- */}
         {activeTab === 'wheel' && (
           <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
-            <View style={styles.cardHeader}>
-              <Text style={[styles.cardTitle, { color: textColor }]}>
-                Wheel Date Picker (Day / Month / Year)
-              </Text>
-              <Text style={[styles.cardDesc, { color: subtextColor }]}>
-                Smooth scrolling columns for Day, Month, and Year with leap year day synchronization.
-              </Text>
-            </View>
-
             <DatePicker
               mode="wheel"
               value={wheelDate}
@@ -733,16 +605,6 @@ function DatePickerDemoApp() {
               minYear={1970}
               maxYear={2040}
             />
-
-            <View style={[styles.resultTicket, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)', borderColor }]}>
-              <View style={styles.ticketTopRow}>
-                <Text style={[styles.ticketLabel, { color: subtextColor }]}>WHEEL DATE OUTPUT</Text>
-                <View style={[styles.activeDot, { backgroundColor: '#10B981' }]} />
-              </View>
-              <Text style={[styles.ticketValue, { color: textColor }]}>
-                {wheelDate ? formatDate(wheelDate, 'DD/MM/YYYY', currentLocale) : 'None'}
-              </Text>
-            </View>
           </View>
         )}
 
@@ -768,32 +630,13 @@ function DatePickerDemoApp() {
               locale={currentLocale}
             />
 
-            <View style={[styles.resultTicket, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)', borderColor }]}>
-              <View style={styles.ticketTopRow}>
-                <Text style={[styles.ticketLabel, { color: subtextColor }]}>SELECTED RANGE</Text>
-                <View style={[styles.activeDot, { backgroundColor: '#10B981' }]} />
-              </View>
-              <Text style={[styles.ticketValue, { color: textColor }]}>
-                {range.startDate ? formatDate(range.startDate, 'DD/MM/YYYY', currentLocale) : '--'}
-                {'  →  '}
-                {range.endDate ? formatDate(range.endDate, 'DD/MM/YYYY', currentLocale) : '--'}
-              </Text>
-            </View>
+
           </View>
         )}
 
         {/* --- DEMO 8: INPUT MODAL PICKER --- */}
         {activeTab === 'input' && (
           <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
-            <View style={styles.cardHeader}>
-              <Text style={[styles.cardTitle, { color: textColor }]}>
-                Input Field with Modal Popup
-              </Text>
-              <Text style={[styles.cardDesc, { color: subtextColor }]}>
-                Tap the text field to open a smooth pop-up calendar modal.
-              </Text>
-            </View>
-
             <DatePicker
               mode="input"
               value={inputDate}
@@ -804,87 +647,24 @@ function DatePickerDemoApp() {
               theme={themeMode}
               locale={currentLocale}
             />
-
-            <View style={[styles.resultTicket, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)', borderColor }]}>
-              <View style={styles.ticketTopRow}>
-                <Text style={[styles.ticketLabel, { color: subtextColor }]}>CURRENT DATE VALUE ({selectedDateFormat})</Text>
-                <View style={[styles.activeDot, { backgroundColor: '#10B981' }]} />
-              </View>
-              <Text style={[styles.ticketValue, { color: textColor }]}>
-                {inputDate ? formatDate(inputDate, selectedDateFormat, currentLocale) : 'None'}
-              </Text>
-            </View>
           </View>
         )}
 
         {/* --- DEMO 9: CUSTOM MANUAL DATE ENTRY --- */}
         {activeTab === 'manual' && (
           <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
-            <View style={styles.cardHeader}>
-              <Text style={[styles.cardTitle, { color: textColor }]}>
-                Custom Manual Date Typing
-              </Text>
-              <Text style={[styles.cardDesc, { color: subtextColor }]}>
-                Strict date entry with immediate feedback for leap year days and month bounds.
-              </Text>
-            </View>
-
-            <View style={styles.subControlRow}>
-              <Text style={[styles.subControlLabel, { color: subtextColor }]}>Field Layout:</Text>
-              <View style={styles.intervalRow}>
-                <TouchableOpacity
-                  onPress={() => setManualType('single')}
-                  style={[
-                    styles.intervalPill,
-                    {
-                      backgroundColor: manualType === 'single' ? `${primaryColor}18` : 'transparent',
-                      borderColor: manualType === 'single' ? primaryColor : borderColor,
-                    },
-                  ]}
-                >
-                  <Text style={[styles.intervalPillText, { color: manualType === 'single' ? primaryColor : subtextColor }]}>
-                    Single Field
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setManualType('split')}
-                  style={[
-                    styles.intervalPill,
-                    {
-                      backgroundColor: manualType === 'split' ? `${primaryColor}18` : 'transparent',
-                      borderColor: manualType === 'split' ? primaryColor : borderColor,
-                    },
-                  ]}
-                >
-                  <Text style={[styles.intervalPillText, { color: manualType === 'split' ? primaryColor : subtextColor }]}>
-                    Split Boxes
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
             <DatePicker
               mode="calendar"
               value={manualDate}
               onChange={setManualDate}
               allowManualEntry={true}
-              manualEntryType={manualType}
+              manualEntryType={"split"}
               format={selectedDateFormat}
               showFormatSelector={true}
               onFormatChange={setSelectedDateFormat}
               theme={themeMode}
               locale={currentLocale}
             />
-
-            <View style={[styles.resultTicket, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)', borderColor }]}>
-              <View style={styles.ticketTopRow}>
-                <Text style={[styles.ticketLabel, { color: subtextColor }]}>SYNCHRONIZED CALENDAR VALUE ({selectedDateFormat})</Text>
-                <View style={[styles.activeDot, { backgroundColor: '#10B981' }]} />
-              </View>
-              <Text style={[styles.ticketValue, { color: textColor }]}>
-                {manualDate ? formatDate(manualDate, selectedDateFormat, currentLocale) : 'None'}
-              </Text>
-            </View>
           </View>
         )}
       </ScrollView>

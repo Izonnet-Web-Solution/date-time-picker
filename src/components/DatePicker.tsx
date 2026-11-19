@@ -73,8 +73,8 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
   const defaultFormat = mode === 'time'
     ? (is24Hour ? 'HH:mm' : 'hh:mm A')
     : (mode === 'datetime'
-        ? (is24Hour ? 'DD/MM/YYYY HH:mm' : 'DD/MM/YYYY hh:mm A')
-        : 'DD/MM/YYYY');
+      ? (is24Hour ? 'DD/MM/YYYY HH:mm' : 'DD/MM/YYYY hh:mm A')
+      : 'DD/MM/YYYY');
 
   const [activeFormat, setActiveFormat] = useState<DateFormat>(() => format || defaultFormat);
 
@@ -367,7 +367,7 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
 
   const content = (
     <View testID={testID} style={styles.container}>
-      {renderFormatSelector()}
+      {/* {renderFormatSelector()} */}
       {renderContent()}
     </View>
   );

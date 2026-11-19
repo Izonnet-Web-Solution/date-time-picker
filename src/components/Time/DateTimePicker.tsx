@@ -153,32 +153,6 @@ export const DateTimePicker: React.FC<DateTimePickerComponentProps> = ({
         style,
       ]}
     >
-      {/* Top Banner Ticket Display */}
-      <View
-        style={[
-          styles.previewBanner,
-          {
-            backgroundColor: theme.cardColor,
-            borderColor: theme.borderColor,
-          },
-        ]}
-      >
-        <View style={styles.previewHeaderRow}>
-          <Text style={[styles.previewLabel, { color: theme.secondaryTextColor }]}>
-            SCHEDULED DATE & TIME
-          </Text>
-          <View style={[styles.statusBadge, { backgroundColor: `${theme.primaryColor}15` }]}>
-            <Text style={[styles.statusBadgeText, { color: theme.primaryColor }]}>
-              {activeTab === 'date' ? 'Step 1: Pick Date' : 'Step 2: Pick Time'}
-            </Text>
-          </View>
-        </View>
-
-        <Text style={[styles.previewValue, { color: theme.textColor }]}>
-          {formatDate(currentDate, displayFormat, locale)}
-        </Text>
-      </View>
-
       {/* Segmented Tab Switcher: [ 📅 Date ] [ ⏰ Time ] */}
       <View
         style={[
