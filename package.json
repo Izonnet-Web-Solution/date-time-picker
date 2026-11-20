@@ -13,6 +13,7 @@
   "files": [
     "lib",
     "src",
+    "assets",
     "README.md",
     "LICENSE",
     "CHANGELOG.md"

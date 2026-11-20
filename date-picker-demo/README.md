@@ -1,97 +1,129 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# DatePicker Kit Demo App
 
-# Getting Started
+<div align="center">
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+![React Native](https://img.shields.io/badge/React%20Native-0.74%2B-61DAFB?logo=react&logoColor=black)
+![Platform](https://img.shields.io/badge/Platform-iOS%20%7C%20Android-brightgreen.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-100%25-3178C6?logo=typescript&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Production%20Ready-success.svg)
 
-## Step 1: Start Metro
+**Interactive showcase and testing application for `@izonnet-web-solution/react-native-date-picker-kit`.**  
+Explore all 8 picker modes, live color customization, multilingual localization, format switching, and modal dialog interactions.
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+</div>
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+---
 
-```sh
-# Using npm
+## 📸 Screenshots & Visual Previews
+
+<div align="center">
+
+### Date Pickers & Month/Year Selector
+| Calendar (Violet) | Calendar (Sky Blue) | Wheel Date Picker | Month & Year Fast Modal |
+|:---:|:---:|:---:|:---:|
+| <img src="./screenshots/calendar-picker.jpg" width="200" alt="Calendar Picker Violet" /> | <img src="./screenshots/calendar-picker-blue.jpg" width="200" alt="Calendar Picker Sky Blue" /> | <img src="./screenshots/wheel-date-picker.jpg" width="200" alt="Wheel Date Picker" /> | <img src="./screenshots/month-year-selector-modal.jpg" width="200" alt="Month Year Selector Modal" /> |
+
+### Time & DateTime Pickers
+| 12-Hour Time (Wheel) | 24-Hour Military Time | DateTime (Date Tab) | DateTime (Time Tab) |
+|:---:|:---:|:---:|:---:|
+| <img src="./screenshots/time-12h-wheel.jpg" width="200" alt="12-Hour Time Picker" /> | <img src="./screenshots/time-24h-military-blue.jpg" width="200" alt="24-Hour Military Time" /> | <img src="./screenshots/datetime-picker-date.jpg" width="200" alt="DateTime Picker Date Tab" /> | <img src="./screenshots/datetime-picker-time-blue.jpg" width="200" alt="DateTime Picker Time Tab" /> |
+
+### Range & Manual Keyboard Entry Pickers
+| Date Range Picker | Input Modal Picker | Manual Entry (Single Box) | Manual Entry (Split Pods) |
+|:---:|:---:|:---:|:---:|
+| <img src="./screenshots/range-picker.jpg" width="200" alt="Date Range Picker" /> | <img src="./screenshots/input-modal-picker.jpg" width="200" alt="Input Modal Picker" /> | <img src="./screenshots/manual-entry-single.jpg" width="200" alt="Manual Entry Single Box" /> | <img src="./screenshots/manual-entry-split.jpg" width="200" alt="Manual Entry Split Pods" /> |
+
+</div>
+
+---
+
+## 🚀 Getting Started
+
+Follow these steps to run the demo app locally:
+
+### 1. Install Dependencies
+
+From the repository root or demo directory:
+
+```bash
+cd date-picker-demo
+npm install
+```
+
+### 2. Start Metro Bundler
+
+```bash
 npm start
-
-# OR using Yarn
-yarn start
 ```
 
-## Step 2: Build and run your app
+### 3. Run on Device or Emulator
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
+#### Android:
+```bash
 npm run android
-
-# OR using Yarn
-yarn android
 ```
 
-### iOS
+#### iOS:
+```bash
+# Install CocoaPods for iOS (first time or when updating native dependencies)
+cd ios && pod install && cd ..
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+# Run iOS Simulator
 npm run ios
-
-# OR using Yarn
-yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+---
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## 🎛️ Interactive Features Demonstrated in this App
 
-## Step 3: Modify your app
+### 1. Global Configuration Card (Top Section)
+- 🌓 **Appearance Mode**: Toggle between **Light** and **Dark** themes.
+- 🌐 **Language / Locale Switcher**: Instant switching between:
+  - **English** (`en`)
+  - **हिंदी** (`hi`)
+  - **ગુજરાતી** (`gu`)
+- 🔤 **Format Switcher Bar**: Live date token testing:
+  - `DD/MM/YYYY`
+  - `MM/DD/YYYY`
+  - `YYYY/DD/MM`
+  - `YYYY/MM/DD`
+- 🎨 **Modal Color Customizer**: Live 8-color preset selector:
+  - 🟣 **Indigo** (`#4F46E5`)
+  - 🟢 **Emerald** (`#10B981`)
+  - 🟣 **Violet** (`#8B5CF6`)
+  - 🌹 **Rose** (`#F43F5E`)
+  - 🟠 **Amber** (`#F59E0B`)
+  - 🔵 **Sky Blue** (`#0EA5E9`)
+  - 🩵 **Teal** (`#14B8A6`)
+  - 🔴 **Crimson** (`#EF4444`)  
+  *Tapping any color immediately updates every modal dialog, calendar highlights, and buttons across all tabs!*
 
-Now that you have successfully run the app, let's make changes!
+---
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+### 2. Feature Tabs Breakdown
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+| Tab | Key Highlights Demonstrated |
+|---|---|
+| **📅 Calendar** | Modal calendar dialog, month navigation, Sunday disabled, min/max date limits, Today/Clear/Cancel/Confirm actions |
+| **🎡 Wheel Date** | Smooth Day, Month, and Year spinning wheel columns with inertial scrolling |
+| **🕒 Time (12H)** | 12-hour clock (01–12), instant AM/PM toggle, minute interval pills (1m, 5m, 15m, 30m) |
+| **⏱️ Time (24H)** | 24-hour military clock (00–23), seconds toggle pill (`HH:mm:ss`) |
+| **🧭 Spinner Dial** | Analog clock face with touch angle needle pointer |
+| **🗓️ DateTime** | Unified tabbed dialog (`Select Date` & `Time`), synced live timestamp output |
+| **↔️ Date Range** | Start Date and End Date cards, connecting range ribbon, `maxRangeDays={14}` limit |
+| **📝 Input Picker** | Prominent modal launch card + inline interactive text field with calendar popup icon |
+| **⌨️ Manual Input** | Live switcher between **Single Box** auto-masking and **Split Pods** (Day/Month/Year separate boxes) |
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+---
 
-## Congratulations! :tada:
+## 🔗 Architecture & Local Development
 
-You've successfully run and modified your React Native App. :partying_face:
+In `metro.config.js`, `@izonnet-web-solution/react-native-date-picker-kit` resolves directly to `../src/index.ts`. This means:
+- Any edits made in `../src/` are immediately picked up via **Fast Refresh** in this demo app without needing to rebuild or reinstall packages.
 
-### Now what?
+---
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+## 📄 License
 
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+MIT © [Izonnet Web Solution](https://github.com/Izonnet-Web-Solution)  
+Authored by Jenil.
