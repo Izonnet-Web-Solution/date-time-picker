@@ -9,6 +9,8 @@
 ![Tests](https://img.shields.io/badge/Tests-93%20passed-success.svg)
 ![Zero Native Dependencies](https://img.shields.io/badge/Dependencies-Zero%20Native-orange.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-date--time--picker-181717?logo=github)](https://github.com/Izonnet-Web-Solution/date-time-picker)
+[![Issues](https://img.shields.io/github/issues/Izonnet-Web-Solution/date-time-picker)](https://github.com/Izonnet-Web-Solution/date-time-picker/issues)
 
 **A production-grade, highly customizable, and lightweight React Native Date & Time Picker library.**  
 Built entirely in 100% pure TypeScript and React Native core components — zero native linking, zero `pod install`, works seamlessly with bare React Native and Expo Go with 60 FPS performance.
@@ -67,6 +69,7 @@ Built entirely in 100% pure TypeScript and React Native core components — zero
 - [Comprehensive Props Reference](#-comprehensive-props-reference)
 - [Exported Components & Hooks](#-exported-components--hooks)
 - [Testing & Quality Assurance](#-testing--quality-assurance)
+- [Links & Resources](#-links--resources)
 - [License](#-license)
 
 ---
@@ -925,7 +928,16 @@ npm run build
 
 ---
 
+## 🔗 Links & Resources
+
+- 📦 **GitHub Repository**: [https://github.com/Izonnet-Web-Solution/date-time-picker](https://github.com/Izonnet-Web-Solution/date-time-picker)
+- 📖 **Documentation & Readme**: [https://github.com/Izonnet-Web-Solution/date-time-picker#readme](https://github.com/Izonnet-Web-Solution/date-time-picker#readme)
+- 🐛 **Issue Tracker & Bug Reports**: [https://github.com/Izonnet-Web-Solution/date-time-picker/issues](https://github.com/Izonnet-Web-Solution/date-time-picker/issues)
+
+---
+
 ## 📄 License
 
 MIT © [Izonnet Web Solution](https://github.com/Izonnet-Web-Solution)  
+Repository: [date-time-picker](https://github.com/Izonnet-Web-Solution/date-time-picker)  
 Authored by Jenil.

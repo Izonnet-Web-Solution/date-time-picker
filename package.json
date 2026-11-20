@@ -70,12 +70,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Izonnet-Web-Solution/react-native-date-picker-kit.git"
+    "url": "git+https://github.com/Izonnet-Web-Solution/date-time-picker.git"
   },
   "bugs": {
-    "url": "https://github.com/Izonnet-Web-Solution/react-native-date-picker-kit/issues"
+    "url": "https://github.com/Izonnet-Web-Solution/date-time-picker/issues"
   },
-  "homepage": "https://github.com/Izonnet-Web-Solution/react-native-date-picker-kit#readme",
+  "homepage": "https://github.com/Izonnet-Web-Solution/date-time-picker#readme",
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-native": ">=0.68.0"

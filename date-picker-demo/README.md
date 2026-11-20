@@ -6,6 +6,7 @@
 ![Platform](https://img.shields.io/badge/Platform-iOS%20%7C%20Android-brightgreen.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-100%25-3178C6?logo=typescript&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-success.svg)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-date--time--picker-181717?logo=github)](https://github.com/Izonnet-Web-Solution/date-time-picker)
 
 **Interactive showcase and testing application for `@izonnet-web-solution/react-native-date-picker-kit`.**  
 Explore all 8 picker modes, live color customization, multilingual localization, format switching, and modal dialog interactions.
@@ -123,7 +124,16 @@ In `metro.config.js`, `@izonnet-web-solution/react-native-date-picker-kit` resol
 
 ---
 
+## 🔗 Links & Resources
+
+- 📦 **GitHub Repository**: [https://github.com/Izonnet-Web-Solution/date-time-picker](https://github.com/Izonnet-Web-Solution/date-time-picker)
+- 📖 **Documentation & Readme**: [https://github.com/Izonnet-Web-Solution/date-time-picker#readme](https://github.com/Izonnet-Web-Solution/date-time-picker#readme)
+- 🐛 **Issue Tracker & Bug Reports**: [https://github.com/Izonnet-Web-Solution/date-time-picker/issues](https://github.com/Izonnet-Web-Solution/date-time-picker/issues)
+
+---
+
 ## 📄 License
 
 MIT © [Izonnet Web Solution](https://github.com/Izonnet-Web-Solution)  
+Repository: [date-time-picker](https://github.com/Izonnet-Web-Solution/date-time-picker)  
 Authored by Jenil.
