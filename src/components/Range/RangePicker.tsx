@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { View, Text, StyleSheet, StyleProp, ViewStyle, TouchableOpacity } from 'react-native';
 import type {
   DatePickerTheme,
   DatePickerLocale,
@@ -107,6 +107,10 @@ export const RangePicker: React.FC<RangePickerProps> = ({
     ? formatDate(range.endDate, format, locale)
     : '--/--/----';
 
+  const isSelectingEnd = isSelectingEndDate;
+  const isSelectingStart = !range.startDate || Boolean(range.startDate && range.endDate);
+  const defaultBorderColor = theme.borderColor === '#E2E8F0' ? '#CBD5E1' : theme.borderColor;
+
   return (
     <View
       style={[
@@ -120,60 +124,135 @@ export const RangePicker: React.FC<RangePickerProps> = ({
       ]}
     >
       {/* Range Status Header */}
-      <View
-        style={[
-          styles.rangeHeader,
-          {
-            backgroundColor: theme.surfaceColor,
-            borderColor: theme.borderColor,
-          },
-        ]}
-      >
-        <View style={styles.rangeColumn}>
+      <View style={styles.rangeHeaderContainer}>
+        {/* Start Date Card Box */}
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => {
+            if (range.startDate && range.endDate) {
+              clearRange();
+            }
+          }}
+          style={[
+            styles.dateCard,
+            {
+              backgroundColor: isSelectingStart && !range.startDate
+                ? `${theme.primaryColor}0C`
+                : (theme.cardColor || theme.surfaceColor),
+              borderColor: isSelectingStart && !range.startDate
+                ? theme.primaryColor
+                : (range.startDate ? `${theme.primaryColor}80` : defaultBorderColor),
+            },
+          ]}
+        >
+          <View style={styles.dateCardHeader}>
+            <View
+              style={[
+                styles.statusDot,
+                {
+                  backgroundColor: range.startDate
+                    ? theme.primaryColor
+                    : (isSelectingStart ? theme.primaryColor : theme.disabledTextColor),
+                },
+              ]}
+            />
+            <Text
+              style={[
+                styles.dateCardLabel,
+                {
+                  color: range.startDate || isSelectingStart
+                    ? theme.primaryColor
+                    : theme.secondaryTextColor,
+                },
+              ]}
+              numberOfLines={1}
+            >
+              {locale.startDate}
+            </Text>
+          </View>
           <Text
             style={[
-              styles.rangeLabel,
-              { color: theme.secondaryTextColor, fontSize: theme.fontSize.small },
-            ]}
-          >
-            {locale.startDate}
-          </Text>
-          <Text
-            style={[
-              styles.rangeValue,
+              styles.dateCardValue,
               {
                 color: range.startDate ? theme.textColor : theme.disabledTextColor,
                 fontSize: theme.fontSize.medium,
               },
             ]}
+            numberOfLines={1}
           >
             {formattedStart}
           </Text>
+        </TouchableOpacity>
+
+        {/* Center Arrow Connector */}
+        <View
+          style={[
+            styles.arrowBadge,
+            {
+              backgroundColor: `${theme.primaryColor}12`,
+              borderColor: `${theme.primaryColor}30`,
+            },
+          ]}
+        >
+          <Text style={[styles.arrowText, { color: theme.primaryColor }]}>→</Text>
         </View>
 
-        <Text style={[styles.arrow, { color: theme.secondaryTextColor }]}>→</Text>
-
-        <View style={styles.rangeColumn}>
+        {/* End Date Card Box */}
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={[
+            styles.dateCard,
+            {
+              backgroundColor: isSelectingEnd
+                ? `${theme.primaryColor}0C`
+                : (theme.cardColor || theme.surfaceColor),
+              borderColor: isSelectingEnd
+                ? theme.primaryColor
+                : (range.endDate ? `${theme.primaryColor}80` : defaultBorderColor),
+            },
+          ]}
+        >
+          <View style={styles.dateCardHeader}>
+            <View
+              style={[
+                styles.statusDot,
+                {
+                  backgroundColor: range.endDate
+                    ? theme.primaryColor
+                    : (isSelectingEnd ? theme.primaryColor : theme.disabledTextColor),
+                },
+              ]}
+            />
+            <Text
+              style={[
+                styles.dateCardLabel,
+                {
+                  color: range.endDate || isSelectingEnd
+                    ? theme.primaryColor
+                    : theme.secondaryTextColor,
+                },
+              ]}
+              numberOfLines={1}
+            >
+              {locale.endDate}
+            </Text>
+          </View>
           <Text
             style={[
-              styles.rangeLabel,
-              { color: theme.secondaryTextColor, fontSize: theme.fontSize.small },
-            ]}
-          >
-            {locale.endDate}
-          </Text>
-          <Text
-            style={[
-              styles.rangeValue,
+              styles.dateCardValue,
               {
-                color: range.endDate ? theme.textColor : theme.disabledTextColor,
+                color: range.endDate
+                  ? theme.textColor
+                  : (isSelectingEnd ? theme.primaryColor : theme.disabledTextColor),
                 fontSize: theme.fontSize.medium,
+                fontWeight: isSelectingEnd ? '600' : '700',
               },
             ]}
+            numberOfLines={1}
           >
-            {isSelectingEndDate ? locale.selectDate : formattedEnd}
+            {isSelectingEnd ? locale.selectDate : formattedEnd}
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
 
       <CalendarHeader
@@ -268,29 +347,61 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'space-between',
   },
-  rangeHeader: {
+  rangeHeaderContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    marginBottom: 8,
+    width: '100%',
+    paddingTop: 4,
+    paddingBottom: 2,
+    marginBottom: 10,
   },
-  rangeColumn: {
+  dateCard: {
     flex: 1,
+    paddingVertical: 9,
+    paddingHorizontal: 11,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+
   },
-  rangeLabel: {
-    fontWeight: '600',
+  dateCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+    gap: 5,
+  },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  dateCardLabel: {
+    fontSize: 10,
+    fontWeight: '800',
     textTransform: 'uppercase',
-    marginBottom: 2,
+    letterSpacing: 0.5,
   },
-  rangeValue: {
+  dateCardValue: {
     fontWeight: '700',
+    letterSpacing: 0.2,
   },
-  arrow: {
-    fontSize: 18,
-    marginHorizontal: 8,
+  arrowBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 6,
+  },
+  arrowText: {
+    fontSize: 14,
+    fontWeight: '700',
   },
   grid: {
     flexDirection: 'row',
@@ -302,7 +413,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 12,
+    paddingTop: 10,
+    paddingBottom: 2,
     marginTop: 'auto',
     borderTopWidth: 1,
     borderTopColor: 'rgba(0,0,0,0.06)',
