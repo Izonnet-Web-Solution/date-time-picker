@@ -221,7 +221,7 @@ export const DateInputField: React.FC<DateInputFieldProps> = ({
     };
 
     return (
-      <View style={[styles.container, style, { backgroundColor: 'green' }]}>
+      <View style={[styles.container, style]}>
         {/* Sleek Top Status & Label Bar */}
         <View style={styles.topStatusRow}>
           <View style={styles.topBadgeGroup}>
@@ -270,7 +270,7 @@ export const DateInputField: React.FC<DateInputFieldProps> = ({
 
   // --- SINGLE BOX MODE IMPLEMENTATION (UNIQUE MODERN HERO CARD) ---
   return (
-    <View style={[styles.container, style,]}>
+    <View style={[styles.container, style]}>
       {/* Sleek Top Header Badge Bar */}
       <View style={styles.topStatusRow}>
         <View style={styles.topBadgeGroup}>
@@ -410,7 +410,7 @@ const styles = StyleSheet.create({
     height: 48,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
-    elevation: 2,
+    // elevation: 2,
   },
   heroInputIconBadge: {
     width: 30,

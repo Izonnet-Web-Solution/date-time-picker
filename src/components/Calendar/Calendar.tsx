@@ -228,10 +228,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   manualContainer: {
-    paddingVertical: 8,
+    paddingTop: 6,
+    paddingBottom: 8,
     paddingHorizontal: 4,
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   actionsFooter: {
     flexDirection: 'row',
