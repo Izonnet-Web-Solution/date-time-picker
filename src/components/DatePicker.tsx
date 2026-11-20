@@ -43,6 +43,9 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
     accentColor,
     textColor,
     backgroundColor,
+    cardColor,
+    modalBackgroundColor,
+    modalContentStyle,
     borderRadius,
     minimumDate,
     maximumDate,
@@ -80,6 +83,8 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
     accentColor,
     textColor,
     backgroundColor,
+    cardColor,
+    modalBackgroundColor,
     borderRadius,
   });
 
@@ -755,7 +760,7 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
           visible={isVisible && !isMonthYearSelectorOpen}
           onClose={handleModalClose}
           theme={theme}
-          contentStyle={isManualModal ? styles.manualModalCard : undefined}
+          contentStyle={[isManualModal ? styles.manualModalCard : undefined, modalContentStyle]}
         >
           {content}
         </Modal>

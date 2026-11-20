@@ -99,7 +99,8 @@ function DatePickerDemoApp() {
   const cardBg = isDark ? '#151D2F' : '#FFFFFF';
   const textColor = isDark ? '#F1F5F9' : '#0F172A';
   const subtextColor = isDark ? '#94A3B8' : '#64748B';
-  const primaryColor = '#4F46E5'; // Modern Indigo
+  const [accentColor, setAccentColor] = useState<string>('#4F46E5'); // User-customizable Modal / Accent color
+  const primaryColor = accentColor;
   const borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
 
   return (
@@ -284,6 +285,66 @@ function DatePickerDemoApp() {
               })}
             </ScrollView>
           </View>
+
+          {/* Modal & Accent Color Customizer */}
+          <View style={[styles.controlRow, { marginTop: 10 }]}>
+            <Text style={[styles.controlLabel, { color: textColor }]}>Modal Color:</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={[
+                styles.pillGroup,
+                { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)', gap: 6, paddingHorizontal: 6, paddingVertical: 4 },
+              ]}
+            >
+              {[
+                { name: 'Indigo', color: '#4F46E5' },
+                { name: 'Emerald', color: '#10B981' },
+                { name: 'Violet', color: '#8B5CF6' },
+                { name: 'Rose', color: '#F43F5E' },
+                { name: 'Amber', color: '#F59E0B' },
+                { name: 'Sky Blue', color: '#0EA5E9' },
+                { name: 'Teal', color: '#14B8A6' },
+                { name: 'Crimson', color: '#EF4444' },
+              ].map((c) => {
+                const isSelected = accentColor === c.color;
+                return (
+                  <TouchableOpacity
+                    key={c.color}
+                    activeOpacity={0.8}
+                    onPress={() => setAccentColor(c.color)}
+                    style={[
+                      styles.colorPill,
+                      isSelected && {
+                        backgroundColor: cardBg,
+                        borderColor: c.color,
+                        borderWidth: 2,
+                        shadowColor: c.color,
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.35,
+                        shadowRadius: 4,
+                        elevation: 3,
+                      },
+                    ]}
+                  >
+                    <View style={[styles.colorDot, { backgroundColor: c.color }]} />
+                    <Text
+                      style={[
+                        styles.colorPillText,
+                        {
+                          color: isSelected ? c.color : subtextColor,
+                          fontWeight: isSelected ? '800' : '600',
+                          fontSize: 11,
+                        },
+                      ]}
+                    >
+                      {c.name}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </View>
         </View>
 
         {/* Feature Category Navigation Tabs */}
@@ -376,6 +437,7 @@ function DatePickerDemoApp() {
               }}
               onClose={() => setDialModalOpen(false)}
               onCancel={() => setDialModalOpen(false)}
+              accentColor={accentColor}
               theme={themeMode}
               locale={currentLocale}
               format="hh:mm A"
@@ -522,6 +584,7 @@ function DatePickerDemoApp() {
               onCancel={() => setTime12ModalOpen(false)}
               is24Hour={false}
               minuteInterval={minuteStep12}
+              accentColor={accentColor}
               theme={themeMode}
               locale={currentLocale}
               format="hh:mm A"
@@ -634,6 +697,7 @@ function DatePickerDemoApp() {
               onCancel={() => setTime24ModalOpen(false)}
               is24Hour={true}
               showSeconds={showSeconds24}
+              accentColor={accentColor}
               theme={themeMode}
               locale={currentLocale}
               format={showSeconds24 ? 'HH:mm:ss' : 'HH:mm'}
@@ -755,6 +819,7 @@ function DatePickerDemoApp() {
               onClose={() => setDateTimeModalOpen(false)}
               onCancel={() => setDateTimeModalOpen(false)}
               is24Hour={dateTimeIs24}
+              accentColor={accentColor}
               theme={themeMode}
               locale={currentLocale}
               format={dateTimeIs24 ? 'DD/MM/YYYY HH:mm' : 'DD/MM/YYYY hh:mm A'}
@@ -861,6 +926,7 @@ function DatePickerDemoApp() {
               }}
               onClose={() => setCalendarModalOpen(false)}
               onCancel={() => setCalendarModalOpen(false)}
+              accentColor={accentColor}
               theme={themeMode}
               locale={currentLocale}
               format={selectedDateFormat}
@@ -944,6 +1010,7 @@ function DatePickerDemoApp() {
               }}
               onClose={() => setWheelModalOpen(false)}
               onCancel={() => setWheelModalOpen(false)}
+              accentColor={accentColor}
               theme={themeMode}
               locale={currentLocale}
               minYear={1970}
@@ -1026,6 +1093,7 @@ function DatePickerDemoApp() {
               onClose={() => setRangeModalOpen(false)}
               onCancel={() => setRangeModalOpen(false)}
               maxRangeDays={14}
+              accentColor={accentColor}
               theme={themeMode}
               locale={currentLocale}
             />
@@ -1109,6 +1177,7 @@ function DatePickerDemoApp() {
               label="Date"
               format={selectedDateFormat}
               allowManualEntry={true}
+              accentColor={accentColor}
               theme={themeMode}
               locale={currentLocale}
             />
@@ -1126,6 +1195,7 @@ function DatePickerDemoApp() {
                 label="Date"
                 format={selectedDateFormat}
                 allowManualEntry={true}
+                accentColor={accentColor}
                 theme={themeMode}
                 locale={currentLocale}
               />
@@ -1247,6 +1317,7 @@ function DatePickerDemoApp() {
               allowManualEntry={true}
               manualEntryType={manualType}
               format={selectedDateFormat}
+              accentColor={accentColor}
               theme={themeMode}
               locale={currentLocale}
             />
@@ -1264,6 +1335,7 @@ function DatePickerDemoApp() {
                 value={manualDate}
                 onChange={setManualDate}
                 format={selectedDateFormat}
+                accentColor={accentColor}
                 theme={themeMode}
                 locale={currentLocale}
               />
@@ -1413,6 +1485,22 @@ const styles = StyleSheet.create({
   },
   pillText: {
     fontSize: 12,
+  },
+  colorPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+  },
+  colorDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+  colorPillText: {
+    fontSize: 11,
   },
   subControlRow: {
     flexDirection: 'row',

@@ -197,6 +197,21 @@ export interface BaseDatePickerProps {
   backgroundColor?: string;
 
   /**
+   * Card / modal container background color override
+   */
+  cardColor?: string;
+
+  /**
+   * Dedicated modal container background color override
+   */
+  modalBackgroundColor?: string;
+
+  /**
+   * Custom style for the inner modal card container
+   */
+  modalContentStyle?: StyleProp<ViewStyle>;
+
+  /**
    * Border radius override
    */
   borderRadius?: number;

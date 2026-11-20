@@ -9,8 +9,11 @@ export const themes: Record<'light' | 'dark', DatePickerTheme> = {
 
 export interface ThemeOverrides {
   accentColor?: string;
+  primaryColor?: string;
   textColor?: string;
   backgroundColor?: string;
+  cardColor?: string;
+  modalBackgroundColor?: string;
   borderRadius?: number;
 }
 
@@ -37,11 +40,14 @@ export const resolveTheme = (
 
   const resolved: DatePickerTheme = { ...baseTheme };
 
-  if (overrides?.accentColor) {
-    resolved.primaryColor = overrides.accentColor;
-    resolved.selectedDayBackgroundColor = overrides.accentColor;
-    resolved.todayBorderColor = overrides.accentColor;
-    resolved.todayTextColor = overrides.accentColor;
+  const accent = overrides?.accentColor || overrides?.primaryColor;
+  if (accent) {
+    resolved.primaryColor = accent;
+    resolved.selectedDayBackgroundColor = accent;
+    resolved.todayBorderColor = accent;
+    resolved.todayTextColor = accent;
+    resolved.rangeBetweenBackgroundColor = `${accent}20`;
+    resolved.rangeBetweenTextColor = accent;
   }
 
   if (overrides?.textColor) {
@@ -51,6 +57,10 @@ export const resolveTheme = (
   if (overrides?.backgroundColor) {
     resolved.backgroundColor = overrides.backgroundColor;
     resolved.cardColor = overrides.backgroundColor;
+  }
+
+  if (overrides?.cardColor || overrides?.modalBackgroundColor) {
+    resolved.cardColor = (overrides.cardColor || overrides.modalBackgroundColor)!;
   }
 
   if (overrides?.borderRadius !== undefined) {
