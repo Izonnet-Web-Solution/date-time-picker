@@ -9,6 +9,7 @@ import type {
 } from '../../types';
 import { Modal } from '../common/Modal';
 import { Calendar } from '../Calendar/Calendar';
+import { MonthYearSelectorModal } from '../Calendar/MonthYearSelectorModal';
 
 export interface CalendarPopupProps {
   visible: boolean;
@@ -56,10 +57,17 @@ export const CalendarPopup: React.FC<CalendarPopupProps> = ({
   onConfirm,
 }) => {
   const [draftDate, setDraftDate] = useState<Date | null>(selectedDate);
+  const [isMonthYearOpen, setIsMonthYearOpen] = useState(false);
+  const [viewYear, setViewYear] = useState<number>(() => (selectedDate || new Date()).getFullYear());
+  const [viewMonth, setViewMonth] = useState<number>(() => (selectedDate || new Date()).getMonth());
 
   useEffect(() => {
     if (visible) {
       setDraftDate(selectedDate);
+      const d = selectedDate || new Date();
+      setViewYear(d.getFullYear());
+      setViewMonth(d.getMonth());
+      setIsMonthYearOpen(false);
     }
   }, [visible, selectedDate]);
 
@@ -70,37 +78,80 @@ export const CalendarPopup: React.FC<CalendarPopupProps> = ({
     onClose();
   };
 
+  const handleViewYearMonthChange = (y: number, m: number) => {
+    setViewYear((prevY) => (prevY !== y ? y : prevY));
+    setViewMonth((prevM) => (prevM !== m ? m : prevM));
+  };
+
+  const handleMonthYearConfirm = (newYear: number, newMonth: number) => {
+    setViewYear(newYear);
+    setViewMonth(newMonth);
+
+    if (draftDate instanceof Date && !isNaN(draftDate.getTime())) {
+      const currentDay = draftDate.getDate();
+      const maxDaysInNewMonth = new Date(newYear, newMonth + 1, 0).getDate();
+      const clampedDay = Math.min(currentDay, maxDaysInNewMonth);
+      const updated = new Date(
+        newYear,
+        newMonth,
+        clampedDay,
+        draftDate.getHours(),
+        draftDate.getMinutes(),
+        draftDate.getSeconds()
+      );
+      setDraftDate(updated);
+    }
+
+    setIsMonthYearOpen(false);
+  };
+
   return (
-    <Modal visible={visible} onClose={onClose} theme={theme}>
-      <View style={styles.calendarWrapper}>
-        <Calendar
-          selectedDate={draftDate}
-          onSelectDate={setDraftDate}
-          theme={theme}
-          locale={locale}
-          format={format}
-          minimumDate={minimumDate}
-          maximumDate={maximumDate}
-          disabledDates={disabledDates}
-          disabledWeekdays={disabledWeekdays}
-          firstDayOfWeek={firstDayOfWeek}
-          allowManualEntry={allowManualEntry}
-          manualEntryType={manualEntryType}
-          manualText={manualText}
-          isManualMode={isManualMode}
-          validationResult={validationResult}
-          onManualTextChange={onManualTextChange}
-          onToggleManualMode={onToggleManualMode}
-          showActionButtons={true}
-          showTodayButton={true}
-          showClearButton={true}
-          onConfirm={handleConfirm}
-          onCancel={onClose}
-          onClear={() => setDraftDate(null)}
-          style={styles.calendarInner}
-        />
-      </View>
-    </Modal>
+    <>
+      <Modal visible={visible && !isMonthYearOpen} onClose={onClose} theme={theme}>
+        <View style={styles.calendarWrapper}>
+          <Calendar
+            selectedDate={draftDate}
+            onSelectDate={setDraftDate}
+            theme={theme}
+            locale={locale}
+            format={format}
+            minimumDate={minimumDate}
+            maximumDate={maximumDate}
+            disabledDates={disabledDates}
+            disabledWeekdays={disabledWeekdays}
+            firstDayOfWeek={firstDayOfWeek}
+            allowManualEntry={allowManualEntry}
+            manualEntryType={manualEntryType}
+            manualText={manualText}
+            isManualMode={isManualMode}
+            validationResult={validationResult}
+            onManualTextChange={onManualTextChange}
+            onToggleManualMode={onToggleManualMode}
+            showActionButtons={true}
+            showTodayButton={true}
+            showClearButton={true}
+            onConfirm={handleConfirm}
+            onCancel={onClose}
+            onClear={() => setDraftDate(null)}
+            style={styles.calendarInner}
+            viewYear={viewYear}
+            viewMonth={viewMonth}
+            onViewYearMonthChange={handleViewYearMonthChange}
+            onOpenMonthYearSelector={() => setIsMonthYearOpen(true)}
+          />
+        </View>
+      </Modal>
+
+      <MonthYearSelectorModal
+        visible={visible && isMonthYearOpen}
+        onClose={() => setIsMonthYearOpen(false)}
+        currentYear={viewYear}
+        currentMonth={viewMonth}
+        theme={theme}
+        locale={locale}
+        onConfirm={handleMonthYearConfirm}
+      />
+    </>
   );
 };
 

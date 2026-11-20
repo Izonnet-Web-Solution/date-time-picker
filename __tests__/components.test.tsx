@@ -7,6 +7,8 @@ import { ManualDateInput } from '../src/components/ManualDateInput/ManualDateInp
 import { TimePicker } from '../src/components/Time/TimePicker';
 import { WheelTimePicker } from '../src/components/Time/WheelTimePicker';
 import { DateTimePicker } from '../src/components/Time/DateTimePicker';
+import { MonthYearSelectorModal } from '../src/components/Calendar/MonthYearSelectorModal';
+import { CalendarHeader } from '../src/components/Calendar/CalendarHeader';
 import { lightTheme, darkTheme, resolveTheme } from '../src/themes';
 import { enLocale, getLocale } from '../src/localization';
 
@@ -268,6 +270,71 @@ describe('DatePicker Kit Components', () => {
           onChange={onChange}
           is24Hour={false}
           minuteInterval={15}
+        />
+      );
+      expect(element).toBeTruthy();
+    });
+  });
+
+  describe('Month & Year Selector and Modal Handoff', () => {
+    it('instantiates MonthYearSelectorModal with full props', () => {
+      const onClose = jest.fn();
+      const onSelectMonth = jest.fn();
+      const onSelectYear = jest.fn();
+      const onConfirm = jest.fn();
+
+      const element = (
+        <MonthYearSelectorModal
+          visible={true}
+          onClose={onClose}
+          currentYear={2026}
+          currentMonth={10}
+          theme={lightTheme}
+          locale={enLocale}
+          onSelectMonth={onSelectMonth}
+          onSelectYear={onSelectYear}
+          onConfirm={onConfirm}
+        />
+      );
+      expect(element).toBeTruthy();
+    });
+
+    it('instantiates CalendarHeader with onOpenMonthYearSelector', () => {
+      const onOpen = jest.fn();
+      const onPrev = jest.fn();
+      const onNext = jest.fn();
+
+      const element = (
+        <CalendarHeader
+          currentYear={2026}
+          currentMonth={10}
+          currentMonthName="November"
+          theme={lightTheme}
+          locale={enLocale}
+          canGoPrevMonth={true}
+          canGoNextMonth={true}
+          onPrevMonth={onPrev}
+          onNextMonth={onNext}
+          onSelectMonth={jest.fn()}
+          onSelectYear={jest.fn()}
+          onOpenMonthYearSelector={onOpen}
+        />
+      );
+      expect(element).toBeTruthy();
+    });
+
+    it('instantiates DatePicker in modal mode supporting modal handoff', () => {
+      const onClose = jest.fn();
+      const onConfirm = jest.fn();
+
+      const element = (
+        <DatePicker
+          modal
+          open={true}
+          mode="input"
+          value={testDate}
+          onClose={onClose}
+          onConfirm={onConfirm}
         />
       );
       expect(element).toBeTruthy();

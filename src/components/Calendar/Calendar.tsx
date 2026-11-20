@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import type {
   DatePickerTheme,
@@ -39,6 +39,10 @@ export interface CalendarProps {
   onCancel?: () => void;
   onClear?: () => void;
   style?: StyleProp<ViewStyle>;
+  onOpenMonthYearSelector?: () => void;
+  viewYear?: number;
+  viewMonth?: number;
+  onViewYearMonthChange?: (year: number, month: number) => void;
 }
 
 export const Calendar: React.FC<CalendarProps> = ({
@@ -66,6 +70,10 @@ export const Calendar: React.FC<CalendarProps> = ({
   onCancel,
   onClear,
   style,
+  onOpenMonthYearSelector,
+  viewYear,
+  viewMonth,
+  onViewYearMonthChange,
 }) => {
   const {
     currentYear,
@@ -92,12 +100,57 @@ export const Calendar: React.FC<CalendarProps> = ({
     locale,
   });
 
-  // Jump view to selected date when changed externally
+  // Track previous selectedDate timestamp to avoid redundant jumpToDate calls
+  const prevSelectedDateRef = useRef<number | null>(
+    selectedDate ? selectedDate.getTime() : null
+  );
+
   useEffect(() => {
-    if (selectedDate) {
-      jumpToDate(selectedDate);
+    const time = selectedDate ? selectedDate.getTime() : null;
+    if (time !== null && time !== prevSelectedDateRef.current) {
+      prevSelectedDateRef.current = time;
+      jumpToDate(new Date(time));
     }
   }, [selectedDate, jumpToDate]);
+
+  // Synchronize calendar view with external viewYear & viewMonth when provided
+  const prevViewYearRef = useRef<number | undefined>(viewYear);
+  const prevViewMonthRef = useRef<number | undefined>(viewMonth);
+
+  useEffect(() => {
+    if (viewYear !== undefined && viewMonth !== undefined) {
+      if (
+        viewYear !== prevViewYearRef.current ||
+        viewMonth !== prevViewMonthRef.current
+      ) {
+        prevViewYearRef.current = viewYear;
+        prevViewMonthRef.current = viewMonth;
+        if (currentYear !== viewYear || currentMonth !== viewMonth) {
+          jumpToDate(new Date(viewYear, viewMonth, 1));
+        }
+      }
+    }
+  }, [viewYear, viewMonth, currentYear, currentMonth, jumpToDate]);
+
+  // Notify parent of view changes (e.g. prev/next month chevrons) only when values actually change
+  const onViewYearMonthChangeRef = useRef(onViewYearMonthChange);
+  useEffect(() => {
+    onViewYearMonthChangeRef.current = onViewYearMonthChange;
+  }, [onViewYearMonthChange]);
+
+  const prevReportedYearRef = useRef<number>(currentYear);
+  const prevReportedMonthRef = useRef<number>(currentMonth);
+
+  useEffect(() => {
+    if (
+      currentYear !== prevReportedYearRef.current ||
+      currentMonth !== prevReportedMonthRef.current
+    ) {
+      prevReportedYearRef.current = currentYear;
+      prevReportedMonthRef.current = currentMonth;
+      onViewYearMonthChangeRef.current?.(currentYear, currentMonth);
+    }
+  }, [currentYear, currentMonth]);
 
   const handleTodayPress = () => {
     goToToday();
@@ -140,6 +193,7 @@ export const Calendar: React.FC<CalendarProps> = ({
         allowManualEntry={allowManualEntry}
         isManualMode={isManualMode}
         onToggleManualMode={onToggleManualMode}
+        onOpenMonthYearSelector={onOpenMonthYearSelector}
       />
 
       {isManualMode ? (

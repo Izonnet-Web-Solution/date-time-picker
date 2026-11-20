@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, StyleProp, ViewStyle, TouchableOpacity } from 'react-native';
 import type {
   DatePickerTheme,
@@ -35,6 +35,10 @@ export interface RangePickerProps {
   onConfirm?: (range: DateRange) => void;
   onCancel?: () => void;
   style?: StyleProp<ViewStyle>;
+  onOpenMonthYearSelector?: () => void;
+  viewYear?: number;
+  viewMonth?: number;
+  onViewYearMonthChange?: (year: number, month: number) => void;
 }
 
 export const RangePicker: React.FC<RangePickerProps> = ({
@@ -56,6 +60,10 @@ export const RangePicker: React.FC<RangePickerProps> = ({
   onConfirm,
   onCancel,
   style,
+  onOpenMonthYearSelector,
+  viewYear,
+  viewMonth,
+  onViewYearMonthChange,
 }) => {
   const {
     range,
@@ -89,6 +97,7 @@ export const RangePicker: React.FC<RangePickerProps> = ({
     goToNextMonth,
     setMonth,
     setYear,
+    jumpToDate,
   } = useCalendar({
     initialDate: range.startDate || new Date(),
     range,
@@ -99,6 +108,45 @@ export const RangePicker: React.FC<RangePickerProps> = ({
     disabledWeekdays,
     locale,
   });
+
+  // Synchronize calendar view with external viewYear & viewMonth when provided
+  const prevViewYearRef = useRef<number | undefined>(viewYear);
+  const prevViewMonthRef = useRef<number | undefined>(viewMonth);
+
+  useEffect(() => {
+    if (viewYear !== undefined && viewMonth !== undefined) {
+      if (
+        viewYear !== prevViewYearRef.current ||
+        viewMonth !== prevViewMonthRef.current
+      ) {
+        prevViewYearRef.current = viewYear;
+        prevViewMonthRef.current = viewMonth;
+        if (currentYear !== viewYear || currentMonth !== viewMonth) {
+          jumpToDate(new Date(viewYear, viewMonth, 1));
+        }
+      }
+    }
+  }, [viewYear, viewMonth, currentYear, currentMonth, jumpToDate]);
+
+  // Notify parent of view changes (e.g. prev/next month chevrons)
+  const onViewYearMonthChangeRef = useRef(onViewYearMonthChange);
+  useEffect(() => {
+    onViewYearMonthChangeRef.current = onViewYearMonthChange;
+  }, [onViewYearMonthChange]);
+
+  const prevReportedYearRef = useRef<number>(currentYear);
+  const prevReportedMonthRef = useRef<number>(currentMonth);
+
+  useEffect(() => {
+    if (
+      currentYear !== prevReportedYearRef.current ||
+      currentMonth !== prevReportedMonthRef.current
+    ) {
+      prevReportedYearRef.current = currentYear;
+      prevReportedMonthRef.current = currentMonth;
+      onViewYearMonthChangeRef.current?.(currentYear, currentMonth);
+    }
+  }, [currentYear, currentMonth]);
 
   const formattedStart = range.startDate
     ? formatDate(range.startDate, format, locale)
@@ -267,6 +315,7 @@ export const RangePicker: React.FC<RangePickerProps> = ({
         onNextMonth={goToNextMonth}
         onSelectMonth={setMonth}
         onSelectYear={setYear}
+        onOpenMonthYearSelector={onOpenMonthYearSelector}
       />
 
       <WeekDays weekdays={weekdays} theme={theme} />

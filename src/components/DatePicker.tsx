@@ -33,6 +33,7 @@ import { DateInputField } from './ManualDateInput/DateInputField';
 import { TimePicker } from './Time/TimePicker';
 import { DateTimePicker } from './Time/DateTimePicker';
 import { Modal } from './common/Modal';
+import { MonthYearSelectorModal } from './Calendar/MonthYearSelectorModal';
 
 export const DatePicker: React.FC<DatePickerProps> = (props) => {
   const {
@@ -149,20 +150,50 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
 
   const [draftValidation, setDraftValidation] = useState<ValidationResult>({ isValid: true });
 
+  // Track month & year selector modal state for seamless modal-to-modal handoff
+  const [isMonthYearSelectorOpen, setIsMonthYearSelectorOpen] = useState(false);
+  const [modalViewYear, setModalViewYear] = useState<number>(() => {
+    const initial = singleProps.value ?? singleProps.defaultValue ?? new Date();
+    return (initial instanceof Date && !isNaN(initial.getTime()))
+      ? initial.getFullYear()
+      : new Date().getFullYear();
+  });
+  const [modalViewMonth, setModalViewMonth] = useState<number>(() => {
+    const initial = singleProps.value ?? singleProps.defaultValue ?? new Date();
+    return (initial instanceof Date && !isNaN(initial.getTime()))
+      ? initial.getMonth()
+      : new Date().getMonth();
+  });
+
+  // Track modal open transition so draft value is only initialized when modal initially opens
+  const prevIsVisibleRef = React.useRef(false);
+
   // Re-sync draft value and draft text whenever modal opens or external value changes
   useEffect(() => {
-    if (isVisible) {
+    const justOpened = isVisible && !prevIsVisibleRef.current;
+    prevIsVisibleRef.current = isVisible;
+
+    if (justOpened) {
+      setIsMonthYearSelectorOpen(false);
       if (mode === 'range') {
         const rp = props as RangeDatePickerProps;
+        const start = rp.startDate ?? rp.defaultStartDate ?? null;
+        const end = rp.endDate ?? rp.defaultEndDate ?? null;
         setDraftValue({
-          startDate: rp.startDate ?? rp.defaultStartDate ?? null,
-          endDate: rp.endDate ?? rp.defaultEndDate ?? null,
+          startDate: start,
+          endDate: end,
         });
+        const target = start || new Date();
+        setModalViewYear(target.getFullYear());
+        setModalViewMonth(target.getMonth());
       } else {
         const initialDate = singleProps.value ?? singleProps.defaultValue ?? null;
         setDraftValue(initialDate);
         setDraftDateText(initialDate ? formatDate(initialDate, activeFormat, locale) : '');
         setDraftValidation({ isValid: true });
+        const target = initialDate || new Date();
+        setModalViewYear(target.getFullYear());
+        setModalViewMonth(target.getMonth());
       }
     }
   }, [isVisible, mode, singleProps.value, singleProps.defaultValue, activeFormat, locale]);
@@ -173,6 +204,40 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
       setDraftDateText(formatDate(draftValue, activeFormat, locale));
     }
   }, [activeFormat, locale]);
+
+  // Stable callback for calendar month/year view changes
+  const handleViewYearMonthChange = useCallback((y: number, m: number) => {
+    setModalViewYear((prevY) => (prevY !== y ? y : prevY));
+    setModalViewMonth((prevM) => (prevM !== m ? m : prevM));
+  }, []);
+
+  // Commit selected Month and Year from MonthYearSelectorModal to draftValue
+  const handleMonthYearConfirm = useCallback(
+    (newYear: number, newMonth: number) => {
+      setModalViewYear(newYear);
+      setModalViewMonth(newMonth);
+
+      if (draftValue instanceof Date && !isNaN(draftValue.getTime())) {
+        const currentDay = draftValue.getDate();
+        const maxDaysInNewMonth = new Date(newYear, newMonth + 1, 0).getDate();
+        const clampedDay = Math.min(currentDay, maxDaysInNewMonth);
+        const updated = new Date(
+          newYear,
+          newMonth,
+          clampedDay,
+          draftValue.getHours(),
+          draftValue.getMinutes(),
+          draftValue.getSeconds()
+        );
+        setDraftValue(updated);
+        setDraftDateText(formatDate(updated, activeFormat, locale));
+        setDraftValidation({ isValid: true });
+      }
+
+      setIsMonthYearSelectorOpen(false);
+    },
+    [draftValue, activeFormat, locale]
+  );
 
   // Modal close handlers
   const handleModalClose = useCallback(() => {
@@ -463,6 +528,10 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
           }}
           onCancel={handleModalClose}
           style={pickerStyle}
+          viewYear={isModalMode ? modalViewYear : undefined}
+          viewMonth={isModalMode ? modalViewMonth : undefined}
+          onViewYearMonthChange={isModalMode ? handleViewYearMonthChange : undefined}
+          onOpenMonthYearSelector={isModalMode ? () => setIsMonthYearSelectorOpen(true) : undefined}
         />
       );
     }
@@ -515,6 +584,10 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
                 onClear?.();
               }}
               style={pickerStyle}
+              viewYear={modalViewYear}
+              viewMonth={modalViewMonth}
+              onViewYearMonthChange={handleViewYearMonthChange}
+              onOpenMonthYearSelector={() => setIsMonthYearSelectorOpen(true)}
             />
           </View>
         );
@@ -593,6 +666,10 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
           onClear?.();
         }}
         style={pickerStyle}
+        viewYear={isModalMode ? modalViewYear : undefined}
+        viewMonth={isModalMode ? modalViewMonth : undefined}
+        onViewYearMonthChange={isModalMode ? handleViewYearMonthChange : undefined}
+        onOpenMonthYearSelector={isModalMode ? () => setIsMonthYearSelectorOpen(true) : undefined}
       />
     );
   };
@@ -672,14 +749,28 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
   if (isModalMode) {
     const isManualModal = isManualMode && mode === 'calendar';
     return (
-      <Modal
-        visible={isVisible}
-        onClose={handleModalClose}
-        theme={theme}
-        contentStyle={isManualModal ? styles.manualModalCard : undefined}
-      >
-        {content}
-      </Modal>
+      <>
+        {/* Main Picker Modal - Automatically closes when Month & Year selector opens */}
+        <Modal
+          visible={isVisible && !isMonthYearSelectorOpen}
+          onClose={handleModalClose}
+          theme={theme}
+          contentStyle={isManualModal ? styles.manualModalCard : undefined}
+        >
+          {content}
+        </Modal>
+
+        {/* Month & Year Selection Modal - Re-opens the main modal upon Close or Confirm */}
+        <MonthYearSelectorModal
+          visible={isVisible && isMonthYearSelectorOpen}
+          onClose={() => setIsMonthYearSelectorOpen(false)}
+          currentYear={modalViewYear}
+          currentMonth={modalViewMonth}
+          theme={theme}
+          locale={locale}
+          onConfirm={handleMonthYearConfirm}
+        />
+      </>
     );
   }
 

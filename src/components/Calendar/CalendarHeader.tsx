@@ -4,11 +4,10 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
 } from 'react-native';
 import type { DatePickerTheme, DatePickerLocale } from '../../types';
 import { IconButton } from '../common/IconButton';
-import { Modal } from '../common/Modal';
+import { MonthYearSelectorModal } from './MonthYearSelectorModal';
 
 export interface CalendarHeaderProps {
   currentYear: number;
@@ -27,6 +26,7 @@ export interface CalendarHeaderProps {
   onToggleManualMode?: () => void;
   minYear?: number;
   maxYear?: number;
+  onOpenMonthYearSelector?: () => void;
 }
 
 export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
@@ -46,19 +46,23 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   onToggleManualMode,
   minYear = 1970,
   maxYear = 2050,
+  onOpenMonthYearSelector,
 }) => {
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
 
-  const years: number[] = [];
-  for (let y = minYear; y <= maxYear; y++) {
-    years.push(y);
-  }
+  const handleTitlePress = () => {
+    if (onOpenMonthYearSelector) {
+      onOpenMonthYearSelector();
+    } else {
+      setIsSelectorOpen(true);
+    }
+  };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
         activeOpacity={0.7}
-        onPress={() => setIsSelectorOpen(true)}
+        onPress={handleTitlePress}
         style={styles.titleContainer}
         accessibilityRole="button"
         accessibilityLabel={`${currentMonthName} ${currentYear}, tap to change month and year`}
@@ -116,117 +120,26 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         />
       </View>
 
-      {/* Month & Year Selection Modal */}
-      <Modal
-        visible={isSelectorOpen}
-        onClose={() => setIsSelectorOpen(false)}
-        theme={theme}
-      >
-        <View style={styles.selectorContainer}>
-          <View style={styles.selectorHeader}>
-            <Text
-              style={[
-                styles.selectorTitle,
-                { color: theme.textColor, fontSize: theme.fontSize.title },
-              ]}
-            >
-              {locale.selectDate}
-            </Text>
-            <IconButton
-              icon="close"
-              color={theme.secondaryTextColor}
-              size={18}
-              onPress={() => setIsSelectorOpen(false)}
-            />
-          </View>
-
-          <View style={styles.selectorColumns}>
-            {/* Months List */}
-            <View style={styles.columnHalf}>
-              <Text
-                style={[
-                  styles.columnLabel,
-                  { color: theme.secondaryTextColor },
-                ]}
-              >
-                {locale.monthLabel}
-              </Text>
-              <ScrollView style={styles.columnScroll} showsVerticalScrollIndicator={false}>
-                {locale.months.map((monthName, idx) => {
-                  const isSelected = idx === currentMonth;
-                  return (
-                    <TouchableOpacity
-                      key={monthName}
-                      style={[
-                        styles.pickerItem,
-                        isSelected && {
-                          backgroundColor: theme.surfaceColor,
-                          borderRadius: 6,
-                        },
-                      ]}
-                      onPress={() => onSelectMonth(idx)}
-                    >
-                      <Text
-                        style={[
-                          styles.pickerItemText,
-                          {
-                            color: isSelected ? theme.primaryColor : theme.textColor,
-                            fontWeight: isSelected ? '700' : '400',
-                          },
-                        ]}
-                      >
-                        {monthName}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
-            </View>
-
-            {/* Years List */}
-            <View style={styles.columnHalf}>
-              <Text
-                style={[
-                  styles.columnLabel,
-                  { color: theme.secondaryTextColor },
-                ]}
-              >
-                {locale.yearLabel}
-              </Text>
-              <ScrollView style={styles.columnScroll} showsVerticalScrollIndicator={false}>
-                {years.map((yearNum) => {
-                  const isSelected = yearNum === currentYear;
-                  return (
-                    <TouchableOpacity
-                      key={yearNum}
-                      style={[
-                        styles.pickerItem,
-                        isSelected && {
-                          backgroundColor: theme.surfaceColor,
-                          borderRadius: 6,
-                        },
-                      ]}
-                      onPress={() => onSelectYear(yearNum)}
-                    >
-                      <Text
-                        style={[
-                          styles.pickerItemText,
-                          {
-                            color: isSelected ? theme.primaryColor : theme.textColor,
-                            fontWeight: isSelected ? '700' : '400',
-                          },
-                        ]}
-                      >
-                        {yearNum}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      {/* Internal Month & Year Selection Modal (fallback when not managed externally by parent modal) */}
+      {!onOpenMonthYearSelector && (
+        <MonthYearSelectorModal
+          visible={isSelectorOpen}
+          onClose={() => setIsSelectorOpen(false)}
+          currentYear={currentYear}
+          currentMonth={currentMonth}
+          theme={theme}
+          locale={locale}
+          onSelectMonth={onSelectMonth}
+          onSelectYear={onSelectYear}
+          onConfirm={(y, m) => {
+            onSelectYear(y);
+            onSelectMonth(m);
+            setIsSelectorOpen(false);
+          }}
+          minYear={minYear}
+          maxYear={maxYear}
+        />
+      )}
     </View>
   );
 };
@@ -259,43 +172,5 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     marginLeft: 2,
-  },
-  selectorContainer: {
-    padding: 16,
-    maxHeight: 400,
-  },
-  selectorHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  selectorTitle: {
-    fontWeight: '700',
-  },
-  selectorColumns: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    height: 280,
-  },
-  columnHalf: {
-    flex: 1,
-    paddingHorizontal: 4,
-  },
-  columnLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    marginBottom: 8,
-    textTransform: 'uppercase',
-  },
-  columnScroll: {
-    flex: 1,
-  },
-  pickerItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 8,
-  },
-  pickerItemText: {
-    fontSize: 14,
   },
 });
