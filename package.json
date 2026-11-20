@@ -1,6 +1,6 @@
 {
   "name": "@izonnet-web-solution/react-native-date-picker-kit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A modern, customizable, lightweight React Native Date Picker library supporting Android and iOS.",
   "publishConfig": {
     "access": "public"
