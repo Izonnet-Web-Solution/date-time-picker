@@ -11,7 +11,10 @@ import {
   addMonths,
   addYears,
   getDaysDifference,
+  toValidDate,
+  toUTCISOString,
 } from '../src/utils/dateUtils';
+import { formatDate } from '../src/utils/dateFormatting';
 
 describe('dateUtils', () => {
   describe('isLeapYear', () => {
@@ -152,6 +155,37 @@ describe('dateUtils', () => {
       const start = new Date(2024, 0, 1);
       const end = new Date(2024, 0, 5);
       expect(getDaysDifference(start, end)).toBe(5);
+    });
+  });
+
+  describe('toValidDate and toUTCISOString (UTC Conversions)', () => {
+    it('parses UTC ISO string into a valid local Date object', () => {
+      const utcString = '2026-11-20T09:30:00.000Z';
+      const parsed = toValidDate(utcString);
+      expect(parsed).toBeInstanceOf(Date);
+      expect(parsed?.getTime()).toBe(new Date(utcString).getTime());
+    });
+
+    it('returns Date object as-is when valid', () => {
+      const now = new Date();
+      expect(toValidDate(now)).toBe(now);
+    });
+
+    it('returns null for null, undefined, or invalid date string', () => {
+      expect(toValidDate(null)).toBeNull();
+      expect(toValidDate(undefined)).toBeNull();
+      expect(toValidDate('invalid-date')).toBeNull();
+    });
+
+    it('converts Date to UTC ISO string', () => {
+      const date = new Date(Date.UTC(2026, 10, 20, 9, 30, 0));
+      expect(toUTCISOString(date)).toBe('2026-11-20T09:30:00.000Z');
+    });
+
+    it('formats UTC string directly via formatDate', () => {
+      const utcString = '2026-11-20T09:30:00.000Z';
+      const expected = formatDate(new Date(utcString), 'DD/MM/YYYY');
+      expect(formatDate(utcString, 'DD/MM/YYYY')).toBe(expected);
     });
   });
 });

@@ -2,11 +2,11 @@
 
 <div align="center">
 
-![npm version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![npm version](https://img.shields.io/badge/version-1.0.1-blue.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-100%25-3178C6?logo=typescript&logoColor=white)
 ![React Native](https://img.shields.io/badge/React%20Native-0.68%2B-61DAFB?logo=react&logoColor=black)
 ![Platform](https://img.shields.io/badge/Platform-iOS%20%7C%20Android-brightgreen.svg)
-![Tests](https://img.shields.io/badge/Tests-93%20passed-success.svg)
+![Tests](https://img.shields.io/badge/Tests-98%20passed-success.svg)
 ![Zero Native Dependencies](https://img.shields.io/badge/Dependencies-Zero%20Native-orange.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 [![GitHub Repository](https://img.shields.io/badge/GitHub-date--time--picker-181717?logo=github)](https://github.com/Izonnet-Web-Solution/date-time-picker)
@@ -26,17 +26,17 @@ Built entirely in 100% pure TypeScript and React Native core components — zero
 ### Date Pickers & Month/Year Selector
 | Calendar (Violet) | Calendar (Sky Blue) | Wheel Date Picker | Month & Year Fast Modal |
 |:---:|:---:|:---:|:---:|
-| <img src="assets/screenshots/calendar-picker.jpg" width="200" alt="Calendar Picker Violet" /> | <img src="assets/screenshots/calendar-picker-blue.jpg" width="200" alt="Calendar Picker Sky Blue" /> | <img src="assets/screenshots/wheel-date-picker.jpg" width="200" alt="Wheel Date Picker" /> | <img src="assets/screenshots/month-year-selector-modal.jpg" width="200" alt="Month Year Selector Modal" /> |
+| <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/calendar-picker.jpg" width="200" alt="Calendar Picker Violet" /> | <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/calendar-picker-blue.jpg" width="200" alt="Calendar Picker Sky Blue" /> | <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/wheel-date-picker.jpg" width="200" alt="Wheel Date Picker" /> | <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/month-year-selector-modal.jpg" width="200" alt="Month Year Selector Modal" /> |
 
 ### Time & DateTime Pickers
 | 12-Hour Time (Wheel) | 24-Hour Military Time | DateTime (Date Tab) | DateTime (Time Tab) |
 |:---:|:---:|:---:|:---:|
-| <img src="assets/screenshots/time-12h-wheel.jpg" width="200" alt="12-Hour Time Picker" /> | <img src="assets/screenshots/time-24h-military-blue.jpg" width="200" alt="24-Hour Military Time" /> | <img src="assets/screenshots/datetime-picker-date.jpg" width="200" alt="DateTime Picker Date Tab" /> | <img src="assets/screenshots/datetime-picker-time-blue.jpg" width="200" alt="DateTime Picker Time Tab" /> |
+| <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/time-12h-wheel.jpg" width="200" alt="12-Hour Time Picker" /> | <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/time-24h-military-blue.jpg" width="200" alt="24-Hour Military Time" /> | <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/datetime-picker-date.jpg" width="200" alt="DateTime Picker Date Tab" /> | <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/datetime-picker-time-blue.jpg" width="200" alt="DateTime Picker Time Tab" /> |
 
 ### Range & Manual Keyboard Entry Pickers
 | Date Range Picker | Input Modal Picker | Manual Entry (Single Box) | Manual Entry (Split Pods) |
 |:---:|:---:|:---:|:---:|
-| <img src="assets/screenshots/range-picker.jpg" width="200" alt="Date Range Picker" /> | <img src="assets/screenshots/input-modal-picker.jpg" width="200" alt="Input Modal Picker" /> | <img src="assets/screenshots/manual-entry-single.jpg" width="200" alt="Manual Entry Single Box" /> | <img src="assets/screenshots/manual-entry-split.jpg" width="200" alt="Manual Entry Split Pods" /> |
+| <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/range-picker.jpg" width="200" alt="Date Range Picker" /> | <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/input-modal-picker.jpg" width="200" alt="Input Modal Picker" /> | <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/manual-entry-single.jpg" width="200" alt="Manual Entry Single Box" /> | <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/manual-entry-split.jpg" width="200" alt="Manual Entry Split Pods" /> |
 
 </div>
 
@@ -59,18 +59,38 @@ Built entirely in 100% pure TypeScript and React Native core components — zero
   - [7. Date Range Picker (with Ribbon Highlights & Limit)](#7-date-range-picker-with-ribbon-highlights--limit)
   - [8. Input Modal Picker (Tap-to-Open Field)](#8-input-modal-picker-tap-to-open-field)
   - [9. Strict Manual Keyboard Entry (Single Box & Split Pods)](#9-strict-manual-keyboard-entry-single-box--split-pods)
-  - [10. Standalone Component Usage](#10-standalone-component-usage)
-- [Modal & Color Customization](#-modal--color-customization)
-- [Month & Year Fast Navigator Modal](#-month--year-fast-navigator-modal)
-- [Dynamic Format Switcher Bar](#-dynamic-format-switcher-bar)
-- [Formatting Tokens Reference](#-formatting-tokens-reference)
-- [Multilingual Localization](#-multilingual-localization)
-- [Themes & Styling Reference](#-themes--styling-reference)
-- [Comprehensive Props Reference](#-comprehensive-props-reference)
-- [Exported Components & Hooks](#-exported-components--hooks)
-- [Testing & Quality Assurance](#-testing--quality-assurance)
-- [Links & Resources](#-links--resources)
-- [License](#-license)
+  - [10. Date & Time Boundary Constraints](#10-date--time-boundary-constraints)
+  - [11. Disabling Specific Dates & Weekdays](#11-disabling-specific-dates--weekdays)
+  - [12. Custom Action Buttons & Auto-Close on Select](#12-custom-action-buttons--auto-close-on-select)
+  - [13. Standalone Component Usage](#13-standalone-component-usage)
+- [🌍 Automatic UTC & ISO 8601 Support](#-automatic-utc--iso-8601-support)
+- [🎨 Modal & Color Customization](#-modal--color-customization)
+- [🗂️ Month & Year Fast Navigator Modal](#-month--year-fast-navigator-modal)
+- [🔤 Dynamic Format Switcher Bar](#-dynamic-format-switcher-bar)
+- [🔤 Formatting Tokens Reference](#-formatting-tokens-reference)
+- [🌐 Multilingual Localization](#-multilingual-localization)
+- [🎨 Themes & Styling Reference](#-themes--styling-reference)
+- [📖 Comprehensive Props Reference](#-comprehensive-props-reference)
+  - [Base / Common Props](#base--common-props)
+  - [Single Date & Calendar Props](#single-date--calendar-props)
+  - [Date Range Props](#date-range-props)
+  - [Time & DateTime Props](#time--datetime-props)
+  - [Wheel Picker Props](#wheel-picker-props)
+  - [Input & Manual Entry Props](#input--manual-entry-props)
+  - [Action Buttons & Callback Props](#action-buttons--callback-props)
+- [🪝 Headless Custom Hooks](#-headless-custom-hooks)
+  - [1. `useDatePicker`](#1-usedatepicker)
+  - [2. `useCalendar`](#2-usecalendar)
+  - [3. `useDateRange`](#3-usedaterange)
+  - [4. `useTimePicker`](#4-usetimepicker)
+- [🛠️ Utility Functions Reference](#-utility-functions-reference)
+  - [Date Arithmetic & Comparison](#date-arithmetic--comparison)
+  - [Time Helpers & Conversions](#time-helpers--conversions)
+  - [Parsing, Masking & Formatting](#parsing-masking--formatting)
+  - [Validation Engine](#validation-engine)
+- [🧪 Testing & Quality Assurance](#-testing--quality-assurance)
+- [🔗 Links & Resources](#-links--resources)
+- [📄 License](#-license)
 
 ---
 
@@ -78,18 +98,24 @@ Built entirely in 100% pure TypeScript and React Native core components — zero
 
 - 📅 **Interactive Calendar Picker**: Full-featured monthly grid with smooth month navigation, previous/next jump, disable filters, and current day indicator.
 - 🎡 **3D Wheel Date & Time Picker**: Inertial scrolling wheel columns for Day, Month, Year, Hours, Minutes, and AM/PM with realistic physics and snap feedback.
-- 🕒 **12-Hour Time Picker (AM/PM)**: 12-hour digital/wheel clock (01–12) with instant AM/PM toggle, configurable minute intervals (1m, 5m, 15m, 30m), and live preview.
+- 🕒 **12-Hour Time Picker (AM/PM)**: 12-hour digital/wheel clock (01–12) with instant AM/PM toggle, configurable minute intervals (1m, 2m, 3m, 5m, 10m, 15m, 30m), and live preview.
 - ⏱️ **24-Hour Military Time Picker**: Military clock navigation (00–23) with optional seconds support (`HH:mm:ss`).
 - 🧭 **Analog Clock Dial & Spinner**: Circular analog clock face with fluid angle calculation, dual-circle 24h layout, and visual needle pointers.
 - 🗓️ **Unified DateTime Picker**: Seamless synchronization of calendar date and time in one unified tabbed component.
+- 🌍 **Automatic UTC & ISO 8601 Support**: Seamlessly accepts UTC ISO strings directly from APIs, converts to local device time for user interaction, and provides helpers to format back to standard UTC strings for server storage.
 - ↔️ **Continuous Date Range Picker**: Interactive start/end selection cards, continuous highlight ribbon between dates, and `maxRangeDays` limits.
 - 📝 **Input Modal & Inline Field**: Clean text input with calendar popup trigger, auto-formatting, and error validation badge.
 - ⌨️ **Strict Manual Keyboard Date Entry**:
   - **Single Box**: Format-guided smart typing with auto-masking.
   - **Split Pods**: 3 discrete boxes for Day, Month, and Year with auto-advance focus.
-- 🎨 **Live Modal Color Customization**: Complete dynamic color customization (`accentColor`, `primaryColor`, `cardColor`, `modalBackgroundColor`, `modalContentStyle`).
+- 🚫 **Comprehensive Date & Time Constraints**:
+  - `minimumDate` and `maximumDate` boundaries.
+  - `minimumTime` and `maximumTime` boundary enforcement for operating hours.
+  - Specific disabled dates (array or dynamic callback predicate).
+  - Disabled weekdays (e.g. disabling weekends).
 - 🗂️ **Nested Month & Year Selector Modal**: Dedicated 2-column scrollable sheet that automatically closes the parent modal cleanly and restores state without flicker or loop issues.
-- 🔘 **Flexible Action Buttons**: `Today` / `Now`, `Clear`, `Cancel`, and `Confirm` / `Apply` buttons with independent visibility toggles.
+- 🎨 **Live Modal Color Customization**: Complete dynamic color customization (`accentColor`, `primaryColor`, `cardColor`, `modalBackgroundColor`, `modalContentStyle`, `borderRadius`).
+- 🔘 **Flexible Action Buttons**: `Today` / `Now`, `Clear`, `Cancel`, and `Confirm` / `Apply` buttons with independent visibility toggles and optional `autoCloseOnSelect`.
 - 🔤 **Dynamic Format Switcher**: Real-time format switching bar supporting `DD/MM/YYYY`, `MM/DD/YYYY`, `YYYY/DD/MM`, and `YYYY/MM/DD`.
 - 🌐 **Built-in Multilingual Localization**: English (`en`), Hindi (`hi`), and Gujarati (`gu`) with custom dictionary support.
 - 🌓 **Adaptive Light & Dark Themes**: Pixel-perfect dark and light themes with automatic contrast calculations.
@@ -104,8 +130,8 @@ Built entirely in 100% pure TypeScript and React Native core components — zero
 | **Dependencies** | **0 native dependencies**. Pure React Native core (`View`, `Text`, `TouchableOpacity`, `ScrollView`, `Modal`, `StyleSheet`). |
 | **Expo Compatibility** | **100% Expo Go ready**. No prebuild, no config plugins, no native modules. |
 | **TypeScript** | Written in 100% strict TypeScript with comprehensive type definitions exported. |
-| **Performance** | Optimized rendering with `useCallback`, `useMemo`, and ref comparison guards to eliminate unnecessary re-renders. |
-| **Test Coverage** | 93 Jest unit tests covering date arithmetic, time parsing, validation constraints, and component rendering. |
+| **Performance** | Optimized rendering with `useCallback`, `useMemo`, and ref comparison guards to eliminate unnecessary re-renders (60 FPS scroll & snap). |
+| **Test Coverage** | 98 Jest unit tests covering date arithmetic, time parsing, boundary constraints, component rendering, and UTC conversion. |
 
 ---
 
@@ -167,9 +193,9 @@ The library provides 8 primary modes through the unified `<DatePicker>` componen
 ### 1. Calendar Date Picker (Modal Dialog)
 
 <div align="center">
-  <img src="assets/screenshots/calendar-picker.jpg" width="220" alt="Calendar Picker" />
+  <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/calendar-picker.jpg" width="220" alt="Calendar Picker" />
   &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/screenshots/calendar-picker-blue.jpg" width="220" alt="Calendar Picker Blue" />
+  <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/calendar-picker-blue.jpg" width="220" alt="Calendar Picker Blue" />
 </div>
 
 Opens an interactive calendar dialog with Today, Clear, Cancel, and Confirm buttons:
@@ -219,10 +245,10 @@ export default function CalendarModalDemo() {
 ### 2. Wheel Date Picker (3D Inertial Scroll)
 
 <div align="center">
-  <img src="assets/screenshots/wheel-date-picker.jpg" width="220" alt="Wheel Date Picker" />
+  <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/wheel-date-picker.jpg" width="220" alt="Wheel Date Picker" />
 </div>
 
-Smooth Day, Month, and Year spinning wheel columns:
+Smooth Day, Month, and Year spinning wheel columns with inertial snap physics:
 
 ```tsx
 import React, { useState } from 'react';
@@ -263,10 +289,10 @@ export default function WheelDateDemo() {
 ### 3. 12-Hour Time Picker (with AM/PM & Intervals)
 
 <div align="center">
-  <img src="assets/screenshots/time-12h-wheel.jpg" width="220" alt="12-Hour Time Picker" />
+  <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/time-12h-wheel.jpg" width="220" alt="12-Hour Time Picker" />
 </div>
 
-12-hour clock layout with configurable minute intervals (1m, 5m, 15m, 30m):
+12-hour clock layout with configurable minute intervals (1m, 2m, 5m, 10m, 15m, 30m):
 
 ```tsx
 import React, { useState } from 'react';
@@ -308,7 +334,7 @@ export default function Time12Demo() {
 ### 4. 24-Hour Military Time Picker (with Seconds)
 
 <div align="center">
-  <img src="assets/screenshots/time-24h-military-blue.jpg" width="220" alt="24-Hour Military Time" />
+  <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/time-24h-military-blue.jpg" width="220" alt="24-Hour Military Time" />
 </div>
 
 Complete 24-hour clock (00–23) with optional seconds display:
@@ -392,9 +418,9 @@ export default function AnalogClockDemo() {
 ### 6. Combined Date + Time Picker (DateTime)
 
 <div align="center">
-  <img src="assets/screenshots/datetime-picker-date.jpg" width="220" alt="DateTime Picker Date" />
+  <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/datetime-picker-date.jpg" width="220" alt="DateTime Picker Date" />
   &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/screenshots/datetime-picker-time-blue.jpg" width="220" alt="DateTime Picker Time" />
+  <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/datetime-picker-time-blue.jpg" width="220" alt="DateTime Picker Time" />
 </div>
 
 Cohesive date and time synchronization in one unified dialog:
@@ -439,7 +465,7 @@ export default function DateTimeDemo() {
 ### 7. Date Range Picker (with Ribbon Highlights & Limit)
 
 <div align="center">
-  <img src="assets/screenshots/range-picker.jpg" width="220" alt="Date Range Picker" />
+  <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/range-picker.jpg" width="220" alt="Date Range Picker" />
 </div>
 
 Select start date and end date with interactive cards, direction arrow, range highlight ribbon, and maximum span limits:
@@ -486,7 +512,7 @@ export default function DateRangeDemo() {
 ### 8. Input Modal Picker (Tap-to-Open Field)
 
 <div align="center">
-  <img src="assets/screenshots/input-modal-picker.jpg" width="220" alt="Input Modal Picker" />
+  <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/input-modal-picker.jpg" width="220" alt="Input Modal Picker" />
 </div>
 
 A clean interactive input box with calendar icon that opens a synchronized popup picker:
@@ -521,9 +547,9 @@ export default function InputPickerDemo() {
 ### 9. Strict Manual Keyboard Entry (Single Box & Split Pods)
 
 <div align="center">
-  <img src="assets/screenshots/manual-entry-single.jpg" width="220" alt="Manual Entry Single Box" />
+  <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/manual-entry-single.jpg" width="220" alt="Manual Entry Single Box" />
   &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/screenshots/manual-entry-split.jpg" width="220" alt="Manual Entry Split Pods" />
+  <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/manual-entry-split.jpg" width="220" alt="Manual Entry Split Pods" />
 </div>
 
 Enables direct numeric typing with validation feedback for leap years and month boundaries:
@@ -562,9 +588,90 @@ Enables direct numeric typing with validation feedback for leap years and month 
 
 ---
 
-### 10. Standalone Component Usage
+### 10. Date & Time Boundary Constraints
 
-All sub-components are exported independently for custom layouts:
+Restrict selectable dates and operating hours (e.g., booking office appointments between 09:00 AM and 06:00 PM within a specific date window):
+
+```tsx
+<DatePicker
+  modal
+  open={open}
+  mode="datetime"
+  value={date}
+  onChange={setDate}
+  // Date boundaries:
+  minimumDate={new Date()}                         // From today onward
+  maximumDate={new Date(Date.now() + 30 * 86400000)} // Up to 30 days ahead
+  // Time boundaries (Business hours):
+  minimumTime="09:00 AM"                           // Earliest selectable time
+  maximumTime="06:00 PM"                           // Latest selectable time
+  minuteInterval={15}                              // 15-minute booking slots
+  onConfirm={(d) => {
+    setDate(d);
+    setOpen(false);
+  }}
+/>
+```
+
+---
+
+### 11. Disabling Specific Dates & Weekdays
+
+Easily disable holidays, weekends, or specific calendar dates:
+
+```tsx
+<DatePicker
+  modal
+  open={open}
+  mode="calendar"
+  value={date}
+  onChange={setDate}
+  // Disable weekends: 0 = Sunday, 6 = Saturday
+  disabledWeekdays={[0, 6]}
+  // Start the calendar column on Monday (1) instead of Sunday (0):
+  firstDayOfWeek={1}
+  // Disable specific holiday dates (array or predicate function):
+  disabledDates={[
+    new Date(2026, 11, 25), // Christmas
+    new Date(2027, 0, 1),   // New Year's Day
+    '2026-12-31',           // ISO string format is supported
+  ]}
+  // OR dynamic callback filter:
+  // disabledDates={(d) => d.getDate() % 2 === 0} // e.g. Disable even days
+/>
+```
+
+---
+
+### 12. Custom Action Buttons & Auto-Close on Select
+
+Customize or hide the bottom footer action buttons, or enable instant closing upon selecting a day:
+
+```tsx
+<DatePicker
+  modal
+  open={open}
+  mode="calendar"
+  value={date}
+  // Auto-close as soon as user taps a day on calendar:
+  autoCloseOnSelect={true}
+  // Control footer buttons independently:
+  showActionButtons={true}
+  showTodayButton={true}    // Show 'Today' jump button
+  showClearButton={false}   // Hide 'Clear' button
+  showCancelButton={true}   // Show 'Cancel' button
+  showConfirmButton={true}  // Show 'Confirm' button
+  onConfirm={(d) => setOpen(false)}
+  onClose={() => setOpen(false)}
+  onClear={() => setDate(null)}
+/>
+```
+
+---
+
+### 13. Standalone Component Usage
+
+All sub-components are exported independently for custom layouts or inline embedding:
 
 ```tsx
 import {
@@ -573,18 +680,72 @@ import {
   RangePicker,
   TimePicker,
   ClockDial,
+  WheelTimePicker,
   DateTimePicker,
   DateInput,
   ManualDateInput,
   MonthYearSelectorModal,
+  Modal,
+  Button,
+  IconButton,
 } from '@izonnet-web-solution/react-native-date-picker-kit';
+```
+
+---
+
+## 🌍 Automatic UTC & ISO 8601 Support
+
+Modern apps receive timestamps from backends in UTC / ISO 8601 strings (e.g. `"2026-11-20T09:30:00.000Z"`).  
+`<DatePicker>` natively accepts `Date`, ISO 8601 `string`, or numeric epoch timestamps, automatically converting them to the user's local timezone.
+
+### 1. Direct Binding with API Payloads:
+```tsx
+import { DatePicker, toUTCISOString } from '@izonnet-web-solution/react-native-date-picker-kit';
+
+function EventScheduler({ apiEvent }) {
+  const [selectedDate, setSelectedDate] = useState(apiEvent.startTimeUtc); // "2026-11-20T09:30:00.000Z"
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <DatePicker
+      modal
+      open={isOpen}
+      mode="datetime"
+      value={selectedDate} // Automatically converted to local device time!
+      onConfirm={(localDate) => {
+        setIsOpen(false);
+        if (localDate) {
+          // Convert back to UTC ISO string to send to server:
+          const payload = toUTCISOString(localDate); // "2026-11-20T09:30:00.000Z"
+          saveToServer({ startTimeUtc: payload });
+        }
+      }}
+    />
+  );
+}
+```
+
+### 2. Built-in Conversion Utilities:
+```tsx
+import { formatDate, toValidDate, toUTCISOString } from '@izonnet-web-solution/react-native-date-picker-kit';
+
+// Safely convert any UTC string, number, or Date into a local Date object:
+const localDate = toValidDate("2026-11-20T09:30:00.000Z");
+
+// Format UTC ISO string directly into local device representation:
+const displayTime = formatDate("2026-11-20T09:30:00.000Z", "DD MMM YYYY, hh:mm A");
+// Result in IST (UTC+5:30): "20 Nov 2026, 03:00 PM"
+
+// Convert local Date object back to standard UTC ISO string:
+const utcString = toUTCISOString(localDate);
+// Result: "2026-11-20T09:30:00.000Z"
 ```
 
 ---
 
 ## 🎨 Modal & Color Customization
 
-The library provides fine-grained control over colors and styles. When you specify `accentColor`, all primary components automatically adapt to that color:
+The library provides fine-grained control over colors and styles. When you specify `accentColor`, all primary components automatically adapt:
 
 ```tsx
 <DatePicker
@@ -601,7 +762,6 @@ The library provides fine-grained control over colors and styles. When you speci
     borderColor: 'rgba(255,255,255,0.1)',
   }}
   theme="dark"
-  ...
 />
 ```
 
@@ -618,7 +778,7 @@ The library provides fine-grained control over colors and styles. When you speci
 ## 🗂️ Month & Year Fast Navigator Modal
 
 <div align="center">
-  <img src="assets/screenshots/month-year-selector-modal.jpg" width="220" alt="Month & Year Selector Modal" />
+  <img src="https://raw.githubusercontent.com/Izonnet-Web-Solution/date-time-picker/main/assets/screenshots/month-year-selector-modal.jpg" width="220" alt="Month & Year Selector Modal" />
 </div>
 
 Tap the month header (e.g. **"November 2026 ▾"**) on any calendar to open the dedicated Month & Year selection sheet:
@@ -638,7 +798,6 @@ Allow users to switch date formats on the fly by enabling `showFormatSelector`:
   showFormatSelector={true}
   supportedFormats={['DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY/DD/MM', 'YYYY/MM/DD']}
   onFormatChange={(newFormat) => console.log('Format changed:', newFormat)}
-  ...
 />
 ```
 
@@ -687,12 +846,11 @@ Built-in translation dictionaries:
 ```tsx
 <DatePicker
   locale="hi"    // Hindi labels ("आज", "साफ़ करें", "रद्द करें", "पुष्टि करें")
-  ...
 />
 ```
 
 ### Custom Locale Dictionary
-You can pass a custom `DatePickerLocale` object:
+Pass any custom `DatePickerLocale` object (e.g. French, Spanish, German):
 
 ```tsx
 import type { DatePickerLocale } from '@izonnet-web-solution/react-native-date-picker-kit';
@@ -710,8 +868,21 @@ const frenchLocale: DatePickerLocale = {
   confirm: 'Confirmer',
   apply: 'Appliquer',
   selectDate: 'Sélectionner une date',
+  startDate: 'Date de début',
+  endDate: 'Date de fin',
+  placeholder: 'JJ/MM/AAAA',
+  dayLabel: 'JOUR',
   monthLabel: 'MOIS',
   yearLabel: 'ANNÉE',
+  switchManual: 'Saisie manuelle',
+  switchCalendar: 'Afficher le calendrier',
+  am: 'AM',
+  pm: 'PM',
+  hourLabel: 'HEURE',
+  minuteLabel: 'MINUTE',
+  secondLabel: 'SECONDE',
+  selectTime: 'Sélectionner une heure',
+  timeLabel: 'Heure',
   errors: {
     invalidDate: 'Date invalide',
     outOfRange: 'Date hors limites',
@@ -727,7 +898,7 @@ const frenchLocale: DatePickerLocale = {
   },
 };
 
-<DatePicker locale={frenchLocale} ... />
+<DatePicker locale={frenchLocale} />
 ```
 
 ---
@@ -773,7 +944,7 @@ interface DatePickerTheme {
 
 ## 📖 Comprehensive Props Reference
 
-### Core & Presentation Props
+### Base / Common Props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
@@ -785,6 +956,8 @@ interface DatePickerTheme {
 | `locale` | `'en' \| 'hi' \| 'gu' \| DatePickerLocale` | `'en'` | Active language code or custom locale dictionary |
 | `accentColor` | `string` | `undefined` | Live primary accent color override |
 | `primaryColor` | `string` | `undefined` | Alias for `accentColor` |
+| `textColor` | `string` | `undefined` | Primary text color override |
+| `backgroundColor` | `string` | `undefined` | Container background color override |
 | `cardColor` | `string` | `undefined` | Card / modal container background color |
 | `modalBackgroundColor`| `string` | `undefined` | Dedicated modal container background override |
 | `modalContentStyle` | `StyleProp<ViewStyle>` | `undefined` | Custom style applied to the modal dialog card |
@@ -796,9 +969,10 @@ interface DatePickerTheme {
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `value` | `Date \| null` | `null` | Currently selected date value |
-| `defaultValue` | `Date \| null` | `null` | Initial date value |
+| `value` | `Date \| string \| number \| null` | `null` | Currently selected date value (Date object or UTC ISO string) |
+| `defaultValue` | `Date \| string \| number \| null` | `null` | Initial date value |
 | `onChange` | `(date: Date \| null) => void` | `undefined` | Fired when date selection changes |
+| `onConfirm` | `(date: Date \| null) => void` | `undefined` | Fired on Confirm button press |
 | `minimumDate` | `Date` | `undefined` | Earliest selectable date boundary |
 | `maximumDate` | `Date` | `undefined` | Latest selectable date boundary |
 | `disabledDates` | `(Date \| string)[] \| ((d: Date) => boolean)` | `undefined` | Array of disabled dates or filter function |
@@ -806,18 +980,19 @@ interface DatePickerTheme {
 | `firstDayOfWeek` | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6` | `0` | Column start day (`0` = Sun, `1` = Mon) |
 | `autoCloseOnSelect` | `boolean` | `false` | Automatically confirm and close modal upon date cell tap |
 
-### Range Picker Props (`mode="range"`)
+### Date Range Props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `startDate` | `Date \| null` | `null` | Range start date |
-| `endDate` | `Date \| null` | `null` | Range end date |
-| `defaultStartDate` | `Date \| null` | `null` | Initial start date |
-| `defaultEndDate` | `Date \| null` | `null` | Initial end date |
+| `startDate` | `Date \| string \| null` | `null` | Range start date (Date object or UTC ISO string) |
+| `endDate` | `Date \| string \| null` | `null` | Range end date (Date object or UTC ISO string) |
+| `defaultStartDate` | `Date \| string \| null` | `null` | Initial start date |
+| `defaultEndDate` | `Date \| string \| null` | `null` | Initial end date |
 | `onRangeChange` | `(range: DateRange) => void` | `undefined` | Fired when range changes |
+| `onConfirm` | `(range: DateRange \| null) => void` | `undefined` | Fired on Confirm button press with final selected range |
 | `maxRangeDays` | `number` | `undefined` | Maximum allowed range span in days |
 
-### Time & DateTime Props (`mode="time"` / `mode="datetime"`)
+### Time & DateTime Props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
@@ -829,14 +1004,16 @@ interface DatePickerTheme {
 | `timePickerLayout` | `'wheel' \| 'spinner' \| 'input' \| 'segmented'` | `'wheel'` | Time picker presentation style |
 | `initialTab` | `'date' \| 'time'` | `'date'` | Default active tab in datetime mode |
 
-### Wheel Picker Props (`mode="wheel"`)
+### Wheel Picker Props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `minYear` | `number` | `1970` | Minimum selectable year |
 | `maxYear` | `number` | `2050` | Maximum selectable year |
+| `itemHeight` | `number` | `44` | Height of each wheel item in pixels |
+| `visibleItems` | `number` | `5` | Number of visible wheel items at one time |
 
-### Manual Input & Validation Props
+### Input & Manual Entry Props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
@@ -846,8 +1023,11 @@ interface DatePickerTheme {
 | `placeholder` | `string` | `undefined` | Input placeholder text (`mode="input"`) |
 | `label` | `string` | `undefined` | Input field label (`mode="input"`) |
 | `editable` | `boolean` | `true` | Enable or disable input editing (`mode="input"`) |
+| `popupTitle` | `string` | `undefined` | Header title for the popup dialog in input mode |
+| `inputStyle` | `StyleProp<TextStyle>` | `undefined` | Custom style for input text element |
+| `inputContainerStyle`| `StyleProp<ViewStyle>` | `undefined` | Custom style for input outer container |
 
-### Action Button & Callback Props
+### Action Buttons & Callback Props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
@@ -861,47 +1041,216 @@ interface DatePickerTheme {
 | `onClear` | `() => void` | `undefined` | Callback fired on Clear press |
 | `onClose` | `() => void` | `undefined` | Callback fired when modal is dismissed |
 
-### Format Switcher Props
+---
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `showFormatSelector` | `boolean` | `false` | Show format pills row above picker |
-| `supportedFormats` | `DateFormat[]` | `['DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY/DD/MM', 'YYYY/MM/DD']` | List of selectable formats |
-| `onFormatChange` | `(format: DateFormat) => void` | `undefined` | Callback fired when format is changed |
+## 🪝 Headless Custom Hooks
+
+For developers building bespoke UI designs or completely custom layouts, all internal state machine hooks are exported:
+
+### 1. `useDatePicker`
+
+Manages single date selection, manual typing synchronization, and error validation:
+
+```tsx
+import { useDatePicker, getLocale } from '@izonnet-web-solution/react-native-date-picker-kit';
+
+const {
+  selectedDate,
+  manualText,
+  isManualMode,
+  validationResult,
+  selectDate,
+  handleManualInputChange,
+  toggleManualMode,
+  clear,
+} = useDatePicker({
+  value: date,
+  onChange: setDate,
+  format: 'DD/MM/YYYY',
+  locale: getLocale('en'),
+  minimumDate: new Date(2020, 0, 1),
+  maximumDate: new Date(2030, 11, 31),
+});
+```
+
+### 2. `useCalendar`
+
+Manages monthly matrix rendering, leap years, month navigation, and cell states:
+
+```tsx
+import { useCalendar, getLocale } from '@izonnet-web-solution/react-native-date-picker-kit';
+
+const {
+  currentYear,
+  currentMonth,
+  currentMonthName,
+  days,         // Array of CalendarDayCell objects for the 7x6 month grid
+  weekdays,     // Formatted column headers according to firstDayOfWeek
+  canGoPrevMonth,
+  canGoNextMonth,
+  goToPrevMonth,
+  goToNextMonth,
+  goToToday,
+  setMonth,
+  setYear,
+  jumpToDate,
+} = useCalendar({
+  selectedDate: date,
+  firstDayOfWeek: 0,
+  locale: getLocale('en'),
+});
+```
+
+### 3. `useDateRange`
+
+Manages multi-day continuous range selection, start/end date logic, and span constraints:
+
+```tsx
+import { useDateRange, getLocale } from '@izonnet-web-solution/react-native-date-picker-kit';
+
+const {
+  range,              // { startDate: Date | null, endDate: Date | null }
+  selectDate,         // Handles first click (start) and second click (end)
+  clearRange,
+  validationResult,
+  isSelectingEndDate,
+} = useDateRange({
+  startDate: range.startDate,
+  endDate: range.endDate,
+  onRangeChange: setRange,
+  maxRangeDays: 14,
+  locale: getLocale('en'),
+});
+```
+
+### 4. `useTimePicker`
+
+Manages 12h/24h time extraction, AM/PM transitions, clock hand angles, and minute steps:
+
+```tsx
+import { useTimePicker } from '@izonnet-web-solution/react-native-date-picker-kit';
+
+const {
+  time,           // TimeObject: { hours, minutes, seconds, period, is24Hour }
+  date,           // Synced Date instance
+  setHours,
+  setMinutes,
+  setSeconds,
+  setPeriod,      // 'AM' | 'PM'
+  setTimeFromDate,
+  hoursAngle,     // Angular degree (0-360°) for analog hour needle
+  minutesAngle,   // Angular degree (0-360°) for analog minute needle
+} = useTimePicker({
+  value: timeDate,
+  is24Hour: false,
+  minuteInterval: 5,
+});
+```
 
 ---
 
-## 📦 Exported Components & Hooks
+## 🛠️ Utility Functions Reference
 
-### Components
-- `DatePicker`: Main versatile picker component supporting all 8 modes.
-- `Calendar`: Month grid calendar component.
-- `WheelPicker`: 3D-feel Day/Month/Year wheel date picker.
-- `RangePicker`: Date range picker component.
-- `TimePicker`: Standalone time picker with dial and wheel layouts.
-- `ClockDial`: Analog clock face component.
-- `WheelTimePicker`: Wheel-based time picker.
-- `DateTimePicker`: Combined date and time picker.
-- `DateInput`: Text input field with embedded calendar icon.
-- `ManualDateInput`: Manual keyboard entry component (Single & Split).
-- `MonthYearSelectorModal`: Two-column month and year selector modal.
-- `Modal`: Lightweight accessible backdrop modal dialog.
-- `Button`: Themed button component.
-- `IconButton`: Accessible icon button.
+The package exports over 25 zero-dependency math and calendar utility functions:
 
-### Utility Functions
-- `formatDate(date, format, locale)`: Format Date object to tokenized string.
-- `parseDate(dateString, format)`: Parse formatted string into Date object.
-- `validateDate(date, options)`: Validate date against boundaries and disable rules.
-- `isSameDay(date1, date2)`: Compare if two dates share the same day.
-- `isToday(date)`: Check if date is today.
-- `addDays(date, days)` / `subDays(date, days)`: Date addition/subtraction.
-- `getDaysInMonth(year, month)`: Get number of days in specified month.
+### Date Arithmetic & Comparison
 
-### Hooks
-- `useDatePicker`: Complete state management for calendar selection and manual entry.
-- `useDateRange`: State management for date range selection.
-- `useTimePicker`: State management for 12h/24h time selection and clock angle math.
+```typescript
+import {
+  isLeapYear,
+  getDaysInMonth,
+  createLocalDate,
+  stripTime,
+  isSameDay,
+  isBeforeDay,
+  isAfterDay,
+  isDateInRange,
+  isToday,
+  addDays,
+  addMonths,
+  addYears,
+  getStartOfMonth,
+  getEndOfMonth,
+  getDaysDifference,
+  toValidDate,
+  toUTCISOString,
+} from '@izonnet-web-solution/react-native-date-picker-kit';
+
+isLeapYear(2024);                  // true
+isLeapYear(2025);                  // false
+getDaysInMonth(2024, 1);           // 29 (February in leap year)
+stripTime(new Date());             // Date with 00:00:00.000
+isSameDay(dateA, dateB);           // boolean
+isDateInRange(date, start, end);   // boolean
+addDays(new Date(), 7);            // Date + 7 days
+getDaysDifference(start, end);     // number of days between
+toValidDate("2026-11-20T09:30:00Z"); // Safe Date object in local timezone
+toUTCISOString(new Date());        // Standard ISO 8601 UTC string
+```
+
+### Time Helpers & Conversions
+
+```typescript
+import {
+  convert24To12,
+  convert12To24,
+  setTimeOnDate,
+  getTimeFromDate,
+  is24HourFormat,
+  padZero,
+} from '@izonnet-web-solution/react-native-date-picker-kit';
+
+convert24To12(15);         // { hour12: 3, period: 'PM' }
+convert24To12(0);          // { hour12: 12, period: 'AM' }
+convert12To24(3, 'PM');    // 15
+convert12To24(12, 'AM');   // 0
+padZero(5);                // "05"
+is24HourFormat("HH:mm");   // true
+is24HourFormat("hh:mm A"); // false
+```
+
+### Parsing, Masking & Formatting
+
+```typescript
+import {
+  formatDate,
+  parseDate,
+  parseDateStrict,
+  formatMaskedInput,
+} from '@izonnet-web-solution/react-native-date-picker-kit';
+
+formatDate(new Date(), 'DD/MM/YYYY');           // "20/11/2026"
+formatDate(new Date(), 'dddd, MMMM D, YYYY');   // "Friday, November 20, 2026"
+formatMaskedInput("20112026", "DD/MM/YYYY");    // "20/11/2026"
+parseDate("20/11/2026", "DD/MM/YYYY");          // Date object
+```
+
+### Validation Engine
+
+```typescript
+import {
+  validateDate,
+  validateDateRange,
+  validateTime,
+  validateDateComponents,
+  isDateDisabled,
+  isWeekdayDisabled,
+} from '@izonnet-web-solution/react-native-date-picker-kit';
+
+// Strict validation of numeric date components (guards leap year rollover):
+validateDateComponents(2024, 2, 29); // { isValid: true }
+validateDateComponents(2025, 2, 29); // { isValid: false, errorCode: 'LEAP_YEAR' }
+
+// Validate against boundaries and rules:
+const result = validateDate(targetDate, {
+  minimumDate: new Date(2026, 0, 1),
+  maximumDate: new Date(2026, 11, 31),
+  disabledWeekdays: [0, 6],
+});
+if (!result.isValid) {
+  console.error(result.error); // E.g. "This day is disabled"
+}
+```
 
 ---
 
@@ -913,6 +1262,7 @@ The library comes with comprehensive Jest unit test suites covering:
 - Range boundaries and max days constraint validation
 - Business hours & operating time constraints
 - Component mounting, user interactions, and callbacks
+- UTC & ISO 8601 normalization and conversions
 
 Run the test suite:
 

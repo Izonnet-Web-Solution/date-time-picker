@@ -33,24 +33,33 @@ import { convert24To12, padZero } from './timeUtils';
  * Never throws on valid Date.
  */
 export const formatDate = (
-  date: Date | null | undefined,
+  date: Date | string | number | null | undefined,
   format: DateFormat | string = 'DD/MM/YYYY',
   locale: SupportedLocale | DatePickerLocale = enLocale
 ): string => {
-  if (!date || isNaN(date.getTime())) {
+  if (!date) {
+    return '';
+  }
+
+  const dateObj =
+    typeof date === 'string' || typeof date === 'number'
+      ? new Date(date)
+      : date;
+
+  if (!dateObj || isNaN(dateObj.getTime())) {
     return '';
   }
 
   const activeLocale = getLocale(locale);
 
-  const year = date.getFullYear();
-  const month = date.getMonth(); // 0-indexed
-  const day = date.getDate();
-  const dayOfWeek = date.getDay();
+  const year = dateObj.getFullYear();
+  const month = dateObj.getMonth(); // 0-indexed
+  const day = dateObj.getDate();
+  const dayOfWeek = dateObj.getDay();
 
-  const hours24 = date.getHours();
-  const minutes = date.getMinutes();
-  const seconds = date.getSeconds();
+  const hours24 = dateObj.getHours();
+  const minutes = dateObj.getMinutes();
+  const seconds = dateObj.getSeconds();
 
   const { hour12, period } = convert24To12(hours24);
   const localizedPeriod =

@@ -8,11 +8,11 @@ import type {
 import { formatDate } from '../utils/dateFormatting';
 import { parseDateStrict, formatMaskedInput } from '../utils/dateParsing';
 import { validateDate } from '../utils/dateValidation';
-import { isSameDay } from '../utils/dateUtils';
+import { isSameDay, toValidDate } from '../utils/dateUtils';
 
 export interface UseDatePickerProps {
-  value?: Date | null;
-  defaultValue?: Date | null;
+  value?: Date | string | number | null;
+  defaultValue?: Date | string | number | null;
   onChange?: (date: Date | null) => void;
   format?: DateFormat;
   locale: DatePickerLocale;
@@ -51,10 +51,11 @@ export const useDatePicker = ({
 }: UseDatePickerProps): UseDatePickerReturn => {
   const isControlled = controlledValue !== undefined;
 
-  const [uncontrolledValue, setUncontrolledValue] = useState<Date | null>(defaultValue);
+  const normalizedDefault = useMemo(() => toValidDate(defaultValue), [defaultValue]);
+  const [uncontrolledValue, setUncontrolledValue] = useState<Date | null>(normalizedDefault);
 
   const selectedDate = useMemo<Date | null>(() => {
-    return isControlled ? (controlledValue ?? null) : uncontrolledValue;
+    return isControlled ? toValidDate(controlledValue) : uncontrolledValue;
   }, [isControlled, controlledValue, uncontrolledValue]);
 
   const [manualText, setManualText] = useState<string>(() => {

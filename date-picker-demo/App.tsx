@@ -16,6 +16,8 @@ import {
   DateFormat,
   TimePickerLayout,
   formatDate,
+  toValidDate,
+  toUTCISOString,
 } from '@izonnet-web-solution/react-native-date-picker-kit';
 
 type DemoTab =
@@ -23,6 +25,7 @@ type DemoTab =
   | 'time-12h'
   | 'time-24h'
   | 'datetime'
+  | 'utc'
   | 'time-constraints'
   | 'calendar'
   | 'wheel'
@@ -88,6 +91,13 @@ function DatePickerDemoApp() {
   const [dateTimeVal, setDateTimeVal] = useState<Date | null>(new Date());
   const [dateTimeIs24, setDateTimeIs24] = useState<boolean>(false);
   const [dateTimeModalOpen, setDateTimeModalOpen] = useState<boolean>(false);
+
+  // Model 10: Automatic UTC & ISO 8601 Conversion Demo
+  const [utcInputString, setUtcInputString] = useState<string>('2026-11-20T09:30:00.000Z');
+  const [utcModalOpen, setUtcModalOpen] = useState<boolean>(false);
+  const [utcSelectedDate, setUtcSelectedDate] = useState<Date | null>(() =>
+    toValidDate('2026-11-20T09:30:00.000Z')
+  );
 
   // Model 9: Time Constraints (Min & Max boundaries)
   const [constrainedTime, setConstrainedTime] = useState<Date | null>(
@@ -359,6 +369,7 @@ function DatePickerDemoApp() {
             { id: 'time-12h', label: '⏰ 12h AM/PM' },
             { id: 'time-24h', label: '⏱️ 24h Military' },
             { id: 'datetime', label: '📅⏰ Date+Time' },
+            { id: 'utc', label: '🌍 UTC & ISO 8601' },
             { id: 'calendar', label: '1. Calendar' },
             { id: 'wheel', label: '2. Wheel Date' },
             { id: 'range', label: '3. Range' },
@@ -840,6 +851,153 @@ function DatePickerDemoApp() {
                     currentLocale
                   )
                   : 'None'}
+              </Text>
+            </View>
+          </View>
+        )}
+
+        {/* --- DEMO: AUTOMATIC UTC & ISO 8601 CONVERSION --- */}
+        {activeTab === 'utc' && (
+          <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
+            <View style={styles.cardHeader}>
+              <View style={styles.badgeRow}>
+                <View style={[styles.tagBadge, { backgroundColor: `${primaryColor}18` }]}>
+                  <Text style={[styles.tagBadgeText, { color: primaryColor }]}>UTC / ISO 8601</Text>
+                </View>
+                <View style={[styles.tagBadge, { backgroundColor: '#10B98118' }]}>
+                  <Text style={[styles.tagBadgeText, { color: '#10B981' }]}>AUTO TIMEZONE</Text>
+                </View>
+              </View>
+              <Text style={[styles.cardTitle, { color: textColor }]}>
+                Automatic UTC & ISO 8601 Conversion
+              </Text>
+              <Text style={[styles.cardDesc, { color: subtextColor }]}>
+                Simulates backend API dates arriving in UTC format. DatePicker automatically renders the exact local time on your phone, and on confirm converts it back to standard UTC format!
+              </Text>
+            </View>
+
+            {/* Simulated API UTC Presets */}
+            <View style={styles.subControlRow}>
+              <Text style={[styles.subControlLabel, { color: subtextColor }]}>Simulate API Payload:</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6 }}>
+                {[
+                  { label: 'Morning UTC', val: '2026-11-20T09:30:00.000Z' },
+                  { label: 'Christmas UTC', val: '2026-12-25T18:45:00.000Z' },
+                  { label: 'New Year UTC', val: '2027-01-01T00:00:00.000Z' },
+                  { label: 'Now (UTC)', val: new Date().toISOString() },
+                ].map((item) => {
+                  const isSel = utcInputString === item.val;
+                  return (
+                    <TouchableOpacity
+                      key={item.label}
+                      onPress={() => {
+                        setUtcInputString(item.val);
+                        setUtcSelectedDate(toValidDate(item.val));
+                      }}
+                      style={[
+                        styles.intervalPill,
+                        {
+                          backgroundColor: isSel ? `${primaryColor}18` : 'transparent',
+                          borderColor: isSel ? primaryColor : borderColor,
+                        },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.intervalPillText,
+                          {
+                            color: isSel ? primaryColor : subtextColor,
+                            fontWeight: isSel ? '800' : '600',
+                          },
+                        ]}
+                      >
+                        {item.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            </View>
+
+            {/* Modal Launch Button */}
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => setUtcModalOpen(true)}
+              style={[
+                styles.openModalButton,
+                {
+                  backgroundColor: primaryColor,
+                  shadowColor: primaryColor,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 5,
+                  marginBottom: 16,
+                },
+              ]}
+            >
+              <Text style={styles.openModalButtonIcon}>🌍</Text>
+              <View style={{ marginLeft: 10, flex: 1 }}>
+                <Text style={styles.openModalButtonTitle}>
+                  Open UTC DateTime Picker (Modal Mode)
+                </Text>
+                <Text style={styles.openModalButtonSubtitle}>
+                  Device Time: {utcSelectedDate ? formatDate(utcSelectedDate, 'DD/MM/YYYY hh:mm A', currentLocale) : 'Tap to select'}
+                </Text>
+              </View>
+              <Text style={styles.openModalArrow}>→</Text>
+            </TouchableOpacity>
+
+            {/* Modal DatePicker instance */}
+            <DatePicker
+              modal
+              open={utcModalOpen}
+              mode="datetime"
+              value={utcSelectedDate}
+              onChange={(d) => {
+                setUtcSelectedDate(d);
+                if (d) setUtcInputString(toUTCISOString(d) || d.toISOString());
+              }}
+              onConfirm={(d) => {
+                setUtcSelectedDate(d);
+                if (d) setUtcInputString(toUTCISOString(d) || d.toISOString());
+                setUtcModalOpen(false);
+              }}
+              onClose={() => setUtcModalOpen(false)}
+              onCancel={() => setUtcModalOpen(false)}
+              accentColor={accentColor}
+              theme={themeMode}
+              locale={currentLocale}
+              format="DD/MM/YYYY hh:mm A"
+            />
+
+            {/* Live Result Ticket Card */}
+            <View style={[styles.resultTicket, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)', borderColor }]}>
+              <View style={styles.ticketTopRow}>
+                <Text style={[styles.ticketLabel, { color: subtextColor }]}>INCOMING API PAYLOAD (UTC)</Text>
+                <View style={[styles.activeDot, { backgroundColor: '#3B82F6' }]} />
+              </View>
+              <Text style={[styles.ticketValue, { color: textColor, fontSize: 13, fontFamily: 'monospace' }]}>
+                {utcInputString}
+              </Text>
+
+              <View style={[styles.ticketTopRow, { marginTop: 12 }]}>
+                <Text style={[styles.ticketLabel, { color: subtextColor }]}>CONVERTED DEVICE LOCAL TIME (formatDate)</Text>
+                <View style={[styles.activeDot, { backgroundColor: '#10B981' }]} />
+              </View>
+              <Text style={[styles.ticketValue, { color: textColor }]}>
+                {utcSelectedDate ? formatDate(utcSelectedDate, 'DD MMMM YYYY, hh:mm A', currentLocale) : 'None'}
+              </Text>
+
+              <View style={[styles.ticketTopRow, { marginTop: 12 }]}>
+                <Text style={[styles.ticketLabel, { color: subtextColor }]}>OUTGOING SERVER PAYLOAD (toUTCISOString)</Text>
+                <View style={[styles.activeDot, { backgroundColor: primaryColor }]} />
+              </View>
+              <Text style={[styles.ticketValue, { color: textColor, fontSize: 13, fontFamily: 'monospace' }]}>
+                {utcSelectedDate ? toUTCISOString(utcSelectedDate) : '--'}
+              </Text>
+              <Text style={[styles.ticketMeta, { color: subtextColor, marginTop: 4 }]}>
+                Epoch Timestamp (ms): {utcSelectedDate ? utcSelectedDate.getTime() : '--'}
               </Text>
             </View>
           </View>

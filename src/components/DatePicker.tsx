@@ -25,6 +25,7 @@ import { useDatePicker } from '../hooks/useDatePicker';
 import { formatDate } from '../utils/dateFormatting';
 import { parseDateStrict, formatMaskedInput } from '../utils/dateParsing';
 import { validateDate } from '../utils/dateValidation';
+import { toValidDate } from '../utils/dateUtils';
 import { Calendar } from './Calendar/Calendar';
 import { WheelPicker } from './Wheel/WheelPicker';
 import { RangePicker } from './Range/RangePicker';
@@ -158,16 +159,12 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
   // Track month & year selector modal state for seamless modal-to-modal handoff
   const [isMonthYearSelectorOpen, setIsMonthYearSelectorOpen] = useState(false);
   const [modalViewYear, setModalViewYear] = useState<number>(() => {
-    const initial = singleProps.value ?? singleProps.defaultValue ?? new Date();
-    return (initial instanceof Date && !isNaN(initial.getTime()))
-      ? initial.getFullYear()
-      : new Date().getFullYear();
+    const initial = toValidDate(singleProps.value ?? singleProps.defaultValue) || new Date();
+    return initial.getFullYear();
   });
   const [modalViewMonth, setModalViewMonth] = useState<number>(() => {
-    const initial = singleProps.value ?? singleProps.defaultValue ?? new Date();
-    return (initial instanceof Date && !isNaN(initial.getTime()))
-      ? initial.getMonth()
-      : new Date().getMonth();
+    const initial = toValidDate(singleProps.value ?? singleProps.defaultValue) || new Date();
+    return initial.getMonth();
   });
 
   // Track modal open transition so draft value is only initialized when modal initially opens
@@ -182,8 +179,8 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
       setIsMonthYearSelectorOpen(false);
       if (mode === 'range') {
         const rp = props as RangeDatePickerProps;
-        const start = rp.startDate ?? rp.defaultStartDate ?? null;
-        const end = rp.endDate ?? rp.defaultEndDate ?? null;
+        const start = toValidDate(rp.startDate ?? rp.defaultStartDate);
+        const end = toValidDate(rp.endDate ?? rp.defaultEndDate);
         setDraftValue({
           startDate: start,
           endDate: end,
@@ -192,7 +189,7 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
         setModalViewYear(target.getFullYear());
         setModalViewMonth(target.getMonth());
       } else {
-        const initialDate = singleProps.value ?? singleProps.defaultValue ?? null;
+        const initialDate = toValidDate(singleProps.value ?? singleProps.defaultValue);
         setDraftValue(initialDate);
         setDraftDateText(initialDate ? formatDate(initialDate, activeFormat, locale) : '');
         setDraftValidation({ isValid: true });
@@ -368,11 +365,13 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
       return (
         <TimePicker
           value={
-            isModalMode
-              ? (draftValue !== undefined ? draftValue : selectedDate)
-              : (timeProps.value !== undefined ? timeProps.value : selectedDate)
+            toValidDate(
+              isModalMode
+                ? (draftValue !== undefined ? draftValue : selectedDate)
+                : (timeProps.value !== undefined ? timeProps.value : selectedDate)
+            )
           }
-          defaultValue={timeProps.defaultValue}
+          defaultValue={toValidDate(timeProps.defaultValue)}
           onChange={(d) => {
             if (isModalMode) {
               setDraftValue(d);
@@ -418,11 +417,13 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
       return (
         <DateTimePicker
           value={
-            isModalMode
-              ? (draftValue !== undefined ? draftValue : selectedDate)
-              : (dateTimeProps.value !== undefined ? dateTimeProps.value : selectedDate)
+            toValidDate(
+              isModalMode
+                ? (draftValue !== undefined ? draftValue : selectedDate)
+                : (dateTimeProps.value !== undefined ? dateTimeProps.value : selectedDate)
+            )
           }
-          defaultValue={dateTimeProps.defaultValue}
+          defaultValue={toValidDate(dateTimeProps.defaultValue)}
           onChange={(d) => {
             if (isModalMode) {
               setDraftValue(d);
@@ -467,7 +468,10 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
       const wheelProps = props as WheelDatePickerProps;
       return (
         <WheelPicker
-          value={isModalMode ? (draftValue ?? wheelProps.value ?? selectedDate) : (wheelProps.value ?? selectedDate)}
+          value={
+            toValidDate(isModalMode ? (draftValue ?? wheelProps.value ?? selectedDate) : (wheelProps.value ?? selectedDate)) ||
+            new Date()
+          }
           onChange={(d) => {
             if (isModalMode) {
               setDraftValue(d);
@@ -507,10 +511,10 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
       const rangeProps = props as RangeDatePickerProps;
       return (
         <RangePicker
-          startDate={isModalMode ? draftValue?.startDate : rangeProps.startDate}
-          endDate={isModalMode ? draftValue?.endDate : rangeProps.endDate}
-          defaultStartDate={rangeProps.defaultStartDate}
-          defaultEndDate={rangeProps.defaultEndDate}
+          startDate={toValidDate(isModalMode ? draftValue?.startDate : rangeProps.startDate)}
+          endDate={toValidDate(isModalMode ? draftValue?.endDate : rangeProps.endDate)}
+          defaultStartDate={toValidDate(rangeProps.defaultStartDate)}
+          defaultEndDate={toValidDate(rangeProps.defaultEndDate)}
           onRangeChange={(range) => {
             if (isModalMode) {
               setDraftValue(range);
@@ -565,7 +569,7 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
             </View>
 
             <Calendar
-              selectedDate={draftValue !== undefined ? draftValue : selectedDate}
+              selectedDate={toValidDate(draftValue !== undefined ? draftValue : selectedDate)}
               onSelectDate={handleModalDateSelect}
               theme={theme}
               locale={locale}
@@ -601,8 +605,8 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
       // Inline mode: renders the interactive text input that triggers the popup modal
       return (
         <DateInput
-          value={inputProps.value !== undefined ? inputProps.value : selectedDate}
-          defaultValue={inputProps.defaultValue}
+          value={toValidDate(inputProps.value !== undefined ? inputProps.value : selectedDate)}
+          defaultValue={toValidDate(inputProps.defaultValue)}
           onChange={(d) => {
             selectDate(d);
             inputProps.onChange?.(d);
@@ -640,7 +644,7 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
     // 6. Default mode: 'calendar'
     return (
       <Calendar
-        selectedDate={isModalMode ? (draftValue !== undefined ? draftValue : selectedDate) : selectedDate}
+        selectedDate={toValidDate(isModalMode ? (draftValue !== undefined ? draftValue : selectedDate) : selectedDate)}
         onSelectDate={isModalMode ? handleModalDateSelect : selectDate}
         theme={theme}
         locale={locale}

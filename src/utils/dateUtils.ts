@@ -115,3 +115,28 @@ export const getDaysDifference = (start: Date, end: Date): number => {
 export const isToday = (date: Date): boolean => {
   return isSameDay(date, new Date());
 };
+
+/**
+ * Safely converts any Date object, ISO UTC string, or numeric timestamp into a valid local Date object.
+ * Returns null if invalid or not provided.
+ */
+export const toValidDate = (
+  value: Date | string | number | null | undefined
+): Date | null => {
+  if (!value) return null;
+  if (value instanceof Date) {
+    return isNaN(value.getTime()) ? null : value;
+  }
+  const parsed = new Date(value);
+  return isNaN(parsed.getTime()) ? null : parsed;
+};
+
+/**
+ * Converts a Date object or timestamp to a standard UTC ISO 8601 string (e.g. "2026-11-20T09:30:00.000Z").
+ */
+export const toUTCISOString = (
+  date: Date | string | number | null | undefined
+): string | null => {
+  const valid = toValidDate(date);
+  return valid ? valid.toISOString() : null;
+};
